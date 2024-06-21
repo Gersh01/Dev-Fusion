@@ -4,11 +4,11 @@ const cors = require('cors');
 
 const path = require('path');
 const { log } = require('console');
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 
 const app = express();
 
-app.set('port', (process.env.PORT || 5000));
+app.set('port', (process.env.PORT || 4000));
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -35,24 +35,32 @@ client.connect;
 //api-----------------
 
 app.post('/api/login', async(req, res, next) =>{
+    var id = -1;
+    var fn = '';
+    var ln = '';
+    var email = '';
+    var username = '';
     var error = '';
     const {login, password} = req.body;
     var db;
+
     var resultsUsername;
     var resultsEmail;
+
+    var resultsUsernameUnverified;
+    var resultsEmailUnverified;
     try{
         db = client.db('DevFusion');
         resultsUsername = await db.collection('Users').find({username:login,password:password}).toArray();
         resultsEmail = await db.collection('Users').find({email:login,password:password}).toArray();
+        resultsUsernameUnverified = await db.collection('UnverifiedUsers').find({username:login}).toArray();
+        resultsEmailUnverified = await db.collection('UnverifiedUsers').find({email:login}).toArray();
     }catch(e){
         error = e.toString;
+        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
+        res.status(500).json(ret);
     }
-    // const db = client.db('DevFusion');
-    // const resultsUsername = await db.collection('Users').find({username:login,password:password}).toArray();
-    // const resultsEmail = await db.collection('Users').find({email:login,password:password}).toArray();
-    var id = -1;
-    var fn = '';
-    var ln = '';
+
     if( resultsUsername.length > 0 ){
         id = resultsUsername[0]._id;
         fn = resultsUsername[0].firstName;
@@ -60,6 +68,8 @@ app.post('/api/login', async(req, res, next) =>{
         confirmation = resultsUsername[0].confirmation;
         email = resultsUsername[0].email;
         username = resultsUsername[0].username;
+        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
+        res.status(200).json(ret);
     }else if(resultsEmail.length > 0){
         id = resultsEmail[0]._id;
         fn = resultsEmail[0].firstName;
@@ -67,11 +77,34 @@ app.post('/api/login', async(req, res, next) =>{
         confirmation = resultsEmail[0].confirmation;
         email = resultsEmail[0].email;
         username = resultsEmail[0].username;
+        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
+        res.status(200).json(ret);
+    }else if( resultsUsernameUnverified.length > 0 ){
+        id = resultsUsernameUnverified[0]._id;
+        fn = resultsUsernameUnverified[0].firstName;
+        ln = resultsUsernameUnverified[0].lastName;
+        confirmation = resultsUsernameUnverified[0].confirmation;
+        email = resultsUsernameUnverified[0].email;
+        username = resultsUsernameUnverified[0].username;
+        error = "User is not verified";
+        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
+        res.status(401).json(ret);
+    }else if(resultsEmailUnverified.length > 0){
+        id = resultsEmailUnverified[0]._id;
+        fn = resultsEmailUnverified[0].firstName;
+        ln = resultsEmailUnverified[0].lastName;
+        confirmation = resultsEmailUnverified[0].confirmation;
+        email = resultsEmailUnverified[0].email;
+        username = resultsEmailUnverified[0].username;
+        error = "User is not verified";
+        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
+        res.status(401).json(ret);
     }else{
-        error = "user not found";
+        error = "Login or/and password is wrong";
+        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
+        res.status(404).json(ret);
     }
-    var ret = { id:id, firstName:fn, lastName:ln, confirmation:confirmation, email:email, username:username, error:''};
-    res.status(200).json(ret);
+    
 });
 
 app.post('/api/register', async(req, res, next) =>{
@@ -80,10 +113,12 @@ app.post('/api/register', async(req, res, next) =>{
         db = client.db('DevFusion');
     }catch(e){
         error = e.toString;
+        var ret = {error:error};
+        res.status(500).json(ret);
     }
 
     const {firstName, lastName, password, username, email} = req.body;
-    const newUser = {firstName:firstName, lastName:lastName, password:password, username:username, email:email, confirmation:false};
+    const newUser = {firstName:firstName, lastName:lastName, password:password, username:username, email:email};
     var error = '';
     var results = await db.collection('Users').find({username:username}).toArray();
     if(results.length == 0){
@@ -92,14 +127,18 @@ app.post('/api/register', async(req, res, next) =>{
     if(results.length == 0){
         try{
             const result = db.collection('Users').insertOne(newUser);
+            var ret = {error:error};
+            res.status(201).json(ret);
         }catch(e){
             error = e.toString();
+            var ret = {error:error};
+            res.status(500).json(ret);
         }
     }else{
         error = "username is taken";
+        var ret = {error:error};
+        res.status(400).json(ret);
     }
-    var ret = {error:error};
-    res.status(200).json(ret);
 });
 
 if(process.env.NODE_ENV === 'production') {
