@@ -41,6 +41,8 @@ app.post('/api/login', async(req, res, next) =>{
     var ln = '';
     var email = '';
     var username = '';
+    var bio = '';
+    var technologies = [];
     var error = '';
     const {login, password} = req.body;
     var db;
@@ -52,8 +54,8 @@ app.post('/api/login', async(req, res, next) =>{
     var resultsEmailUnverified;
     try{
         db = client.db('DevFusion');
-        resultsUsername = await db.collection('Users').find({username:login,password:password}).toArray();
-        resultsEmail = await db.collection('Users').find({email:login,password:password}).toArray();
+        resultsUsername = await db.collection('Users').find({username:login}).toArray();
+        resultsEmail = await db.collection('Users').find({email:login}).toArray();
         resultsUsernameUnverified = await db.collection('UnverifiedUsers').find({username:login}).toArray();
         resultsEmailUnverified = await db.collection('UnverifiedUsers').find({email:login}).toArray();
     }catch(e){
@@ -62,47 +64,67 @@ app.post('/api/login', async(req, res, next) =>{
         res.status(500).json(ret);
     }
 
-    if( resultsUsername.length > 0 ){
-        id = resultsUsername[0]._id;
-        fn = resultsUsername[0].firstName;
-        ln = resultsUsername[0].lastName;
-        confirmation = resultsUsername[0].confirmation;
-        email = resultsUsername[0].email;
-        username = resultsUsername[0].username;
-        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
-        res.status(200).json(ret);
-    }else if(resultsEmail.length > 0){
-        id = resultsEmail[0]._id;
-        fn = resultsEmail[0].firstName;
-        ln = resultsEmail[0].lastName;
-        confirmation = resultsEmail[0].confirmation;
-        email = resultsEmail[0].email;
-        username = resultsEmail[0].username;
-        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
-        res.status(200).json(ret);
-    }else if( resultsUsernameUnverified.length > 0 ){
+    if( resultsUsername.length > 0 ){ //Login matched a verified user's username
+        if(resultsUsername[0].password === password){ //Password matched
+            id = resultsUsername[0]._id;
+            fn = resultsUsername[0].firstName;
+            ln = resultsUsername[0].lastName;
+            confirmation = resultsUsername[0].confirmation;
+            email = resultsUsername[0].email;
+            username = resultsUsername[0].username;
+            bio = resultsUsername[0].bio;
+            technologies = resultsUsername[0].technologies;
+            var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, bio:bio, technologies:technologies, error:error};
+            res.status(200).json(ret);
+        }else{ //Password did not match
+            error = "password is wrong";
+            var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, bio:bio, technologies:technologies, error:error};
+            res.status(401).json(ret);
+        }
+    }else if(resultsEmail.length > 0){ //Login matched a verified user's email
+        if(resultsEmail[0].password === password){ //Password matched
+            id = resultsEmail[0]._id;
+            fn = resultsEmail[0].firstName;
+            ln = resultsEmail[0].lastName;
+            confirmation = resultsEmail[0].confirmation;
+            email = resultsEmail[0].email;
+            username = resultsEmail[0].username;
+            bio = resultsEmail[0].bio;
+            technologies = resultsEmail[0].technologies;
+            var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, bio:bio, technologies:technologies, error:error};
+            res.status(200).json(ret);
+        }else{ //Password did not match
+            error = "password is wrong";
+            var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, bio:bio, technologies:technologies, error:error};
+            res.status(401).json(ret);
+        }
+    }else if( resultsUsernameUnverified.length > 0 ){ //Login matched a unverified user's username
         id = resultsUsernameUnverified[0]._id;
         fn = resultsUsernameUnverified[0].firstName;
         ln = resultsUsernameUnverified[0].lastName;
         confirmation = resultsUsernameUnverified[0].confirmation;
         email = resultsUsernameUnverified[0].email;
         username = resultsUsernameUnverified[0].username;
+        bio = resultsUsernameUnverified[0].bio;
+        technologies = resultsUsernameUnverified[0].technologies;
         error = "User is not verified";
-        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
+        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, bio:bio, technologies:technologies, error:error};
         res.status(401).json(ret);
-    }else if(resultsEmailUnverified.length > 0){
+    }else if(resultsEmailUnverified.length > 0){ //Login matched a unverified user's email
         id = resultsEmailUnverified[0]._id;
         fn = resultsEmailUnverified[0].firstName;
         ln = resultsEmailUnverified[0].lastName;
         confirmation = resultsEmailUnverified[0].confirmation;
         email = resultsEmailUnverified[0].email;
         username = resultsEmailUnverified[0].username;
+        bio = resultsEmailUnverified[0].bio;
+        technologies = resultsEmailUnverified[0].technologies;
         error = "User is not verified";
-        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
+        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, bio:bio, technologies:technologies, error:error};
         res.status(401).json(ret);
-    }else{
-        error = "Login or/and password is wrong";
-        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, error:error};
+    }else{ //Login did not match any user
+        error = "Login did not match any user";
+        var ret = { id:id, firstName:fn, lastName:ln, email:email, username:username, bio:bio, technologies:technologies, error:error};
         res.status(404).json(ret);
     }
     
@@ -120,7 +142,8 @@ app.post('/api/register', async(req, res, next) =>{
 
     const {firstName, lastName, password, username, email} = req.body;
     var timeCreated = new Date();
-    const newUser = {firstName:firstName, lastName:lastName, password:password, username:username, email:email, timeCreated:timeCreated};
+    const newUser = {firstName:firstName, lastName:lastName, password:password, username:username, email:email, timeCreated:timeCreated, bio:"",
+                        technologies:[]};
     var error = '';
     var resultsUsername = await db.collection('Users').find({username:username}).toArray();
     var resultsEmail = await db.collection('Users').find({email:email}).toArray();
