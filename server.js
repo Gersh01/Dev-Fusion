@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const nodemailer = require('nodemailer');
 
 const path = require('path');
 const { log } = require('console');
@@ -118,15 +119,16 @@ app.post('/api/register', async(req, res, next) =>{
     }
 
     const {firstName, lastName, password, username, email} = req.body;
-    const newUser = {firstName:firstName, lastName:lastName, password:password, username:username, email:email};
+    var timeCreated = new Date();
+    const newUser = {firstName:firstName, lastName:lastName, password:password, username:username, email:email, timeCreated:timeCreated};
     var error = '';
-    var results = await db.collection('Users').find({username:username}).toArray();
-    if(results.length == 0){
-        results = await db.collection('Users').find({email:email}).toArray();
-    }
-    if(results.length == 0){
+    var resultsUsername = await db.collection('Users').find({username:username}).toArray();
+    var resultsEmail = await db.collection('Users').find({email:email}).toArray();
+    var resultsUsernameUnverified = await db.collection('UnverifiedUsers').find({username:username}).toArray();
+    var resultsEmailUnverified = await db.collection('UnverifiedUsers').find({email:email}).toArray();
+    if(resultsUsername.length == 0 && resultsEmail.length == 0 && resultsUsernameUnverified.length == 0 && resultsEmailUnverified.length == 0){
         try{
-            const result = db.collection('Users').insertOne(newUser);
+            const result = db.collection('UnverifiedUsers').insertOne(newUser);
             var ret = {error:error};
             res.status(201).json(ret);
         }catch(e){
