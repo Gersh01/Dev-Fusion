@@ -133,9 +133,6 @@ const RegisterFields = () => {
             Remember Me
           </div>
         </div>
-        <button className="text-right text-black dark:text-white text-xs font-normal poppins">
-          Forgot Password
-        </button>
       </div>
     </div>
   );
