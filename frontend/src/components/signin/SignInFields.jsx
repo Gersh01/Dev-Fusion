@@ -31,7 +31,7 @@ const SignInFields = () => {
               <FaRegUserCircle className="dark:fill-white" />
             </div>
           </div>
-          <div className="text-black dark:text-white text-xs font-semibold font-family-Poppins">
+          <div className="text-black dark:text-white text-xs font-semibold poppins">
             Username
           </div>
         </div>
@@ -50,7 +50,7 @@ const SignInFields = () => {
           <div className="w-[15px] h-[15px] relative fill-white">
             <MdOutlineLock className="dark:fill-white" />
           </div>
-          <div className="text-black  dark:text-white  text-xs font-semibold font-family-Poppins">
+          <div className="text-black  dark:text-white  text-xs font-semibold poppins">
             Password
           </div>
         </div>
@@ -75,11 +75,11 @@ const SignInFields = () => {
             type="checkbox"
             className="w-4 h-4 relative rounded-[3px] border border-neutral-400"
           />
-          <div className="text-black dark:text-white text-xs font-normal font-family-Poppins">
+          <div className="text-black dark:text-white text-xs font-normal poppins">
             Remember Me
           </div>
         </div>
-        <button className="text-right text-black dark:text-white text-xs font-normal font-family-Poppins">
+        <button className="text-right text-black dark:text-white text-xs font-normal poppins">
           Forgot Password
         </button>
       </div>

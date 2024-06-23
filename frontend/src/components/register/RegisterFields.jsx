@@ -26,7 +26,7 @@ const RegisterFields = () => {
       <div className="self-stretch h-16 justify-start items-start gap-2.5 inline-flex">
         <div className="self-stretch h-16 p-2.5 bg-gray-200 dark:bg-gray-900 rounded-[5px] shadow border border-none flex-col justify-start items-start gap-[5px] flex">
           <div className="justify-center items-center gap-[5px] inline-flex">
-            <div className="text-black dark:text-white text-xs font-semibold font-family-Poppins">
+            <div className="text-black dark:text-white text-xs font-semibold poppins">
               First Name
             </div>
           </div>
@@ -42,7 +42,7 @@ const RegisterFields = () => {
         </div>
         <div className="self-stretch grow h-16 p-2.5 bg-gray-200 dark:bg-gray-900 rounded-[5px] shadow border border-none flex-col justify-start items-start gap-[5px] flex">
           <div className="justify-center items-center gap-[5px] inline-flex">
-            <div className="text-black dark:text-white text-xs font-semibold font-family-Poppins">
+            <div className="text-black dark:text-white text-xs font-semibold poppins">
               Last Name
             </div>
           </div>
@@ -64,7 +64,7 @@ const RegisterFields = () => {
               <FaRegUserCircle className="dark:fill-white" />
             </div>
           </div>
-          <div className="text-black dark:text-white text-xs font-semibold font-family-Poppins">
+          <div className="text-black dark:text-white text-xs font-semibold poppins">
             Username
           </div>
         </div>
@@ -85,7 +85,7 @@ const RegisterFields = () => {
               <MdMailOutline className="dark:fill-white" />
             </div>
           </div>
-          <div className="text-black dark:text-white text-xs font-semibold font-family-Poppins">
+          <div className="text-black dark:text-white text-xs font-semibold poppins">
             Email
           </div>
         </div>
@@ -104,7 +104,7 @@ const RegisterFields = () => {
           <div className="w-[15px] h-[15px] relative fill-white">
             <MdOutlineLock className="dark:fill-white" />
           </div>
-          <div className="text-black  dark:text-white  text-xs font-semibold font-family-Poppins">
+          <div className="text-black  dark:text-white  text-xs font-semibold poppins">
             Password
           </div>
         </div>
@@ -129,11 +129,11 @@ const RegisterFields = () => {
             type="checkbox"
             className="w-4 h-4 relative rounded-[3px] border border-neutral-400"
           />
-          <div className="text-black dark:text-white text-xs font-normal font-family-Poppins">
+          <div className="text-black dark:text-white text-xs font-normal poppins">
             Remember Me
           </div>
         </div>
-        <button className="text-right text-black dark:text-white text-xs font-normal font-family-Poppins">
+        <button className="text-right text-black dark:text-white text-xs font-normal poppins">
           Forgot Password
         </button>
       </div>
