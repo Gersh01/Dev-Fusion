@@ -162,12 +162,12 @@ exports.setApp = function (app, client) {
     });
 
     //create user api
-    app.post('/api/user', async (req, res, next) => {
+    app.post('/api/user', cookieJwtAuth, async (req, res, next) => {
 
     });
 
     //update user api
-    app.put('/api/user', async (req, res, next) => {
+    app.put('/api/user', cookieJwtAuth, async (req, res, next) => {
 
     });
 
