@@ -2,3 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+.inter{
+    font-family: "Inter";
+}
+
+.poppins{
+    font-family: "Poppins";
+}
+
+.league-spartan{
+    font-family: "League Spartan";
+}
+
+.crimson-pro{
+    font-family: "Crimson Pro";
+}
+
+.playfair-display{
+    font-family: "Playfair Display";
+}
