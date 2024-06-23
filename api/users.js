@@ -3,6 +3,7 @@ require('mongodb');
 
 exports.setApp = function (app, client) {
 
+    //login api
     app.post('/api/login', async (req, res, next) => {
         var id = -1;
         var fn = '';
@@ -98,6 +99,7 @@ exports.setApp = function (app, client) {
 
     });
 
+    //register api
     app.post('/api/register', async (req, res, next) => {
         var db;
         try {
@@ -135,4 +137,6 @@ exports.setApp = function (app, client) {
             res.status(400).json(ret);
         }
     });
+
+    
 }
