@@ -1,5 +1,18 @@
 require('express');
 require('mongodb');
+const jwt = require('jsonwebtoken');
+
+const cookieJwtAuth = (req, res, next) => {
+    const token = req.cookies.token;
+    try {
+        const payload = jwt.verify(token, process.env.SECRET_KEY);
+        req.username = payload.username;
+        next();
+    } catch (e) {
+        res.clearCookie("token");
+        return res.status(403).json({error: "token is not valid"});
+    }
+}
 
 exports.setApp = function (app, client) {
 
@@ -44,6 +57,11 @@ exports.setApp = function (app, client) {
                 bio = resultsUsername[0].bio;
                 technologies = resultsUsername[0].technologies;
                 var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                const payload = { username };
+                var token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: "30s"});
+                res.cookie("token", token, {
+                    httpOnly: true
+                });
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
@@ -61,13 +79,18 @@ exports.setApp = function (app, client) {
                 bio = resultsEmail[0].bio;
                 technologies = resultsEmail[0].technologies;
                 var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                const payload = { username };
+                var token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: "30s"});
+                res.cookie("token", token, {
+                    httpOnly: true
+                });
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
                 var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 res.status(401).json(ret);
             }
-        } else if (resultsUsernameUnverified.length > 0) { //Login matched a unverified user's username
+        } else if (resultsUsernameUnverified.length > 0) { //Login matched an unverified user's username
             id = resultsUsernameUnverified[0]._id;
             fn = resultsUsernameUnverified[0].firstName;
             ln = resultsUsernameUnverified[0].lastName;
@@ -79,7 +102,7 @@ exports.setApp = function (app, client) {
             error = "User is not verified";
             var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
             res.status(401).json(ret);
-        } else if (resultsEmailUnverified.length > 0) { //Login matched a unverified user's email
+        } else if (resultsEmailUnverified.length > 0) { //Login matched an unverified user's email
             id = resultsEmailUnverified[0]._id;
             fn = resultsEmailUnverified[0].firstName;
             ln = resultsEmailUnverified[0].lastName;
@@ -138,5 +161,55 @@ exports.setApp = function (app, client) {
         }
     });
 
-    
+    //create user api
+    app.post('/api/user', async (req, res, next) => {
+
+    });
+
+    //update user api
+    app.put('/api/user', async (req, res, next) => {
+
+    });
+
+    //api to test jwt authentication
+    app.post('/api/jwtTest', cookieJwtAuth, async (req, res, next) => {
+        var id = -1;
+        var fn = '';
+        var ln = '';
+        var email = '';
+        var bio = '';
+        var technologies = [];
+        var error = '';
+
+        const username = req.username;
+
+        var db;
+        var result;
+
+        try {
+            db = client.db('DevFusion');
+            result = await db.collection('Users').find({ username: username }).toArray();
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            res.status(500).json(ret);
+        }
+
+        if (result.length > 0) {
+            id = result[0]._id;
+            fn = result[0].firstName;
+            ln = result[0].lastName;
+            confirmation = result[0].confirmation;
+            email = result[0].email;
+            bio = result[0].bio;
+            technologies = result[0].technologies;
+            var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            res.status(200).json(ret);
+        }else{
+            error = "username does not exist";
+            var ret = {error: error};
+            res.status(404).json(ret);
+        }
+    });
+
 }

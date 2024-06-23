@@ -2,9 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const { log } = require('console');
+require('dotenv').config();
+
 const PORT = process.env.PORT || 4000;
 
 const app = express();
@@ -13,6 +15,7 @@ app.set('port', (process.env.PORT || 4000));
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use((req,res,next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -27,11 +30,16 @@ app.use((req,res,next) => {
     next();
 });
 
-require('dotenv').config();
+
 const url = process.env.MONGODB_URI;
 const MongoClient = require('mongodb').MongoClient;
-const client = new MongoClient(url);
-client.connect;
+var client;
+try{
+    client = new MongoClient(url);
+    client.connect;
+}catch(e){
+    console.error(e);
+}
 
 //--------------------API--------------------
 
