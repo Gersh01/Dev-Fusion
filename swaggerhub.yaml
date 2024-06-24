@@ -1,0 +1,17 @@
+swagger: "2.0"
+info:
+    description: This is the API documentation for the Dev Fusion
+    version: 1.0.0
+    title: Dev Fusion
+    contact:
+        email: alex.gershfeld@gmail.com
+
+paths:
+    /login.js:
+
+definitions:
+
+host: https://dev-fusion-3adc28f56db6.herokuapp.com
+basePath: /api
+schemes:
+    - http
