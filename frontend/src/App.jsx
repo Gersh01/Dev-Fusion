@@ -1,26 +1,33 @@
 import AuthPage from "./pages/AuthPage";
-import LandingPage from "./pages/LandingPage";
+import LoginPanel from "./components/auth/LoginPanel";
+import SignUpPanel from "./components/auth/SignUpPanel";
+import ResetPasswordEmailPanel from "./components/auth/ResetPasswordEmailPanel";
+import ResetPasswordPanel from "./components/auth/ResetPasswordPanel";
+import EmailverificationPanel from "./components/auth/EmailVerificationPanel";
+import LanderPanel from "./components/lander/LanderPanel";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import EmailVerificationPage from "./pages/EmailVerificationPage";
-import ResetPasswordEmailPage from "./pages/ResetPasswordEmailPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route path="/" element={<LandingPage />} />
-				<Route path="/login" element={<AuthPage />} />
-				<Route path="/signup" element={<AuthPage />} />
-				<Route
-					path="/email-verification"
-					element={<EmailVerificationPage />}
-				/>
-				<Route
-					path="/reset-password-email"
-					element={<ResetPasswordEmailPage />}
-				/>
-				<Route path="/reset-password" element={<ResetPasswordPage />} />
+				<Route path="/" element={<AuthPage />}>
+					<Route path="/" element={<LanderPanel />} />
+					<Route path="/login" element={<LoginPanel />} />
+					<Route path="/signup" element={<SignUpPanel />} />
+					<Route
+						path="/email-verification"
+						element={<EmailverificationPanel />}
+					/>
+					<Route
+						path="/reset-password-email"
+						element={<ResetPasswordEmailPanel />}
+					/>
+					<Route
+						path="/reset-password"
+						element={<ResetPasswordPanel />}
+					/>
+				</Route>
 			</Routes>
 		</BrowserRouter>
 	);

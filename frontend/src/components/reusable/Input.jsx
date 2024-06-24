@@ -11,7 +11,7 @@ const Input = ({ titleText, placeholder, icon, password = false, ...rest }) => {
 	return (
 		<div
 			className="flex flex-col p-2 gap-2 bg-gray-200 dark:bg-gray-900 rounded-md
-			text-black dark:text-white poppins min-w-0"
+			text-black dark:text-white poppins min-w-0 min-h-0"
 		>
 			<div className="flex items-center gap-1.5 text-lg">
 				{icon}
@@ -19,7 +19,7 @@ const Input = ({ titleText, placeholder, icon, password = false, ...rest }) => {
 			</div>
 			<div className="flex gap-2 items-center">
 				<input
-					className="grow poppins bg-transparent focus:outline-none text-base"
+					className="grow poppins bg-transparent focus:outline-none text-base min-w-0"
 					{...rest}
 					type={inputVisibility ? "password" : "text"}
 					placeholder={placeholder}
