@@ -1,5 +1,6 @@
 require('express');
 require('mongodb');
+require("dotenv").config();
 const jwt = require('jsonwebtoken');
 
 const cookieJwtAuth = (req, res, next) => {
