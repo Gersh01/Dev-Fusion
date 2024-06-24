@@ -2,22 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-.inter{
-    font-family: "Inter";
+.body {
+	box-sizing: border-box;
 }
 
-.poppins{
-    font-family: "Poppins";
+.inter {
+	font-family: "Inter";
 }
 
-.league-spartan{
-    font-family: "League Spartan";
+.poppins {
+	font-family: "Poppins";
 }
 
-.crimson-pro{
-    font-family: "Crimson Pro";
+.league-spartan {
+	font-family: "League Spartan";
 }
 
-.playfair-display{
-    font-family: "Playfair Display";
+.crimson-pro {
+	font-family: "Crimson Pro";
+}
+
+.playfair-display {
+	font-family: "Playfair Display";
 }

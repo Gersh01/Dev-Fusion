@@ -11,9 +11,11 @@
     "license": "ISC",
     "dependencies": {
         "body-parser": "^1.20.2",
+        "classnames": "^2.5.1",
         "cors": "^2.8.5",
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
-        "mongodb": "^6.7.0"
+        "mongodb": "^6.7.0",
+        "tailwind-merge": "^2.3.0"
     }
 }
