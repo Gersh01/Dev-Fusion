@@ -21,6 +21,9 @@ const SignInFields = () => {
   const showPassword = () => {
     setHidden(!hidden);
   };
+  const goResetPassword = () => {
+    window.location.href = "/reset-password";
+  };
 
   return (
     <div className="self-stretch h-[166px] flex-col justify-start items-start gap-2.5 flex">
@@ -79,7 +82,10 @@ const SignInFields = () => {
             Remember Me
           </div>
         </div>
-        <button className="text-right text-black dark:text-white text-xs font-normal poppins">
+        <button
+          className="text-right text-black dark:text-white text-xs font-normal poppins"
+          onClick={goResetPassword}
+        >
           Forgot Password
         </button>
       </div>
