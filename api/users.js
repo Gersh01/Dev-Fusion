@@ -6,6 +6,8 @@ const nodemailer = require('nodemailer');
 
 const appName = 'https://dev-fusion-3adc28f56db6.herokuapp.com/';
 
+const ObjectId = require('mongodb').ObjectId;
+
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     auth: {
@@ -26,13 +28,14 @@ const cookieJwtAuth = (req, res, next) => {
     }
 }
 
+//APIs
 exports.setApp = function (app, client) {
 
     //login api
     app.post('/api/login', async (req, res, next) => {
         var id = -1;
-        var fn = '';
-        var ln = '';
+        var firstName = '';
+        var lastName = '';
         var email = '';
         var username = '';
         var bio = '';
@@ -54,81 +57,81 @@ exports.setApp = function (app, client) {
             resultsEmailUnverified = await db.collection('UnverifiedUsers').find({ email: login }).toArray();
         } catch (e) {
             error = e.toString;
-            var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, error: error };
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, error: error };
             res.status(500).json(ret);
         }
 
         if (resultsUsername.length > 0) { //Login matched a verified user's username
             if (resultsUsername[0].password === password) { //Password matched
                 id = resultsUsername[0]._id;
-                fn = resultsUsername[0].firstName;
-                ln = resultsUsername[0].lastName;
+                firstName = resultsUsername[0].firstName;
+                lastName = resultsUsername[0].lastName;
                 confirmation = resultsUsername[0].confirmation;
                 email = resultsUsername[0].email;
                 username = resultsUsername[0].username;
                 bio = resultsUsername[0].bio;
                 technologies = resultsUsername[0].technologies;
-                var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 const payload = { username };
-                var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "30s" });
+                var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
                     httpOnly: true
                 });
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
-                var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 res.status(401).json(ret);
             }
         } else if (resultsEmail.length > 0) { //Login matched a verified user's email
             if (resultsEmail[0].password === password) { //Password matched
                 id = resultsEmail[0]._id;
-                fn = resultsEmail[0].firstName;
-                ln = resultsEmail[0].lastName;
+                firstName = resultsEmail[0].firstName;
+                lastName = resultsEmail[0].lastName;
                 confirmation = resultsEmail[0].confirmation;
                 email = resultsEmail[0].email;
                 username = resultsEmail[0].username;
                 bio = resultsEmail[0].bio;
                 technologies = resultsEmail[0].technologies;
-                var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 const payload = { username };
-                var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "30s" });
+                var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
                     httpOnly: true
                 });
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
-                var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 res.status(401).json(ret);
             }
         } else if (resultsUsernameUnverified.length > 0) { //Login matched an unverified user's username
             id = resultsUsernameUnverified[0]._id;
-            fn = resultsUsernameUnverified[0].firstName;
-            ln = resultsUsernameUnverified[0].lastName;
+            firstName = resultsUsernameUnverified[0].firstName;
+            lastName = resultsUsernameUnverified[0].lastName;
             confirmation = resultsUsernameUnverified[0].confirmation;
             email = resultsUsernameUnverified[0].email;
             username = resultsUsernameUnverified[0].username;
             bio = resultsUsernameUnverified[0].bio;
             technologies = resultsUsernameUnverified[0].technologies;
             error = "User is not verified";
-            var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
             res.status(401).json(ret);
         } else if (resultsEmailUnverified.length > 0) { //Login matched an unverified user's email
             id = resultsEmailUnverified[0]._id;
-            fn = resultsEmailUnverified[0].firstName;
-            ln = resultsEmailUnverified[0].lastName;
+            firstName = resultsEmailUnverified[0].firstName;
+            lastName = resultsEmailUnverified[0].lastName;
             confirmation = resultsEmailUnverified[0].confirmation;
             email = resultsEmailUnverified[0].email;
             username = resultsEmailUnverified[0].username;
             bio = resultsEmailUnverified[0].bio;
             technologies = resultsEmailUnverified[0].technologies;
             error = "User is not verified";
-            var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
             res.status(401).json(ret);
         } else { //Login did not match any user
             error = "Login did not match any user";
-            var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
             res.status(404).json(ret);
         }
 
@@ -201,8 +204,8 @@ exports.setApp = function (app, client) {
         }
 
         var id = -1;
-        var fn = '';
-        var ln = '';
+        var firstName = '';
+        var lastName = '';
         var username = '';
         var password = '';
         var bio = '';
@@ -229,15 +232,15 @@ exports.setApp = function (app, client) {
         } else if (resultsEmailUnverified.length > 0) { //emailToken matched an unverified user's email
             _id = resultsEmailUnverified[0]._id;
             password = resultsEmailUnverified[0].password;
-            fn = resultsEmailUnverified[0].firstName;
-            ln = resultsEmailUnverified[0].lastName;
+            firstName = resultsEmailUnverified[0].firstName;
+            lastName = resultsEmailUnverified[0].lastName;
             username = resultsEmailUnverified[0].username;
             bio = resultsEmailUnverified[0].bio;
             technologies = resultsEmailUnverified[0].technologies;
             var insertResult;
             var deleteResult;
             const newUser = {
-                firstName: fn, lastName: ln, password: password, username: username, email: email, bio: bio, technologies: technologies
+                firstName: firstName, lastName: lastName, password: password, username: username, email: email, bio: bio, technologies: technologies
             };
             try{
                 insertResult = await db.collection('Users').insertOne(newUser);
@@ -255,21 +258,102 @@ exports.setApp = function (app, client) {
         }
     });
 
-    //create user api
-    app.post('/api/user', cookieJwtAuth, async (req, res, next) => {
+    //get users api
+    app.get('/api/users', cookieJwtAuth, async (req, res, next) => {
+        const { userId } = req.body;
+        var firstName = '';
+        var lastName = '';
+        var email = '';
+        var username = '';
+        var bio = '';
+        var technologies = [];
+        var error = '';
+        
+        var db;
+        var result;
+
+        const nid = new ObjectId(userId);
+
+        try {
+            db = client.db('DevFusion');
+            result = await db.collection('Users').find({ _id: nid }).toArray();
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+        if(result.length > 0){
+            firstName = result[0].firstName;
+            lastName = result[0].lastName;
+            confirmation = result[0].confirmation;
+            email = result[0].email;
+            username = result[0].username;
+            bio = result[0].bio;
+            technologies = result[0].technologies;
+            var ret = { firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            return res.status(200).json(ret);
+        }else{
+            error = 'user not found'
+            var ret = { error: error };
+            return res.status(404).json(ret);
+        }
 
     });
 
-    //update user api
-    app.put('/api/user', cookieJwtAuth, async (req, res, next) => {
+    //update users api
+    app.put('/api/users', cookieJwtAuth, async (req, res, next) => {
+        var error = '';
+        var userId = req.body.userId;
+        var firstName = req.body.firstName;
+        var lastName = req.body.lastName;
+        var bio = req.body.bio;
+        var technologies = req.body.technologies;
 
+
+        const nid = new ObjectId(userId);
+
+        var db;
+        var resultFind;
+
+        try{
+            db = client.db('DevFusion');
+            resultFind = await db.collection('Users').findOne({_id: nid});
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(404).json(ret);
+        }
+
+        if(req.username != resultFind.username) return res.status(403).json({error: "signed in user does not have access to the given user"});
+        
+        if(firstName == undefined || firstName == null) firstName = resultFind.firstName;
+        if(lastName == undefined || lastName == null) lastName = resultFind.lastName;
+        if(bio == undefined || bio == null) bio = resultFind.bio;
+        if(technologies == undefined || technologies == null) technologies = resultFind.technologies;
+
+        var resultPut;
+        var query = { _id: nid };
+        var newValues = { $set: { firstName: firstName, lastName: lastName, bio: bio, technologies: technologies } };
+
+        try {
+            db = client.db('DevFusion');
+            resultPut = await db.collection('Users').updateOne(query, newValues);
+            return res.status(200).json({error:error});
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
     });
+
+
 
     //api to test jwt authentication
     app.post('/api/jwtTest', cookieJwtAuth, async (req, res, next) => {
         var id = -1;
-        var fn = '';
-        var ln = '';
+        var firstName = '';
+        var lastName = '';
         var email = '';
         var bio = '';
         var technologies = [];
@@ -291,13 +375,13 @@ exports.setApp = function (app, client) {
 
         if (result.length > 0) {
             id = result[0]._id;
-            fn = result[0].firstName;
-            ln = result[0].lastName;
+            firstName = result[0].firstName;
+            lastName = result[0].lastName;
             confirmation = result[0].confirmation;
             email = result[0].email;
             bio = result[0].bio;
             technologies = result[0].technologies;
-            var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
             res.status(200).json(ret);
         } else {
             error = "username does not exist";
