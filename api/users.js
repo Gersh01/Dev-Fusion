@@ -1,6 +1,18 @@
 require('express');
 require('mongodb');
+require("dotenv").config();
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+
+const appName = 'https://dev-fusion-3adc28f56db6.herokuapp.com/';
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+    }
+});
 
 const cookieJwtAuth = (req, res, next) => {
     const token = req.cookies.token;
@@ -10,7 +22,7 @@ const cookieJwtAuth = (req, res, next) => {
         next();
     } catch (e) {
         res.clearCookie("token");
-        return res.status(403).json({error: "token is not valid"});
+        return res.status(403).json({ error: "token is not valid" });
     }
 }
 
@@ -58,7 +70,7 @@ exports.setApp = function (app, client) {
                 technologies = resultsUsername[0].technologies;
                 var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 const payload = { username };
-                var token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: "30s"});
+                var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "30s" });
                 res.cookie("token", token, {
                     httpOnly: true
                 });
@@ -80,7 +92,7 @@ exports.setApp = function (app, client) {
                 technologies = resultsEmail[0].technologies;
                 var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 const payload = { username };
-                var token = jwt.sign(payload, process.env.SECRET_KEY, {expiresIn: "30s"});
+                var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "30s" });
                 res.cookie("token", token, {
                     httpOnly: true
                 });
@@ -135,10 +147,6 @@ exports.setApp = function (app, client) {
 
         const { firstName, lastName, password, username, email } = req.body;
         var timeCreated = new Date();
-        const newUser = {
-            firstName: firstName, lastName: lastName, password: password, username: username, email: email, timeCreated: timeCreated, bio: "",
-            technologies: []
-        };
         var error = '';
         var resultsUsername = await db.collection('Users').find({ username: username }).toArray();
         var resultsEmail = await db.collection('Users').find({ email: email }).toArray();
@@ -146,7 +154,22 @@ exports.setApp = function (app, client) {
         var resultsEmailUnverified = await db.collection('UnverifiedUsers').find({ email: email }).toArray();
         if (resultsUsername.length == 0 && resultsEmail.length == 0 && resultsUsernameUnverified.length == 0 && resultsEmailUnverified.length == 0) {
             try {
+                const payload = { email };
+                const emailToken = jwt.sign(payload, process.env.EMAIL_SECRET, { expiresIn: "1d" });
+                const newUser = {
+                    firstName: firstName, lastName: lastName, password: password, username: username, email: email, timeCreated: timeCreated, bio: "",
+                    technologies: [], emailToken: emailToken
+                };
                 const result = db.collection('UnverifiedUsers').insertOne(newUser);
+                transporter.sendMail({
+                    to: 'alperen.yazmaci@gmail.com',
+                    subject: 'Dev Fusion Email Confirmation',
+                    html: `<h3>Please click <a href=${appName}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
+                }).then(() => {
+                    console.log("email sent");
+                }).catch(err => {
+                    console.error(err);
+                });
                 var ret = { error: error };
                 res.status(201).json(ret);
             } catch (e) {
@@ -154,10 +177,81 @@ exports.setApp = function (app, client) {
                 var ret = { error: error };
                 res.status(500).json(ret);
             }
-        } else {
+        } else if (resultsUsername.length != 0 || resultsUsernameUnverified.length != 0) { //Username is taken
             error = "username is taken";
             var ret = { error: error };
             res.status(400).json(ret);
+        } else { //Email is taken
+            error = "email is taken";
+            var ret = { error: error };
+            res.status(400).json(ret);
+        }
+    });
+
+    //verify email api
+    app.post('/api/verify_email/:token', async (req, res, next) => {
+        const emailToken = req.params.token;
+        var payload;
+        var email;
+        try {
+            payload = jwt.verify(emailToken, process.env.EMAIL_SECRET);
+            email = payload.email;
+        } catch (e) {
+            return res.status(404).json({ error: "email token is not valid" });
+        }
+
+        var id = -1;
+        var fn = '';
+        var ln = '';
+        var username = '';
+        var password = '';
+        var bio = '';
+        var technologies = [];
+        var error = '';
+        var db;
+
+        var resultsEmail;
+        var resultsEmailUnverified;
+        try {
+            db = client.db('DevFusion');
+            resultsEmail = await db.collection('Users').find({ email: email }).toArray();
+            resultsEmailUnverified = await db.collection('UnverifiedUsers').find({ email: email }).toArray();
+        } catch (e) {
+            error = e.toString;
+            var ret = {error: error };
+            res.status(500).json(ret);
+        }
+
+        if (resultsEmail.length > 0) { //emailToken matched a verified user's email
+            error = 'user is already verified'
+            var ret = { error: error };
+            res.status(400).json(ret);
+        } else if (resultsEmailUnverified.length > 0) { //emailToken matched an unverified user's email
+            _id = resultsEmailUnverified[0]._id;
+            password = resultsEmailUnverified[0].password;
+            fn = resultsEmailUnverified[0].firstName;
+            ln = resultsEmailUnverified[0].lastName;
+            username = resultsEmailUnverified[0].username;
+            bio = resultsEmailUnverified[0].bio;
+            technologies = resultsEmailUnverified[0].technologies;
+            var insertResult;
+            var deleteResult;
+            const newUser = {
+                firstName: fn, lastName: ln, password: password, username: username, email: email, bio: bio, technologies: technologies
+            };
+            try{
+                insertResult = await db.collection('Users').insertOne(newUser);
+                deleteResult = await db.collection('UnverifiedUsers').deleteOne({_id: _id});
+                return res.status(200).json({});
+            }catch(e){
+                error = e.toString;
+                var ret = {error: error };
+                return res.status(500).json(ret);
+            }
+        } else { //emailToken did not match any user
+            error = "Email did not match any user";
+            var ret = { error: error };
+            return res.status(404).json(ret);
         }
     });
 
@@ -205,9 +299,9 @@ exports.setApp = function (app, client) {
             technologies = result[0].technologies;
             var ret = { id: id, firstName: fn, lastName: ln, email: email, username: username, bio: bio, technologies: technologies, error: error };
             res.status(200).json(ret);
-        }else{
+        } else {
             error = "username does not exist";
-            var ret = {error: error};
+            var ret = { error: error };
             res.status(404).json(ret);
         }
     });
