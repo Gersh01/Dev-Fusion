@@ -1,17 +1,52 @@
 swagger: "2.0"
 info:
-    description: This is the API documentation for the Dev Fusion
-    version: 1.0.0
-    title: Dev Fusion
-    contact:
-        email: alex.gershfeld@gmail.com
+  description: This is the API documentation for the Dev Fusion
+  version: 1.0.0
+  title: Dev Fusion
+  contact:
+    email: alex.gershfeld@gmail.com
 
 paths:
-    /login.js:
+  /login.js:
+    post:
+      tags:
+      - Authentication
+      summary: Logs in a user with the given values
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: login
+        description: login
+        schema:
+          $ref: '#/definitions/Login'
+      responses:
+        200:
+          description: Successful
+        401:
+          description: Password is wrong/User is not verified
+        404:
+          description: URL Not Found/User not found
+        500:
+          description: Server Error
 
 definitions:
+  Login:
+    type: object
+    required:
+    - login
+    - password
+    properties:
+      login:
+        type: string
+        example: "AlperenY"
+      password:
+        type: string
+        example: "hashed"
 
-host: https://dev-fusion-3adc28f56db6.herokuapp.com
+host: dev-fusion-3adc28f56db6.herokuapp.com
 basePath: /api
 schemes:
-    - http
+  - http
