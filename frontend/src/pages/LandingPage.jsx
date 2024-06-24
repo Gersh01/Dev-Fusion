@@ -11,7 +11,7 @@ const LandingPage = () => {
 			className="w-screen h-screen p-2.5 bg-gradient-to-br from-orange-300 to-orange-500 
 			dark:bg-gradient-to-br dark:from-violet-600 dark:to-violet-700 justify-center items-center gap-3 inline-flex"
 		>
-			<div className="w-[400px] p-2 flex flex-col justify-start gap-20">
+			<div className="w-[480px] p-2 flex flex-col justify-start gap-20">
 				<div className="flex flex-col gap-5">
 					<div className="text-center text-white text-4xl font-bold italic inter uppercase leading-10">
 						Thrive in the power of open-source to drive innovation!
