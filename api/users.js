@@ -165,7 +165,7 @@ exports.setApp = function (app, client) {
                 };
                 const result = db.collection('UnverifiedUsers').insertOne(newUser);
                 transporter.sendMail({
-                    to: 'alperen.yazmaci@gmail.com',
+                    to: email,
                     subject: 'Dev Fusion Email Confirmation',
                     html: `<h3>Please click <a href=${appName}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
                 }).then(() => {
