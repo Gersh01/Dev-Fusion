@@ -4,7 +4,7 @@ require("dotenv").config();
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-const appName = 'https://dev-fusion-3adc28f56db6.herokuapp.com/';
+const PORT = process.env.PORT || 4000;
 
 const ObjectId = require('mongodb').ObjectId;
 
@@ -187,7 +187,7 @@ exports.setApp = function (app, client) {
                 transporter.sendMail({
                     to: email,
                     subject: 'Dev Fusion Email Confirmation',
-                    html: `<h3>Please click <a href=${appName}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
+                    html: `<h3>Please click <a href=${PORT}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
                 }).then(() => {
                     console.log("email sent");
                 }).catch(err => {
@@ -233,7 +233,7 @@ exports.setApp = function (app, client) {
             transporter.sendMail({
                 to: email,
                 subject: 'Dev Fusion Email Confirmation',
-                html: `<h3>Please click <a href=${appName}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
+                html: `<h3>Please click <a href=${PORT}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
             }).then(() => {
                 console.log("email resent");
             }).catch(err => {
