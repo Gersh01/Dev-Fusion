@@ -4,6 +4,7 @@ import { useState } from "react";
 import Input from "../reusable/Input";
 import Button from "../reusable/Button";
 import AuthPanel from "../reusable/AuthPanel";
+import Axios from "axios";
 
 const LoginPanel = () => {
   // * Keeps track of remember me
@@ -32,7 +33,7 @@ const LoginPanel = () => {
       e.preventDefault();
       const newLogin = { login: username, password: password };
       try {
-        const response = await post(
+        const response = await Axios.post(
           "http://localhost:5000/api/login",
           newLogin
         );
