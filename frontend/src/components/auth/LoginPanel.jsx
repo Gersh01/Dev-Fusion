@@ -12,24 +12,20 @@ const LoginPanel = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
   const [user, setUser] = useState([]);
 
   const goToRegister = () => {
     window.location.href = "/signup";
   };
 
-  const addError = (error) => {
-    const currentErrors = [...errors, error];
-    const listErrors = Array.from(new Set(currentErrors));
-    setErrors(listErrors);
-  };
-
   const loginSuccess = (user) => {
     setUser(user);
   };
+  //POST for Login API
+  //uses the err.response.data.error to distinguish between error codes
   const doLogin = async (e) => {
     if (username !== "" && password !== "") {
-      setErrors([]);
       e.preventDefault();
       const newLogin = { login: username, password: password };
       try {
@@ -40,19 +36,20 @@ const LoginPanel = () => {
         if (response && response.data) {
           loginSuccess(response.data);
         }
-        console.log(user);
       } catch (err) {
-        console.log(newLogin);
-        console.log("Error: ${err.message}");
+        let errorMessage = err.response.data.error;
+        console.log(`Error: ${err.message}`);
+        console.log(errorMessage);
+        if (errorMessage === "User is not verified") {
+          window.location.href = "/email-verification";
+        } else {
+          setErrorMessage("Username/Password is incorrect");
+        }
       }
     } else {
-      addError("Missing field");
+      setErrorMessage("One or more fields is missing valid data");
     }
   };
-
-  const renderError = errors.map((error) => {
-    return <li key={error}>{error}</li>;
-  });
 
   return (
     // <div className="w-[480px] min-h-[750px] p-7 bg-gray-100 dark:bg-gray-800 rounded-3xl flex flex-col justify-center gap-12">
@@ -88,8 +85,9 @@ const LoginPanel = () => {
           </button>
         </div>
       </div>
-      <div className="h-10 flex text-white ">
-        <ul>{renderError}</ul>
+      <div className="h-5 flex justify-ceneter text-white text-md poppins">
+        {console.log(errorMessage)}
+        <span>{errorMessage}</span>
       </div>
       <div className="flex flex-col gap-3">
         <Button onClick={doLogin} large>
