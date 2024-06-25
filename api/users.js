@@ -106,29 +106,42 @@ exports.setApp = function (app, client) {
                 res.status(401).json(ret);
             }
         } else if (resultsUsernameUnverified.length > 0) { //Login matched an unverified user's username
-            id = resultsUsernameUnverified[0]._id;
-            firstName = resultsUsernameUnverified[0].firstName;
-            lastName = resultsUsernameUnverified[0].lastName;
-            confirmation = resultsUsernameUnverified[0].confirmation;
-            email = resultsUsernameUnverified[0].email;
-            username = resultsUsernameUnverified[0].username;
-            bio = resultsUsernameUnverified[0].bio;
-            technologies = resultsUsernameUnverified[0].technologies;
-            error = "User is not verified";
-            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
-            res.status(401).json(ret);
+            if (resultsUsernameUnverified[0].password === password) { //Password matched
+                id = resultsUsernameUnverified[0]._id;
+                firstName = resultsUsernameUnverified[0].firstName;
+                lastName = resultsUsernameUnverified[0].lastName;
+                confirmation = resultsUsernameUnverified[0].confirmation;
+                email = resultsUsernameUnverified[0].email;
+                username = resultsUsernameUnverified[0].username;
+                bio = resultsUsernameUnverified[0].bio;
+                technologies = resultsUsernameUnverified[0].technologies;
+                error = "User is not verified";
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                res.status(401).json(ret);
+            }else{
+                error = "password is wrong";
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                res.status(401).json(ret);
+            }
+            
         } else if (resultsEmailUnverified.length > 0) { //Login matched an unverified user's email
-            id = resultsEmailUnverified[0]._id;
-            firstName = resultsEmailUnverified[0].firstName;
-            lastName = resultsEmailUnverified[0].lastName;
-            confirmation = resultsEmailUnverified[0].confirmation;
-            email = resultsEmailUnverified[0].email;
-            username = resultsEmailUnverified[0].username;
-            bio = resultsEmailUnverified[0].bio;
-            technologies = resultsEmailUnverified[0].technologies;
-            error = "User is not verified";
-            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
-            res.status(401).json(ret);
+            if (resultsEmailUnverified[0].password === password) { //Password matched
+                id = resultsEmailUnverified[0]._id;
+                firstName = resultsEmailUnverified[0].firstName;
+                lastName = resultsEmailUnverified[0].lastName;
+                confirmation = resultsEmailUnverified[0].confirmation;
+                email = resultsEmailUnverified[0].email;
+                username = resultsEmailUnverified[0].username;
+                bio = resultsEmailUnverified[0].bio;
+                technologies = resultsEmailUnverified[0].technologies;
+                error = "User is not verified";
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                res.status(401).json(ret);
+            }else{
+                error = "password is wrong";
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                res.status(401).json(ret);
+            }
         } else { //Login did not match any user
             error = "Login did not match any user";
             var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
@@ -349,9 +362,54 @@ exports.setApp = function (app, client) {
     });
 
     //logout api
-    app.post('/api/logout', async (req, res, next) => {
+    app.post('/api/logout', cookieJwtAuth, async (req, res, next) => {
         res.clearCookie("token");
         res.status(200).json({});
+    });
+
+    //forgot_password api
+    app.post('/api/forgot_password', async (req, res, next) => {
+        var db;
+        try {
+            db = client.db('DevFusion');
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+    });
+
+    //forgot_password api
+    app.post('/api/forgot_password/:userId/:token', async (req, res, next) => {
+        const combinedToken = req.params.token;
+        const userId = req.params.userId;
+        const nid = new ObjectId(userId);
+        var db;
+        try {
+            db = client.db('DevFusion');
+            result = await db.collection('Users').findOne({ _id: nid });
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+        if(result.length == null || result.length == undefined) return res.status(404).json({ error: "User not found"} );
+
+        const oldPassword = result.password;
+        const combinedKey = process.env.EMAIL_SECRET + oldPassword;
+        
+        var payload;
+        try {
+            payload = jwt.verify(combinedToken, combinedKey);
+            
+        } catch (e) {
+            return res.status(403).json({ error: "Email token is not valid" });
+        }
+
+
+
     });
     
     //api to test jwt authentication

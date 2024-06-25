@@ -18,5 +18,5 @@ const cookieJwtAuth = (req, res, next) => {
 }
 
 exports.setApp = function (app, client) {
-
+    
 }
