@@ -103,6 +103,27 @@ paths:
         500:
           description: Server Error
 
+  /api/project:
+    post:
+      tags:
+      - Project
+      summary: Creates a Project
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: createProject
+        description: createProject
+        schema:
+          $ref: '#/definitions/createProject'
+      responses:
+        200:
+          description: Successful
+        500:
+          description: Server Error
+
 definitions:
   Login:
     type: object
@@ -170,6 +191,55 @@ definitions:
         items:
           type: string
           example: "API"
+
+  createProject:
+    type: object
+    required:
+    - isOpen
+    - isDone
+    - isStarted
+    - dateCreated
+    - ownerID
+    - currentVsRequired
+    - deadline
+    - projectStartDate
+    - roles
+    - technologies
+    - title
+    properties:
+      isOpen:
+        type: boolean
+        example: false
+      isDone:
+        type: boolean
+        example: false
+      isStarted:
+        type: boolean
+        example: false
+      dateCreated:
+        type: string
+        example: "2023-05-24T10:00:00Z"
+      ownerID:
+        type: string
+        example: "667147c37d5f8d94a8a374c1"
+      currentVsRequired:
+        type: array
+        example: [1, 9]
+      deadline:
+        type: string
+        example: "2029-05-24T10:00:00Z"
+      projectStartDate:
+        type: string
+        example: "2023-25-24T10:00:00Z"
+      roles:
+        type: array
+        example: ["Project Manager", "Frontend"]
+      technologies:
+        type: array
+        example: ["HTML"]
+      title:
+        type: string
+        example: "Test Me"
 
 host: dev-fusion-3adc28f56db6.herokuapp.com
 basePath: /api
