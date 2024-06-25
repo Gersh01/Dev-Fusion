@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 4000;
 
 const app = express();
 
-app.set("port", process.env.PORT || 4000);
+app.set("port", PORT);
 
 app.use(cors());
 app.use(bodyParser.json());

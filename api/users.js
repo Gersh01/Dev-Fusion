@@ -4,7 +4,7 @@ require("dotenv").config();
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-const appName = 'https://dev-fusion-3adc28f56db6.herokuapp.com/';
+const appName = "http://localhost:4000";
 
 const ObjectId = require('mongodb').ObjectId;
 
@@ -153,21 +153,28 @@ exports.setApp = function (app, client) {
     //register api
     app.post('/api/register', async (req, res, next) => {
         var db;
+        var resultsUsername;
+        var resultsEmail;
+        var resultsUsernameUnverified;
+        var resultsEmailUnverified;
+
+        const { firstName, lastName, password, username, email } = req.body;
+        var timeCreated = new Date();
+        var error = '';
+
         try {
             db = client.db('DevFusion');
+            resultsUsername = await db.collection('Users').find({ username: username }).toArray();
+            resultsEmail = await db.collection('Users').find({ email: email }).toArray();
+            resultsUsernameUnverified = await db.collection('UnverifiedUsers').find({ username: username }).toArray();
+            resultsEmailUnverified = await db.collection('UnverifiedUsers').find({ email: email }).toArray();
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
             return res.status(500).json(ret);
         }
 
-        const { firstName, lastName, password, username, email } = req.body;
-        var timeCreated = new Date();
-        var error = '';
-        var resultsUsername = await db.collection('Users').find({ username: username }).toArray();
-        var resultsEmail = await db.collection('Users').find({ email: email }).toArray();
-        var resultsUsernameUnverified = await db.collection('UnverifiedUsers').find({ username: username }).toArray();
-        var resultsEmailUnverified = await db.collection('UnverifiedUsers').find({ email: email }).toArray();
+        
         if (resultsUsername.length == 0 && resultsEmail.length == 0 && resultsUsernameUnverified.length == 0 && resultsEmailUnverified.length == 0) {
             try {
                 const payload = { email };
@@ -202,6 +209,40 @@ exports.setApp = function (app, client) {
             var ret = { error: error };
             return res.status(403).json(ret);
         }
+    });
+
+    //resend verification email api
+    app.post('/api/resend_verification_email', async (req, res, next) => {
+        var db;
+        var resultEmail;
+        var resultEmailUnverified;
+        const email = req.body.email;
+        try {
+            db = client.db('DevFusion');
+            resultEmail = await db.collection('Users').findOne({ email: email });
+            resultEmailUnverified = await db.collection('UnverifiedUsers').findOne({ email: email });
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+        if(resultEmail != null || resultEmail != undefined) return res.status(404).json({ error: "User is already verified"});
+        else if(resultEmailUnverified != null | resultEmailUnverified != undefined){
+            const emailToken = resultEmailUnverified.emailToken;
+            transporter.sendMail({
+                to: email,
+                subject: 'Dev Fusion Email Confirmation',
+                html: `<h3>Please click <a href=${appName}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
+            }).then(() => {
+                console.log("email resent");
+            }).catch(err => {
+                console.error(err);
+                var ret = { error: error };
+                return res.status(500).json(ret);
+            });
+            return res.status(200).json({error: "" });
+        }else return res.status(404).json({ error: "User not found"});
     });
 
     //verify email api
@@ -258,7 +299,7 @@ exports.setApp = function (app, client) {
             try{
                 insertResult = await db.collection('Users').insertOne(newUser);
                 deleteResult = await db.collection('UnverifiedUsers').deleteOne({_id: _id});
-                return res.status(200).json({});
+                return res.status(200).json({error:""});
             }catch(e){a
                 error = e.toString;
                 var ret = {error: error };
