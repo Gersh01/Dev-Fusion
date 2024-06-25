@@ -246,7 +246,7 @@ exports.setApp = function (app, client) {
     });
 
     //verify email api
-    app.post('/api/verify_email/:token', async (req, res, next) => {
+    app.get('/api/verify_email/:token', async (req, res, next) => {
         const emailToken = req.params.token;
         var payload;
         var email;
