@@ -7,7 +7,7 @@ info:
     email: alex.gershfeld@gmail.com
 
 paths:
-  /login.js:
+  /login:
     post:
       tags:
       - Authentication
@@ -31,6 +31,77 @@ paths:
           description: URL Not Found/User not found
         500:
           description: Server Error
+  /register:
+    post:
+      tags:
+      - Authentication
+      summary: Register a user with the given values
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: register
+        description: register
+        schema:
+          $ref: '#/definitions/Register'
+      responses:
+        201:
+          description: User Created
+        403:
+          description: Username/Email is taken
+        404:
+          description: URL Not Found
+        500:
+          description: Server Error
+  /users:
+    get:
+      tags:
+      - Users
+      summary: Gets the user with the given userId
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: getUser
+        description: getUser
+        schema:
+          $ref: '#/definitions/usersGet'
+      responses:
+        200:
+          description: Successful
+        403:
+          description: Token is not valid
+        404:
+          description: URL Not Found/User not found
+        500:
+          description: Server Error
+    put:
+      tags:
+      - Users
+      summary: Updates the user with the given userId
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: updateUser
+        description: updateUser
+        schema:
+          $ref: '#/definitions/usersPut'
+      responses:
+        200:
+          description: Successful
+        403:
+          description: Signed in user does not have access to the given user
+        404:
+          description: URL Not Found/User with the userId does not exist
+        500:
+          description: Server Error
 
 definitions:
   Login:
@@ -45,6 +116,60 @@ definitions:
       password:
         type: string
         example: "hashed"
+  Register:
+    type: object
+    required:
+    - firstName
+    - lastName
+    - password
+    - username
+    - email
+    properties:
+      firstName:
+        type: string
+        example: "Alperen"
+      lastName:
+        type: string
+        example: "Yazmaci"
+      password:
+        type: string
+        example: "abc123!"
+      username:
+        type: string
+        example: "alpereny"
+      email:
+        type: string
+        example: "alperen.yazmaci@gmail.com"
+  usersGet:
+    type: object
+    required:
+    - userId
+    properties:
+      userId:
+        type: string
+        example: "667148327d5f8d94a8a374c5"
+  usersPut:
+    type: object
+    required:
+    - userId
+    properties:
+      userId: 
+        type: string
+        example: "667148327d5f8d94a8a374c5"
+      firstName:
+        type: string
+        example: "Alperen"
+      lastName:
+        type: string
+        example: "Yazmaci"
+      bio:
+        type: string
+        example: "abc123!"
+      technologies:
+        type: array
+        items:
+          type: string
+          example: "API"
 
 host: dev-fusion-3adc28f56db6.herokuapp.com
 basePath: /api

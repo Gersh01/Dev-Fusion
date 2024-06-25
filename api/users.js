@@ -322,9 +322,10 @@ exports.setApp = function (app, client) {
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
-            return res.status(404).json(ret);
+            return res.status(500).json(ret);
         }
 
+        if(resultFind == null || resultFind == undefined) return res.status(404).json({error: "user with the userId does not exist"});
         if(req.username != resultFind.username) return res.status(403).json({error: "signed in user does not have access to the given user"});
         
         if(firstName == undefined || firstName == null) firstName = resultFind.firstName;
