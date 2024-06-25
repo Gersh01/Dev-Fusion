@@ -137,6 +137,16 @@ exports.setApp = function (app, client) {
 
     });
 
+    //logout api
+    app.post('api/logout', async (req, res, next) => {
+        try{
+            res.clearCookie("token");
+            return res.status(200).json({error:""});
+        }catch(e){
+            return res.status(500).json({error:e.toString});
+        }
+    });
+
     //register api
     app.post('/api/register', async (req, res, next) => {
         var db;
