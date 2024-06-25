@@ -4,7 +4,7 @@ require("dotenv").config();
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-const PORT = process.env.PORT || 4000;
+const appName = "http://localhost:4000";
 
 const ObjectId = require('mongodb').ObjectId;
 
@@ -187,7 +187,7 @@ exports.setApp = function (app, client) {
                 transporter.sendMail({
                     to: email,
                     subject: 'Dev Fusion Email Confirmation',
-                    html: `<h3>Please click <a href=${PORT}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
+                    html: `<h3>Please click <a href=${appName}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
                 }).then(() => {
                     console.log("email sent");
                 }).catch(err => {
@@ -233,7 +233,7 @@ exports.setApp = function (app, client) {
             transporter.sendMail({
                 to: email,
                 subject: 'Dev Fusion Email Confirmation',
-                html: `<h3>Please click <a href=${PORT}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
+                html: `<h3>Please click <a href=${appName}/api/verify_email/${emailToken}>this link</a> to confirm your email</h3>`
             }).then(() => {
                 console.log("email resent");
             }).catch(err => {
@@ -299,7 +299,7 @@ exports.setApp = function (app, client) {
             try{
                 insertResult = await db.collection('Users').insertOne(newUser);
                 deleteResult = await db.collection('UnverifiedUsers').deleteOne({_id: _id});
-                return res.status(200).json({});
+                return res.status(200).json({error:""});
             }catch(e){a
                 error = e.toString;
                 var ret = {error: error };
