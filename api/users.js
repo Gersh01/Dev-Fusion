@@ -145,7 +145,7 @@ exports.setApp = function (app, client) {
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
-            res.status(500).json(ret);
+            return res.status(500).json(ret);
         }
 
         const { firstName, lastName, password, username, email } = req.body;
@@ -174,20 +174,20 @@ exports.setApp = function (app, client) {
                     console.error(err);
                 });
                 var ret = { error: error };
-                res.status(201).json(ret);
+                return res.status(201).json(ret);
             } catch (e) {
                 error = e.toString();
                 var ret = { error: error };
-                res.status(500).json(ret);
+                return res.status(500).json(ret);
             }
         } else if (resultsUsername.length != 0 || resultsUsernameUnverified.length != 0) { //Username is taken
             error = "username is taken";
             var ret = { error: error };
-            res.status(400).json(ret);
+            return res.status(403).json(ret);
         } else { //Email is taken
             error = "email is taken";
             var ret = { error: error };
-            res.status(400).json(ret);
+            return res.status(403).json(ret);
         }
     });
 
@@ -200,7 +200,7 @@ exports.setApp = function (app, client) {
             payload = jwt.verify(emailToken, process.env.EMAIL_SECRET);
             email = payload.email;
         } catch (e) {
-            return res.status(404).json({ error: "email token is not valid" });
+            return res.status(403).json({ error: "email token is not valid" });
         }
 
         var id = -1;
@@ -222,13 +222,13 @@ exports.setApp = function (app, client) {
         } catch (e) {
             error = e.toString;
             var ret = {error: error };
-            res.status(500).json(ret);
+            return res.status(500).json(ret);
         }
 
         if (resultsEmail.length > 0) { //emailToken matched a verified user's email
             error = 'user is already verified'
             var ret = { error: error };
-            res.status(400).json(ret);
+            return res.status(400).json(ret);
         } else if (resultsEmailUnverified.length > 0) { //emailToken matched an unverified user's email
             _id = resultsEmailUnverified[0]._id;
             password = resultsEmailUnverified[0].password;
@@ -246,7 +246,7 @@ exports.setApp = function (app, client) {
                 insertResult = await db.collection('Users').insertOne(newUser);
                 deleteResult = await db.collection('UnverifiedUsers').deleteOne({_id: _id});
                 return res.status(200).json({});
-            }catch(e){
+            }catch(e){a
                 error = e.toString;
                 var ret = {error: error };
                 return res.status(500).json(ret);
@@ -258,7 +258,7 @@ exports.setApp = function (app, client) {
         }
     });
 
-    //get users api
+    //get user api
     app.get('/api/users', cookieJwtAuth, async (req, res, next) => {
         const { userId } = req.body;
         var firstName = '';
@@ -301,7 +301,7 @@ exports.setApp = function (app, client) {
 
     });
 
-    //update users api
+    //update user api
     app.put('/api/users', cookieJwtAuth, async (req, res, next) => {
         var error = '';
         var userId = req.body.userId;
