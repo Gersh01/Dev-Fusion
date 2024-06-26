@@ -10,6 +10,7 @@ Axios.defaults.withCredentials = true;
 
 const LoginPanel = () => {
   // * Keeps track of remember me
+  //Axios.defaults.withCredentials = true;
   const [rememberMe, setRememberMe] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +28,7 @@ const LoginPanel = () => {
   //POST for Login API
   //uses the err.response.data.error to distinguish between error codes
   const doLogin = async (e) => {
+    setErrorMessage("");
     if (username !== "" && password !== "") {
       e.preventDefault();
       const newLogin = { login: username, password: password };
@@ -39,6 +41,7 @@ const LoginPanel = () => {
         if (response && response.data) {
           loginSuccess(response.data);
           window.location.href = "/";
+          console.log(response);
         }
       } catch (err) {
         let errorMessage = err.response.data.error;
