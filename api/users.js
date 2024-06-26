@@ -299,7 +299,8 @@ exports.setApp = function (app, client) {
             try{
                 insertResult = await db.collection('Users').insertOne(newUser);
                 deleteResult = await db.collection('UnverifiedUsers').deleteOne({_id: _id});
-                return res.redirect('/');
+                return res.status(200).json({error:""});
+                // return res.redirect('/');
             }catch(e){a
                 error = e.toString;
                 var ret = {error: error };
@@ -520,9 +521,8 @@ exports.setApp = function (app, client) {
         const oldPassword = result.password;
         const combinedKey = process.env.EMAIL_SECRET + oldPassword;
         
-        var payload;
         try {
-            payload = jwt.verify(combinedToken, combinedKey);
+            var payloadVerify = jwt.verify(combinedToken, combinedKey);
         } catch (e) {
             return res.status(403).json({ error: "Token is not valid" });
         }
@@ -533,7 +533,9 @@ exports.setApp = function (app, client) {
             httpOnly: false
         });
 
-        return res.redirect('/');
+        return res.status(200).json({error:""});
+        // return res.redirect('/');
+
 
     });
     
