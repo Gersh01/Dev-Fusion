@@ -7,8 +7,6 @@ const path = require("path");
 const { log } = require("console");
 require("dotenv").config();
 
-const appName = "https://dev-fusion-3adc28f56db6.herokuapp.com/";
-
 const PORT = process.env.PORT || 4000;
 
 const app = express();
