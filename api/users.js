@@ -71,12 +71,12 @@ exports.setApp = function (app, client) {
                 username = resultsUsername[0].username;
                 bio = resultsUsername[0].bio;
                 technologies = resultsUsername[0].technologies;
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 const payload = { username };
                 var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
                     httpOnly: false
                 });
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies,token: token, error: error };
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
@@ -93,12 +93,12 @@ exports.setApp = function (app, client) {
                 username = resultsEmail[0].username;
                 bio = resultsEmail[0].bio;
                 technologies = resultsEmail[0].technologies;
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 const payload = { username };
                 var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
                     httpOnly: false
                 });
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies,token: token, error: error };
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
