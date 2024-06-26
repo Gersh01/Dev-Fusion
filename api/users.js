@@ -265,8 +265,8 @@ exports.setApp = function (app, client) {
         var bio = '';
         var technologies = [];
         var error = '';
-        var db;
 
+        var db;
         var resultsEmail;
         var resultsEmailUnverified;
         try {
@@ -299,7 +299,7 @@ exports.setApp = function (app, client) {
             try{
                 insertResult = await db.collection('Users').insertOne(newUser);
                 deleteResult = await db.collection('UnverifiedUsers').deleteOne({_id: _id});
-                return res.status(200).json({error:""});
+                return res.redirect('/');
             }catch(e){a
                 error = e.toString;
                 var ret = {error: error };
@@ -408,8 +408,49 @@ exports.setApp = function (app, client) {
         res.status(200).json({});
     });
 
-    //forgot_password api
-    app.post('/api/forgot_password', async (req, res, next) => {
+    //forgot_password api that sends the email
+    app.post('/api/forgot_password/send', async (req, res, next) => {
+        var db;
+        const email = req.body.email;
+        var result;
+        var resultUnverified;
+        try {
+            db = client.db('DevFusion');
+            result = await db.collection('Users').findOne({ email: email });
+            resultUnverified = await db.collection('UnverifiedUsers').findOne({ email: email });
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+        if(resultUnverified != null || resultUnverified != undefined) return res.status(403).json({ error: "User is not verified"});
+        if(result == null || result == undefined) return res.status(404).json({ error: "User not found"});
+
+        const userId = result._id;
+        const oldPassword = result.password;
+        const combinedKey = process.env.EMAIL_SECRET + oldPassword;
+        var payload = {};
+        var token = jwt.sign(payload, combinedKey, { expiresIn: "1d" });
+        
+
+        transporter.sendMail({
+            to: email,
+            subject: 'Dev Fusion Reset Password',
+            html: `<h3>Please click <a href=${appName}/api/forgot_password/email/${userId}/${token}>this link</a> to confirm your email</h3>`
+        }).then(() => {
+            console.log("password reset email sent");
+        }).catch(err => {
+            console.error(err);
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        });
+
+        return res.status(200).json({ error:"" });
+
+    });
+
+    app.post('/api/forgot_password/reset', async (req, res, next) => {
         var db;
         try {
             db = client.db('DevFusion');
@@ -421,12 +462,13 @@ exports.setApp = function (app, client) {
 
     });
 
-    //forgot_password api
-    app.post('/api/forgot_password/:userId/:token', async (req, res, next) => {
+    //forgot_password api for when the user clicks on the link on email
+    app.get('/api/forgot_password/email/:userId/:token', async (req, res, next) => {
         const combinedToken = req.params.token;
         const userId = req.params.userId;
         const nid = new ObjectId(userId);
         var db;
+        var result;
         try {
             db = client.db('DevFusion');
             result = await db.collection('Users').findOne({ _id: nid });
@@ -436,7 +478,7 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         }
 
-        if(result.length == null || result.length == undefined) return res.status(404).json({ error: "User not found"} );
+        if(result == null || result == undefined) return res.status(404).json({ error: "User not found"} );
 
         const oldPassword = result.password;
         const combinedKey = process.env.EMAIL_SECRET + oldPassword;
@@ -444,12 +486,11 @@ exports.setApp = function (app, client) {
         var payload;
         try {
             payload = jwt.verify(combinedToken, combinedKey);
-            
         } catch (e) {
-            return res.status(403).json({ error: "Email token is not valid" });
+            return res.status(403).json({ error: "Token is not valid" });
         }
 
-
+        return res.redirect('/');
 
     });
     
