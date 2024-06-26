@@ -6,8 +6,12 @@ import AuthPanel from "../reusable/AuthPanel";
 import { useState } from "react";
 import PasswordChecklist from "react-password-checklist";
 import Axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUser } from "../auth/userSlice";
 
 const SignUpPanel = () => {
+  const dispatch = useDispatch();
+
   const validEmail = new RegExp(
     "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
   );
@@ -35,7 +39,7 @@ const SignUpPanel = () => {
       email !== ""
     ) {
       console.log(validPassword.test(password));
-
+      setErrorMessage("");
       if (!validEmail.test(email)) {
         setErrorMessage("Email is incorrect");
       } else if (!validPassword.test(password)) {
@@ -55,6 +59,8 @@ const SignUpPanel = () => {
           );
           console.log(response);
           if (response && response.status === 201) {
+            dispatch(setUser(email));
+            console.log(dispatch(setUser(email)));
             window.location.href = "/email-verification";
           }
         } catch (err) {
