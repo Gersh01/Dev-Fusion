@@ -280,7 +280,7 @@ exports.setApp = function (app, client) {
         }
 
         if (resultsEmail.length > 0) { //emailToken matched a verified user's email
-            error = 'user is already verified'
+            error = 'user is already verified';
             var ret = { error: error };
             return res.status(400).json(ret);
         } else if (resultsEmailUnverified.length > 0) { //emailToken matched an unverified user's email

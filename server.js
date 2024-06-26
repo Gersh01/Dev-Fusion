@@ -51,8 +51,8 @@ var projectDataApi = require("./api/project_data.js");
 projectDataApi.setApp(app, client);
 
 //teamMembers API
-var teamMembersApi = require("./api/team_members.js");
-teamMembersApi.setApp(app, client);
+var projectDetailsApi = require("./api/project_details.js");
+projectDetailsApi.setApp(app, client);
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static("frontend/build"));
