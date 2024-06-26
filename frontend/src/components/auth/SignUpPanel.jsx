@@ -21,6 +21,7 @@ const SignUpPanel = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [passwordField, setPasswordField] = useState(false);
 
   const goToLogin = () => {
     window.location.href = "/login";
@@ -72,6 +73,12 @@ const SignUpPanel = () => {
       setErrorMessage("One or more fields is missing valid data");
     }
   };
+  const showPasswordField = () => {
+    setPasswordField(true);
+  };
+  const hidePasswordField = () => {
+    setPasswordField(false);
+  };
 
   return (
     <AuthPanel width={480} minHeight={750}>
@@ -107,21 +114,26 @@ const SignUpPanel = () => {
           icon={<MdLockOpen />}
           password
           onChange={(e) => setPassword(e.target.value)}
+          onFocus={showPasswordField}
+          onBlur={hidePasswordField}
         />
-      </div>
-      <div className="grid gap-.5 ">
-        <div className="h-5 flex justify-ceneter text-white text-md poppins">
-          <span>{errorMessage}</span>
+        <div className="grid ">
+          <div className="h-5 flex justify-ceneter text-white text-sm poppins">
+            <span>{errorMessage}</span>
+          </div>
+          <div className=" h-16 flex flex-col grow text-white text-sm">
+            {passwordField && (
+              <PasswordChecklist
+                className="poppins"
+                rules={["capital", "specialChar", "minLength", "number"]}
+                minLength={8}
+                value={password}
+              />
+            )}
+          </div>
         </div>
-        <div className="h-20 flex flex-col grow text-white ">
-          <PasswordChecklist
-            className="poppins"
-            rules={["capital", "specialChar", "minLength", "number"]}
-            minLength={8}
-            value={password}
-          />
-        </div>
       </div>
+
       <div className="flex flex-col gap-3">
         <Button large onClick={doRegister}>
           Sign Up

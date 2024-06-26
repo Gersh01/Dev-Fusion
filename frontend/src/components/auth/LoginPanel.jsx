@@ -38,6 +38,7 @@ const LoginPanel = () => {
         console.log(response);
         if (response && response.data) {
           loginSuccess(response.data);
+          window.location.href = "/";
         }
       } catch (err) {
         let errorMessage = err.response.data.error;
@@ -87,11 +88,11 @@ const LoginPanel = () => {
             Forgot Password
           </button>
         </div>
+        <div className="h-5 flex justify-ceneter text-white text-md poppins">
+          <span>{errorMessage}</span>
+        </div>
       </div>
-      <div className="h-5 flex justify-ceneter text-white text-md poppins">
-        {console.log(errorMessage)}
-        <span>{errorMessage}</span>
-      </div>
+
       <div className="flex flex-col gap-3">
         <Button onClick={doLogin} large>
           Login
