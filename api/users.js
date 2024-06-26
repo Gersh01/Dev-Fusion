@@ -74,7 +74,7 @@ exports.setApp = function (app, client) {
                 const payload = { username };
                 var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
-                    httpOnly: false,
+                    httpOnly: true,
                     path: '/'
                 });
                 var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, token: token, error: error };
@@ -97,7 +97,7 @@ exports.setApp = function (app, client) {
                 const payload = { username };
                 var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
-                    httpOnly: false,
+                    httpOnly: true,
                     path: '/'
                 });
                 var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, token: token, error: error };
@@ -532,7 +532,7 @@ exports.setApp = function (app, client) {
         const payload = { userId };
         var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "15m" });
         res.cookie("userIdToken", token, {
-            httpOnly: false
+            httpOnly: true
         });
 
         return res.status(200).json({error:""});
