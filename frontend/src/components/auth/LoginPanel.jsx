@@ -6,6 +6,8 @@ import Button from "../reusable/Button";
 import AuthPanel from "../reusable/AuthPanel";
 import Axios from "axios";
 
+Axios.defaults.withCredentials = true;
+
 const LoginPanel = () => {
   // * Keeps track of remember me
   const [rememberMe, setRememberMe] = useState(false);
@@ -33,6 +35,7 @@ const LoginPanel = () => {
           "http://localhost:5000/api/login",
           newLogin
         );
+        console.log(response);
         if (response && response.data) {
           loginSuccess(response.data);
         }

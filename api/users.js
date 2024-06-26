@@ -74,9 +74,10 @@ exports.setApp = function (app, client) {
                 const payload = { username };
                 var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
-                    httpOnly: false
+                    httpOnly: false,
+                    path: '/'
                 });
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, token: token, error: error };
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
@@ -96,9 +97,10 @@ exports.setApp = function (app, client) {
                 const payload = { username };
                 var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
-                    httpOnly: false
+                    httpOnly: false,
+                    path: '/'
                 });
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, token: token, error: error };
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";

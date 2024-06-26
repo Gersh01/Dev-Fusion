@@ -14,6 +14,7 @@ const app = express();
 app.set("port", PORT);
 
 const corsOptions ={
+    origin: "http://localhost:5173",
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200
 }
@@ -23,8 +24,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use((req, res, next) => {
-	res.setHeader("Access-Control-Allow-Origin", "*");
-    // res.setHeader("Access-Control-Allow-Credentials", "true");
+	// res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
 	res.setHeader(
 		"Access-Control-Allow-Headers",
 		"Origin, X-Requested-With, Content-Type, Accept, Authorization"
