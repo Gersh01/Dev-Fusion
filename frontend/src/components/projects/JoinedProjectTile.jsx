@@ -1,24 +1,37 @@
-import { Fragment } from "react";
 import ProjectTilePanel from "../reusable/ProjectTilePanel";
+import { Fragment } from "react";
 import { MdPerson, MdOutlineAccessTimeFilled } from "react-icons/md";
-import Bubble from "../reusable/Bubble";
 import Divider from "../reusable/Divider";
+import Bubble from "../reusable/Bubble";
 
-const DiscoverProjectTile = ({ project }) => {
+const JoinedProjectTile = ({ project }) => {
 	const title = project.title;
 	const description = project.description;
-	const technologies = project.technologies;
 	// TODO - Calculate total people needed
 	const numTotalPositions = 7;
 	// TODO - Calculate number of people still needed
-	const numPositionsNeeded = 2;
 	const numDaysTilStart = Math.floor(
 		(project.startDate - new Date()) / 1000 / 60 / 60 / 24 + 1
 	);
+	const numDaysTilEnd = Math.floor(
+		(project.endDate - new Date()) / 1000 / 60 / 60 / 24 + 1
+	);
 
-	const renderedTechnologyBubbles = technologies.map((technology) => {
-		return <Bubble key={technology} text={technology} />;
-	});
+	let dateMessage = "";
+
+	if (numDaysTilStart > 0) {
+		if (numDaysTilStart === 1) {
+			dateMessage = `${numDaysTilStart} day until project begins`;
+		} else {
+			dateMessage = `${numDaysTilStart} days until project begins`;
+		}
+	} else {
+		if (numDaysTilEnd === 1) {
+			dateMessage = `due in ${numDaysTilEnd} day`;
+		} else {
+			dateMessage = `due in ${numDaysTilEnd} days`;
+		}
+	}
 
 	const topContent = (
 		<Fragment>
@@ -27,12 +40,6 @@ const DiscoverProjectTile = ({ project }) => {
 				<p className="text-xl sm:text-2xl league-spartan font-semibold">
 					{title}
 				</p>
-				<div className="bg-gray-200 dark:bg-gray-700 py-0.5 px-1.5 rounded-lg poppins truncate">
-					{numPositionsNeeded}{" "}
-					{numPositionsNeeded === 1
-						? "Position Left"
-						: "Positions Left"}
-				</div>
 			</div>
 			{/* ROW 2 */}
 			<div className="flex justify-between flex-wrap">
@@ -42,12 +49,7 @@ const DiscoverProjectTile = ({ project }) => {
 				</div>
 				<div className="flex gap-1 items-center">
 					<MdOutlineAccessTimeFilled className="text-xl" />
-					<p className="poppins">
-						{numDaysTilStart}{" "}
-						{numDaysTilStart === 1
-							? "day left to join"
-							: "days left to join"}
-					</p>
+					<p className="poppins">{dateMessage}</p>
 				</div>
 			</div>
 		</Fragment>
@@ -57,18 +59,18 @@ const DiscoverProjectTile = ({ project }) => {
 		<Fragment>
 			{/* ROW 1 */}
 			<div className="max-h-28 flex flex-col gap-2">
+				<p className="poppins text-xl font-semibold">Your Role</p>
+				<div className="flex flex-wrap gap-2">
+					<Bubble text="Frontend" />
+				</div>
+			</div>
+			<Divider />
+			{/* ROW 2 */}
+			<div className="max-h-28 flex flex-col gap-2">
 				<p className="poppins text-xl font-semibold">Description</p>
 				<p className="grow crimson-pro text-lg overflow-hidden leading-6">
 					{description}
 				</p>
-			</div>
-			<Divider />
-			{/* ROW 2 */}
-			<div className="max-h-28 flex flex-col gap-2 overflow-hidden">
-				<p className="poppins text-xl font-semibold">Technologies</p>
-				<div className="flex flex-wrap gap-2">
-					{renderedTechnologyBubbles}
-				</div>
 			</div>
 		</Fragment>
 	);
@@ -81,4 +83,4 @@ const DiscoverProjectTile = ({ project }) => {
 	);
 };
 
-export default DiscoverProjectTile;
+export default JoinedProjectTile;

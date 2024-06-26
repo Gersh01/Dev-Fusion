@@ -6,8 +6,9 @@ import ResetPasswordPanel from "./components/auth/ResetPasswordPanel";
 import EmailverificationPanel from "./components/auth/EmailVerificationPanel";
 import LanderPanel from "./components/lander/LanderPanel";
 import DisocverPage from "./pages/DiscoverPage";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ContentPage from "./pages/ContentPageContainer";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import ContentPageContainer from "./pages/ContentPageContainer";
+import ProjectsPage from "./pages/ProjectsPage";
 
 function App() {
 	return (
@@ -30,8 +31,21 @@ function App() {
 						element={<ResetPasswordPanel />}
 					/>
 				</Route>
-				<Route path="/" element={<ContentPage />}>
+				<Route path="/" element={<ContentPageContainer />}>
 					<Route path="/discover" element={<DisocverPage />} />
+					<Route
+						path="/projects"
+						// * Redirect to /projects/my-project upon visit
+						element={<Navigate to="/projects/my-projects" />}
+					/>
+					<Route
+						path="/projects/my-projects"
+						element={<ProjectsPage />}
+					/>
+					<Route
+						path="/projects/joined-projects"
+						element={<ProjectsPage />}
+					/>
 				</Route>
 			</Routes>
 		</BrowserRouter>

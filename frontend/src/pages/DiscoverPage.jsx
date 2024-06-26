@@ -4,6 +4,7 @@ import SearchField from "../components/reusable/SearchField";
 import { Fragment } from "react";
 
 const DisocverPage = () => {
+	// TODO - Mock Project (To be removed)
 	const mockProject = {
 		title: "Gym Fitness Tracker",
 		description:
@@ -20,8 +21,10 @@ const DisocverPage = () => {
 			"Flutter",
 		],
 		startDate: new Date("2024-7-12"),
+		endDate: new Date("2024-8-11"),
 	};
 
+	// TODO - Mock Project (To be removed)
 	const renderedProjectTiles = (
 		<Fragment>
 			<DiscoverProjectTile project={mockProject} />
