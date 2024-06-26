@@ -5,7 +5,9 @@ import ResetPasswordEmailPanel from "./components/auth/ResetPasswordEmailPanel";
 import ResetPasswordPanel from "./components/auth/ResetPasswordPanel";
 import EmailverificationPanel from "./components/auth/EmailVerificationPanel";
 import LanderPanel from "./components/lander/LanderPanel";
+import DisocverPage from "./pages/DiscoverPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ContentPage from "./pages/ContentPageContainer";
 
 function App() {
 	return (
@@ -27,6 +29,9 @@ function App() {
 						path="/reset-password"
 						element={<ResetPasswordPanel />}
 					/>
+				</Route>
+				<Route path="/" element={<ContentPage />}>
+					<Route path="/discover" element={<DisocverPage />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>
