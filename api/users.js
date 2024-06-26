@@ -75,7 +75,7 @@ exports.setApp = function (app, client) {
                 const payload = { username };
                 var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
-                    httpOnly: true
+                    httpOnly: false
                 });
                 res.status(200).json(ret);
             } else { //Password did not match
@@ -97,7 +97,7 @@ exports.setApp = function (app, client) {
                 const payload = { username };
                 var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
-                    httpOnly: true
+                    httpOnly: false
                 });
                 res.status(200).json(ret);
             } else { //Password did not match
@@ -451,9 +451,46 @@ exports.setApp = function (app, client) {
     });
 
     app.post('/api/forgot_password/reset', async (req, res, next) => {
+        const newPassword = req.body.newPassword;
         var db;
         try {
             db = client.db('DevFusion');
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+        const token = req.cookies.userIdToken;
+        var payload;
+        var userId;
+        try {
+            payload = jwt.verify(token, process.env.SECRET_KEY);
+            userId = payload.userId;
+        } catch (e) {
+            res.clearCookie("userIdToken");
+            return res.status(403).json({ error: "Token is not valid" });
+        }
+        
+        const nid = new ObjectId(userId);
+        var resultFind;
+        try{
+            resultFind = await db.collection('Users').findOne({_id: nid});
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+        if(resultFind == null || resultFind == undefined) return res.status(404).json({error: "User not found"});
+
+        var resultPut;
+        var query = { _id: nid };
+        var newValues = { $set: { password: newPassword } };
+
+        try {
+            resultPut = await db.collection('Users').updateOne(query, newValues);
+            return res.status(200).json({error:""});
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
@@ -489,6 +526,12 @@ exports.setApp = function (app, client) {
         } catch (e) {
             return res.status(403).json({ error: "Token is not valid" });
         }
+
+        const payload = { userId };
+        var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "15m" });
+        res.cookie("userIdToken", token, {
+            httpOnly: false
+        });
 
         return res.redirect('/');
 
