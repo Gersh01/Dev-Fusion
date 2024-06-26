@@ -8,6 +8,7 @@ import Axios from "axios";
 
 const LoginPanel = () => {
   // * Keeps track of remember me
+  Axios.defaults.withCredentials = true;
   const [rememberMe, setRememberMe] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

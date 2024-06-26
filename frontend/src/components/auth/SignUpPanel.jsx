@@ -55,7 +55,7 @@ const SignUpPanel = () => {
           );
           console.log(response);
           if (response && response.status === 201) {
-            window.location.href = "/login";
+            window.location.href = "/email-verification";
           }
         } catch (err) {
           let errorMessage = err.response.data.error;
