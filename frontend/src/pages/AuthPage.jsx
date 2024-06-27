@@ -1,6 +1,16 @@
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
+	const user = useLoaderData();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (user !== null) {
+			navigate("/discover");
+		}
+	}, [user, navigate]);
+
 	return (
 		<div
 			className="min-w-screen min-h-screen p-1 bg-gradient-to-br from-orange-300 to-orange-500 
