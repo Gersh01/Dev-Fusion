@@ -1,9 +1,9 @@
 import { MdMailOutline } from "react-icons/md";
-import Input from "../reusable/Input";
-import Button from "../reusable/Button";
-import AuthPanel from "../reusable/AuthPanel";
+import Input from "../components/reusable/Input";
+import Button from "../components/reusable/Button";
+import AuthPanel from "../components/reusable/AuthPanel";
 
-const ResetPasswordEmailPanel = () => {
+const ResetPasswordEmailPage = () => {
 	return (
 		<AuthPanel width={480} minHeight={500}>
 			<div className="flex flex-col justify-center items-center gap-2">
@@ -24,4 +24,4 @@ const ResetPasswordEmailPanel = () => {
 	);
 };
 
-export default ResetPasswordEmailPanel;
+export default ResetPasswordEmailPage;

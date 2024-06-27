@@ -1,15 +1,15 @@
 import AuthPage from "./pages/AuthPage";
-import LoginPanel from "./components/auth/LoginPanel";
-import SignUpPanel from "./components/auth/SignUpPanel";
-import ResetPasswordEmailPanel from "./components/auth/ResetPasswordEmailPanel";
-import ResetPasswordPanel from "./components/auth/ResetPasswordPanel";
-import EmailverificationPanel from "./components/auth/EmailVerificationPanel";
-import LanderPanel from "./components/lander/LanderPanel";
 import DisocverPage from "./pages/DiscoverPage";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ContentPageContainer from "./pages/ContentPageContainer";
 import ProjectsPage from "./pages/ProjectsPage";
 import { useSelector } from "react-redux";
+import LanderPage from "./pages/LanderPage";
+import LoginPage from "./pages/LoginPanel";
+import SignUpPage from "./pages/SignUpPage";
+import EmailVerificationPage from "./pages/EmailVerificationPage";
+import ResetPasswordEmailPage from "./pages/ResetPasswordEmailPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 function App() {
 	const displayMode = useSelector((state) => state.system.displayMode);
@@ -19,20 +19,20 @@ function App() {
 			<BrowserRouter>
 				<Routes>
 					<Route path="/" element={<AuthPage />}>
-						<Route path="/" element={<LanderPanel />} />
-						<Route path="/login" element={<LoginPanel />} />
-						<Route path="/signup" element={<SignUpPanel />} />
+						<Route path="/" element={<LanderPage />} />
+						<Route path="/login" element={<LoginPage />} />
+						<Route path="/signup" element={<SignUpPage />} />
 						<Route
 							path="/email-verification"
-							element={<EmailverificationPanel />}
+							element={<EmailVerificationPage />}
 						/>
 						<Route
 							path="/reset-password-email"
-							element={<ResetPasswordEmailPanel />}
+							element={<ResetPasswordEmailPage />}
 						/>
 						<Route
 							path="/reset-password"
-							element={<ResetPasswordPanel />}
+							element={<ResetPasswordPage />}
 						/>
 					</Route>
 					<Route path="/" element={<ContentPageContainer />}>

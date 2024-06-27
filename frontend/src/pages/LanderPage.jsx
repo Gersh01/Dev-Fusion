@@ -1,8 +1,8 @@
 import { ReactTyped } from "react-typed";
-import Button from "../reusable/Button";
-import AuthPanel from "../reusable/AuthPanel";
+import Button from "../components/reusable/Button";
+import AuthPanel from "../components/reusable/AuthPanel";
 
-const LanderPanel = () => {
+const LanderPage = () => {
 	const goToLogin = () => {
 		window.location.href = "/login";
 	};
@@ -37,4 +37,4 @@ const LanderPanel = () => {
 	);
 };
 
-export default LanderPanel;
+export default LanderPage;

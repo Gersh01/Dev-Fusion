@@ -1,15 +1,15 @@
-import AuthHeader from "../reusable/AuthHeader";
-import Input from "../reusable/Input";
+import AuthHeader from "../components/reusable/AuthHeader";
+import Input from "../components/reusable/Input";
 import { MdAccountCircle, MdLockOpen, MdEmail } from "react-icons/md";
-import Button from "../reusable/Button";
-import AuthPanel from "../reusable/AuthPanel";
+import Button from "../components/reusable/Button";
+import AuthPanel from "../components/reusable/AuthPanel";
 import { useState } from "react";
 import PasswordChecklist from "react-password-checklist";
 import Axios from "axios";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../store/slices/userSlice";
+import { setUser } from "../store/slices/userSlice";
 
-const SignUpPanel = () => {
+const SignUpPage = () => {
 	const dispatch = useDispatch();
 
 	const validEmail = new RegExp(
@@ -161,4 +161,4 @@ const SignUpPanel = () => {
 	);
 };
 
-export default SignUpPanel;
+export default SignUpPage;

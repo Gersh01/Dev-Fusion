@@ -1,10 +1,10 @@
 // import ResetPasswordFields from "./ResetPasswordFields";
 // import ResetPasswordButton from "./ResetPasswordButton";
-import AuthPanel from "../reusable/AuthPanel";
-import Input from "../reusable/Input";
+import AuthPanel from "../components/reusable/AuthPanel";
+import Input from "../components/reusable/Input";
 import { MdLockOpen } from "react-icons/md";
 
-const ResetPasswordPanel = () => {
+const ResetPasswordPage = () => {
 	const goLogin = () => {
 		window.location.href = "/login";
 	};
@@ -46,4 +46,4 @@ const ResetPasswordPanel = () => {
 	);
 };
 
-export default ResetPasswordPanel;
+export default ResetPasswordPage;
