@@ -11,9 +11,7 @@ const useJWT = async ()=>{
     } catch(err){
         console.log(`Error: ${err.message}`);
     }
-    console.log("returing user")
     return auth;
-
 }
 
 

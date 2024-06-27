@@ -5,7 +5,7 @@ import Input from "../components/reusable/Input";
 import Button from "../components/reusable/Button";
 import AuthPanel from "../components/reusable/AuthPanel";
 import Axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 
 Axios.defaults.withCredentials = true;
 
@@ -115,6 +115,7 @@ const LoginPage = () => {
           Sign up instead
         </button>
       </div>
+      <Outlet />
     </AuthPanel>
   );
 };
