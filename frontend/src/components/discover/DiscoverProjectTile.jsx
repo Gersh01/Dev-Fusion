@@ -24,10 +24,10 @@ const DiscoverProjectTile = ({ project }) => {
 		<Fragment>
 			{/* ROW 1 */}
 			<div className="flex justify-between items-center flex-wrap">
-				<p className="text-xl sm:text-2xl league-spartan font-semibold">
+				<p className="text-xl sm:text-2xl league-spartan font-semibold text-white">
 					{title}
 				</p>
-				<div className="bg-gray-200 dark:bg-gray-700 py-0.5 px-1.5 rounded-lg poppins truncate">
+				<div className="bg-gray-200 dark:bg-gray-700 py-0.5 px-1.5 rounded-lg poppins truncate font-medium">
 					{numPositionsNeeded}{" "}
 					{numPositionsNeeded === 1
 						? "Position Left"
@@ -37,12 +37,12 @@ const DiscoverProjectTile = ({ project }) => {
 			{/* ROW 2 */}
 			<div className="flex justify-between flex-wrap">
 				<div className="flex gap-1 items-center">
-					<p className="poppins">{numTotalPositions}</p>
-					<MdPerson className="text-xl" />
+					<p className="poppins text-white">{numTotalPositions}</p>
+					<MdPerson className="text-xl text-white" />
 				</div>
 				<div className="flex gap-1 items-center">
-					<MdOutlineAccessTimeFilled className="text-xl" />
-					<p className="poppins">
+					<MdOutlineAccessTimeFilled className="text-xl text-white" />
+					<p className="poppins text-white">
 						{numDaysTilStart}{" "}
 						{numDaysTilStart === 1
 							? "day left to join"
