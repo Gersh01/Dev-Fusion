@@ -4,24 +4,20 @@ import Button from "../components/reusable/Button";
 import AuthPanel from "../components/reusable/AuthPanel";
 
 const ResetPasswordEmailPage = () => {
-	return (
-		<AuthPanel width={480} minHeight={500}>
-			<div className="flex flex-col justify-center items-center gap-2">
-				<p className="league-spartan dark:text-white text-2xl font-semibold">
-					Reset Password
-				</p>
-				<p className="poppins dark:text-white">
-					Enter your email to reset your password
-				</p>
-			</div>
-			<Input
-				titleText="Email"
-				placeholder="Email"
-				icon={<MdMailOutline />}
-			/>
-			<Button large>Submit</Button>;
-		</AuthPanel>
-	);
+  return (
+    <AuthPanel width={480} minHeight={500}>
+      <div className="flex flex-col justify-center items-center gap-2">
+        <p className="league-spartan dark:text-white text-2xl font-semibold">
+          Reset Password
+        </p>
+        <p className="poppins dark:text-white">
+          Enter your email to reset your password
+        </p>
+      </div>
+      <Input titleText="Email" placeholder="Email" icon={<MdMailOutline />} />
+      <Button large>Submit</Button>
+    </AuthPanel>
+  );
 };
 
 export default ResetPasswordEmailPage;
