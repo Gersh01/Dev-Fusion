@@ -6,11 +6,14 @@ import Button from "../components/reusable/Button";
 import AuthPanel from "../components/reusable/AuthPanel";
 import Axios from "axios";
 import { useNavigate, Outlet } from "react-router-dom";
+import { addUser } from "../store/slices/userSlice";
+import { useDispatch } from "react-redux";
 
 Axios.defaults.withCredentials = true;
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   // * Keeps track of remember me
   //Axios.defaults.withCredentials = true;
   const [rememberMe, setRememberMe] = useState(false);
@@ -45,6 +48,7 @@ const LoginPage = () => {
         );
         console.log(response);
         if (response && response.data) {
+          dispatch(addUser(response.data));
           navigate("/discover");
         }
       } catch (err) {
