@@ -9,8 +9,6 @@ import { useNavigate, Outlet } from "react-router-dom";
 import { addUser } from "../store/slices/userSlice";
 import { useDispatch } from "react-redux";
 
-Axios.defaults.withCredentials = true;
-
 const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -41,7 +39,8 @@ const LoginPage = () => {
       try {
         const response = await Axios.post(
           "http://localhost:5000/api/login",
-          newLogin
+          newLogin,
+          { withCredentials: true }
         );
         console.log(response);
         if (response && response.data) {

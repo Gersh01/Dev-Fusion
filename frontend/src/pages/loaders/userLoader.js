@@ -18,7 +18,7 @@ const getUserFromJwt = async () => {
 		console.log(`Error: ${err.message}`);
 		return null;
 	}
-	//return auth;
+	return auth;
 };
 
 export { getUserFromJwt };

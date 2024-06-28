@@ -18,7 +18,7 @@ const userSlice = createSlice({
 			"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkdvbGRlbkwiLCJpYXQiOjE3MTk1ODc1NTcsImV4cCI6MTcxOTY3Mzk1N30.-mnunFXAP0lZI9lq_OvbB0hCvKnbHakIgdXUg62JhRk",
 			"error": ""
 		}
-	},
+ },
 	reducers: {
 		addUser:(state,action)=>{
 			state.value = action.payload;
