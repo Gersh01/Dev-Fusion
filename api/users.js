@@ -372,6 +372,7 @@ exports.setApp = function (app, client) {
         var technologies = req.body.technologies;
 
 
+        if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
         const nid = new ObjectId(userId);
 
         var db;
@@ -510,6 +511,7 @@ exports.setApp = function (app, client) {
     app.get('/api/forgot_password/email/:userId/:token', async (req, res, next) => {
         const combinedToken = req.params.token;
         const userId = req.params.userId;
+        if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
         const nid = new ObjectId(userId);
         var db;
         var result;

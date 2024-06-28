@@ -89,6 +89,55 @@ exports.setApp = function (app, client) {
         }
     })
 
+    //edit roles or/and teamMembers API
+    app.put('/api/project/roles_and_members', async (req, res, next) => {
+      var projectId = req.body.projectId;
+      var communication = req.body.communication;
+      var teamMembers = req.body.teamMembers;
+      if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
+      if(teamMembers == null && communication == null) return res.status(400).json({error: "Both communication and teamMembers are not given"});
+  
+  
+      const nid = new ObjectId(projectId);
+  
+      var db;
+      var resultFind;
+  
+      try{
+          db = client.db('DevFusion');
+          resultFind = await db.collection('Projects').findOne({_id: nid});
+          if(resultFind == null || resultFind == undefined) return res.status(404).json({error: "Project not found"});
+      } catch (e) {
+          error = e.toString;
+          var ret = { error: error };
+          return res.status(500).json(ret);
+      }
+  
+      var resultPut;
+      var query = { _id: nid };
+      var newValues;
+  
+      if(teamMembers == null){
+        newValues = { $set: { communications: communication } };
+      }else if(communication == null){
+        newValues = { $set: { teamMembers: teamMembers } };
+      }else{
+        newValues = { $set: { teamMembers: teamMembers, communications: communication } };
+      }
+      
+  
+      try {
+          db = client.db('DevFusion');
+          console.log(newValues);
+          resultPut = await db.collection('Projects').updateOne(query, newValues);
+          return res.status(200).json({error:error});
+      } catch (e) {
+          error = e.toString;
+          var ret = { error: error };
+          return res.status(500).json(ret);
+      }
+  
+    });
     
     app.post('/api/discover', cookieJwtAuth, async (req, res, next) => {
         // const searchBy = req.query.searchBy;
