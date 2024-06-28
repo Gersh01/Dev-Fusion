@@ -19,10 +19,23 @@ const cookieJwtAuth = (req, res, next) => {
 
 exports.setApp = function (app, client) {
 
-    //api for creating new application of joining a project
-    app.post('/api/inbox', async (req, res, next) => {
+    //api for getting all members who applied
+    app.get('/api/inbox', async (req, res, next) => {
         
+    });
 
+    //api for creating new application
+    app.post('/api/inbox/apply', async (req, res, next) => {
+
+    });
+
+    //api for accepting an application
+    app.post('/api/inbox/accept_member', async (req, res, next) => {
+        
+    });
+
+    //api for rejecting an application
+    app.post('/api/inbox/reject_member', async (req, res, next) => {
         
     });
 

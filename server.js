@@ -57,10 +57,6 @@ usersApi.setApp(app, client);
 var projectDataApi = require("./api/project_data.js");
 projectDataApi.setApp(app, client);
 
-//ProjectDetails API
-var projectDetailsApi = require("./api/project_details.js");
-projectDetailsApi.setApp(app, client);
-
 //Inbox API
 var inboxApi = require("./api/inbox.js");
 inboxApi.setApp(app, client);
