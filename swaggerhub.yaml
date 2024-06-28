@@ -103,7 +103,7 @@ paths:
         500:
           description: Server Error
 
-  /api/project:
+  /api/projects:
     post:
       tags:
       - Project
@@ -118,6 +118,29 @@ paths:
         description: createProject
         schema:
           $ref: '#/definitions/createProject'
+      responses:
+        200:
+          description: Successful
+        500:
+          description: Server Error
+
+  /api/project/{projectId}:
+    get:
+      tags:
+        -Project
+      summary: Gets a Project
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: get a project
+        schema:
+          type: string
+        required: true
+        description: The ID of the project to retrieve
       responses:
         200:
           description: Successful

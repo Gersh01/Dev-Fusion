@@ -18,6 +18,27 @@ const cookieJwtAuth = (req, res, next) => {
 }
 
 exports.setApp = function (app, client) {
+
+    app.get('/api/project/:projectId', async (req, res, next) => {
+
+      try {
+
+        let db = client.db("DevFusion");
+  
+        let id = req.params.projectId
+
+        if (id.length != 24) return res.status(400).json({error: "projectId must be 24 characters"})
+  
+        let project = await db.collection("Projects").findOne({ _id: new ObjectId(id) })
+  
+        return res.status(200).json(project)
+
+      } catch (e) {
+        return res.status(500).json(e)
+      }
+
+
+    })
     
     // create a project
     app.post('/api/project', async (req, res, next) => {
