@@ -17,8 +17,9 @@ import EmailVerificationPage from "./pages/EmailVerificationPage";
 import ResetPasswordEmailPage from "./pages/ResetPasswordEmailPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import SettingsPage from "./pages/SettingsPage";
-import { getUserFromJwt } from "./pages/loaders/userLoader";
 import ProfilePage from "./pages/ProfilePage";
+import AboutUsPage from "./pages/AboutUsPage";
+import { getUserFromJwt } from "./pages/loaders/userLoader";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -61,6 +62,7 @@ const router = createBrowserRouter(
           // * Redirect to /projects/my-project upon visit
           element={<Navigate to="/projects/my-projects" />}
         />
+        <Route path="about" element={<AboutUsPage />} />
         <Route path="/projects/my-projects" element={<ProjectsPage />} />
         <Route path="/projects/joined-projects" element={<ProjectsPage />} />
         <Route path="/user-settings" element={<SettingsPage />} />

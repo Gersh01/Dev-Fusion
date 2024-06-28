@@ -30,7 +30,9 @@ const SettingsPage = () => {
     navigate("/reset-password");
   };
 
-  const goAboutUs = () => {};
+  const goAboutUs = () => {
+    navigate("/about");
+  };
 
   console.log(res);
   return (

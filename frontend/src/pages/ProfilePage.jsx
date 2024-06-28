@@ -72,7 +72,7 @@ const ProfilePage = () => {
           {res.username}
         </p>
       </div>
-
+      {/* Making this into their own componenets */}
       <div className="flex flex-wrap gap-8 py-4">
         <div className="flex-col w-full p-2 rounded-2xl dark:bg-gray-700 bg-gray-200 md:w-3/5 text-xl poppins">
           <span className="text-2xl font-semibold">Bio</span>
