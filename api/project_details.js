@@ -36,7 +36,8 @@ exports.setApp = function (app, client) {
         try {
             db = client.db('DevFusion');
             resultFindProject = await db.collection('ProjectData').findOne({ _id: nid });
-            resultFindDetail = await db.collection('ProjectDetails').findOne({ _id: nid });
+            resultFindDetail = await db.collection('ProjectDetails').findOne({ projectId: nid });
+            result
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
@@ -44,13 +45,13 @@ exports.setApp = function (app, client) {
         }
 
         if(resultFindProject == null || resultFindProject == undefined) return res.status(404).json({error: "project with projectId not found"});
-        if(resultFindProject != null || resultFindProject != undefined) return res.status(401).json({error: "project detail with projectId exists"});
+        if(resultFindDetail != null || resultFindDetail != undefined) return res.status(401).json({error: "project detail with projectId exists"});
 
         try{
             const newProjectDetails = {
                 communications: communications, teamMembers: teamMembers, projectId: projectId
             };
-            const result = db.collection('ProjectDetails').insertOne(newProjectDetails);
+            const resultProjectDetailsInsert = db.collection('ProjectDetails').insertOne(newProjectDetails);
             return res.status(201).json({ error: "" });
         }catch (e) {
             error = e.toString();
