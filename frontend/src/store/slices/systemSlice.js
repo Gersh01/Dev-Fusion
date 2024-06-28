@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const systemSlice = createSlice({
 	name: "system",
 	initialState: {
-		displayMode: "light",
+		displayMode: "dark",
 		email:"example@email.com"
 	},
 	reducers: {
