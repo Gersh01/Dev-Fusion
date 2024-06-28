@@ -20,24 +20,24 @@ const ProjectTypeSelector = () => {
 		<div className="h-12 flex poppins font-semibold text-lg shadow-sm">
 			<button
 				className={`grow basis-0 rounded-l-xl ${
-					location.pathname === "/projects/my-projects"
+					location.pathname === "/my-projects"
 						? selectedColorStyle
 						: unselectedColorStyle
 				}`}
 				onClick={() => {
-					navigate("/projects/my-projects");
+					navigate("/my-projects");
 				}}
 			>
 				My Projects
 			</button>
 			<button
 				className={`grow basis-0 rounded-r-xl ${
-					location.pathname === "/projects/joined-projects"
+					location.pathname === "/joined-projects"
 						? selectedColorStyle
 						: unselectedColorStyle
 				}`}
 				onClick={() => {
-					navigate("/projects/joined-projects");
+					navigate("/joined-projects");
 				}}
 			>
 				Joined Projects

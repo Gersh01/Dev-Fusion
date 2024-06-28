@@ -1,9 +1,16 @@
+import { useLoaderData } from "react-router-dom";
 import DiscoverProjectTile from "../components/discover/DiscoverProjectTile";
 import Divider from "../components/reusable/Divider";
 import SearchField from "../components/reusable/SearchField";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 
 const DisocverPage = () => {
+	const projects = useLoaderData();
+
+	useEffect(() => {
+		console.log(projects);
+	}, [projects]);
+
 	// TODO - Mock Project (To be removed)
 	const mockProject = {
 		title: "Gym Fitness Tracker",
