@@ -49,17 +49,17 @@ try {
 
 //--------------------API--------------------
 
-//Users API
-var usersApi = require("./api/users.js");
-usersApi.setApp(app, client);
+//Users API (includes APIs for authentication etc.)
+var usersAPI = require("./api/users.js");
+usersAPI.setApp(app, client);
 
-//ProjectData API
-var projectDataApi = require("./api/project_data.js");
-projectDataApi.setApp(app, client);
+//Projects API
+var projectsAPI = require("./api/projects.js");
+projectsAPI.setApp(app, client);
 
 //Inbox API
-var inboxApi = require("./api/inbox.js");
-inboxApi.setApp(app, client);
+var inboxAPI = require("./api/inbox.js");
+inboxAPI.setApp(app, client);
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static("frontend/build"));
