@@ -35,19 +35,19 @@ const OwnedProjectTile = ({ project }) => {
 		<Fragment>
 			{/* ROW 1 */}
 			<div className="flex justify-between items-center flex-wrap">
-				<p className="text-xl sm:text-2xl league-spartan font-semibold">
+				<p className="text-xl sm:text-2xl league-spartan font-semibold text-white">
 					{title}
 				</p>
 			</div>
 			{/* ROW 2 */}
 			<div className="flex justify-between flex-wrap">
 				<div className="flex gap-1 items-center">
-					<p className="poppins">{numTotalPositions}</p>
-					<MdPerson className="text-xl" />
+					<p className="poppins text-white">{numTotalPositions}</p>
+					<MdPerson className="text-xl text-white" />
 				</div>
 				<div className="flex gap-1 items-center">
-					<MdOutlineAccessTimeFilled className="text-xl" />
-					<p className="poppins">{dateMessage}</p>
+					<MdOutlineAccessTimeFilled className="text-xl text-white" />
+					<p className="poppins text-white">{dateMessage}</p>
 				</div>
 			</div>
 		</Fragment>

@@ -1,17 +1,19 @@
-import AuthHeader from "../reusable/AuthHeader";
-import Input from "../reusable/Input";
+import AuthHeader from "../components/reusable/AuthHeader";
+import Input from "../components/reusable/Input";
 import { MdAccountCircle, MdLockOpen, MdEmail } from "react-icons/md";
-import Button from "../reusable/Button";
-import AuthPanel from "../reusable/AuthPanel";
+import Button from "../components/reusable/Button";
+import AuthPanel from "../components/reusable/AuthPanel";
 import { useState } from "react";
 import PasswordChecklist from "react-password-checklist";
 import Axios from "axios";
 import { useDispatch } from "react-redux";
-import { setUser } from "../auth/userSlice";
 
-const SignUpPanel = () => {
+import { setVerificationEmail } from "../store/slices/systemSlice";
+import { useNavigate } from "react-router-dom";
+
+const SignUpPage = () => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const validEmail = new RegExp(
     "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
   );
@@ -28,7 +30,7 @@ const SignUpPanel = () => {
   const [passwordField, setPasswordField] = useState(false);
 
   const goToLogin = () => {
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   const doRegister = async (e) => {
@@ -58,17 +60,17 @@ const SignUpPanel = () => {
             "http://localhost:5000/api/register",
             newSignup
           );
-          console.log(response);
+          console.log(response.status);
           if (response && response.status === 201) {
-            dispatch(setUser(email));
-            console.log(dispatch(setUser(email)));
-            window.location.href = "/email-verification";
+            console.log("Positive respose");
+            console.log(email);
+            dispatch(setVerificationEmail(email));
+            console.log("Dispatched");
+            navigate("/email-verification");
           }
         } catch (err) {
           let errorMessage = err.response.data.error;
-          if (errorMessage.status === 201) {
-            goToLogin;
-          } else if (errorMessage === "email is taken") {
+          if (errorMessage === "email is taken") {
             setErrorMessage("Email is already taken");
           } else if (errorMessage === "username is taken") {
             setErrorMessage("Username is already taken");
@@ -124,10 +126,10 @@ const SignUpPanel = () => {
           onBlur={hidePasswordField}
         />
         <div className="grid ">
-          <div className="h-5 flex justify-ceneter text-white text-sm poppins">
+          <div className="h-5 flex justify-ceneter dark:text-white text-sm poppins">
             <span>{errorMessage}</span>
           </div>
-          <div className=" h-16 flex flex-col grow text-white text-sm">
+          <div className=" h-16 flex flex-col grow dark:text-white text-sm">
             {passwordField && (
               <PasswordChecklist
                 className="poppins"
@@ -156,4 +158,4 @@ const SignUpPanel = () => {
   );
 };
 
-export default SignUpPanel;
+export default SignUpPage;

@@ -1,7 +1,8 @@
-import AuthPanel from "../reusable/AuthPanel";
+import AuthPanel from "../components/reusable/AuthPanel";
 import { useSelector } from "react-redux";
 
-const EmailverificationPanel = () => {
+const EmailverificationPage = () => {
+  const email = useSelector((state) => state.system.email);
   return (
     <AuthPanel width={480} minHeight={600}>
       <p className="text-black text-3xl font-semibold dark:text-white league-spartan text-center">
@@ -12,7 +13,7 @@ const EmailverificationPanel = () => {
           We have sent you a link to{" "}
         </div>
         <div className="text-center text-black text-xl font-semibold league-spartan dark:text-white">
-          example@email.com
+          {email}
         </div>
         <div className="px-16 text-center text-black text-xl league-spartan dark:text-white">
           Just click on the link to complete your registration
@@ -25,4 +26,4 @@ const EmailverificationPanel = () => {
   );
 };
 
-export default EmailverificationPanel;
+export default EmailverificationPage;

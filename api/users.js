@@ -4,7 +4,7 @@ require("dotenv").config();
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-const appName = "http://localhost:5000";
+const appName = "http://localhost:4000";
 
 const ObjectId = require('mongodb').ObjectId;
 

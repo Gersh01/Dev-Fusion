@@ -7,7 +7,7 @@ const path = require("path");
 const { log } = require("console");
 require("dotenv").config();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 
 const app = express();
 
@@ -49,17 +49,17 @@ try {
 
 //--------------------API--------------------
 
-//users API
+//Users API
 var usersApi = require("./api/users.js");
 usersApi.setApp(app, client);
 
-//projectData API
+//ProjectData API
 var projectDataApi = require("./api/project_data.js");
 projectDataApi.setApp(app, client);
 
-//teamMembers API
-var projectDetailsApi = require("./api/project_details.js");
-projectDetailsApi.setApp(app, client);
+//Inbox API
+var inboxApi = require("./api/inbox.js");
+inboxApi.setApp(app, client);
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static("frontend/build"));

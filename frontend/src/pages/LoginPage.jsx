@@ -1,14 +1,16 @@
-import AuthHeader from "../reusable/AuthHeader";
+import AuthHeader from "../components/reusable/AuthHeader";
 import { MdAccountCircle, MdLockOpen } from "react-icons/md";
 import { useState } from "react";
-import Input from "../reusable/Input";
-import Button from "../reusable/Button";
-import AuthPanel from "../reusable/AuthPanel";
+import Input from "../components/reusable/Input";
+import Button from "../components/reusable/Button";
+import AuthPanel from "../components/reusable/AuthPanel";
 import Axios from "axios";
+import { useNavigate, Outlet } from "react-router-dom";
 
 Axios.defaults.withCredentials = true;
 
-const LoginPanel = () => {
+const LoginPage = () => {
+  const navigate = useNavigate();
   // * Keeps track of remember me
   //Axios.defaults.withCredentials = true;
   const [rememberMe, setRememberMe] = useState(false);
@@ -19,7 +21,11 @@ const LoginPanel = () => {
   const [user, setUser] = useState([]);
 
   const goToRegister = () => {
-    window.location.href = "/signup";
+    navigate("/signup");
+  };
+
+  const goToResetPassword = () => {
+    navigate("/reset-password-email");
   };
 
   const loginSuccess = (user) => {
@@ -39,16 +45,14 @@ const LoginPanel = () => {
         );
         console.log(response);
         if (response && response.data) {
-          loginSuccess(response.data);
-          window.location.href = "/";
-          console.log(response);
+          navigate("/discover");
         }
       } catch (err) {
         let errorMessage = err.response.data.error;
         console.log(`Error: ${err.message}`);
         console.log(errorMessage);
         if (errorMessage === "User is not verified") {
-          window.location.href = "/email-verification";
+          navigate("/email-verification");
         } else {
           setErrorMessage("Username/Password is incorrect");
         }
@@ -87,11 +91,14 @@ const LoginPanel = () => {
             />
             <p className="text-black dark:text-white">Remember Me</p>
           </div>
-          <button className="text-black dark:text-white poppins">
+          <button
+            className="text-black dark:text-white poppins"
+            onClick={goToResetPassword}
+          >
             Forgot Password
           </button>
         </div>
-        <div className="h-5 flex justify-ceneter text-white text-md poppins">
+        <div className="h-5 flex justify-ceneter text-black dark:text-white text-md poppins">
           <span>{errorMessage}</span>
         </div>
       </div>
@@ -108,8 +115,9 @@ const LoginPanel = () => {
           Sign up instead
         </button>
       </div>
+      <Outlet />
     </AuthPanel>
   );
 };
 
-export default LoginPanel;
+export default LoginPage;
