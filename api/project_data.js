@@ -20,7 +20,7 @@ const cookieJwtAuth = (req, res, next) => {
 exports.setApp = function (app, client) {
     
     // create a project
-    app.post('/api/project', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/project', async (req, res, next) => {
 
 
         let isOpen = Boolean(req.body.isOpen);
@@ -80,7 +80,7 @@ exports.setApp = function (app, client) {
         const initial = Boolean(req.body.initial);
 
         
-        req.username
+        // req.username
         const user = await db.collection("Users").findOne({ username: req.username })
         // const user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
         
@@ -94,8 +94,8 @@ exports.setApp = function (app, client) {
           project = await db.collection("ProjectData").findOne({ _id: new ObjectId(projectId)})
           date = new Date(project.dateCreated)
 
-          console.log("MY DATE BEFORE: ", project.dateCreated)
-          console.log("MY DATE AFTER: ", date)
+          // console.log("MY DATE BEFORE: ", project.dateCreated)
+          // console.log("MY DATE AFTER: ", date)
 
           userTechnologies = user.technologies;
           projectTechnologies = project.technologies;
@@ -108,25 +108,25 @@ exports.setApp = function (app, client) {
         // derived variables
 
         
-        console.log("PROJECT CURSOR: ")
-        console.log(project)
+        // console.log("PROJECT CURSOR: ")
+        // console.log(project)
 
-        // const date = project.dateCreated
+        // // const date = project.dateCreated
 
-        console.log("MY USER: ", user)
-        console.log(user._id)
-        console.log(user._id.toString())
+        // console.log("MY USER: ", user)
+        // console.log(user._id)
+        // console.log(user._id.toString())
 
 
-        console.log("HERE IS MY INFO")
+        // console.log("HERE IS MY INFO")
 
-        console.log(searchBy)
-        console.log(sortBy)
-        console.log(query)
-        console.log(count)
-        console.log(projectId)
-        console.log(numOfMatches)
-        console.log(date)
+        // console.log(searchBy)
+        // console.log(sortBy)
+        // console.log(query)
+        // console.log(count)
+        // console.log(projectId)
+        // console.log(numOfMatches)
+        // console.log(date)
 
         let results = null;
         let pipeline = []
@@ -137,8 +137,8 @@ exports.setApp = function (app, client) {
             $match: { isOpen: true }
           })
 
-          console.log("GRABBING ONLY OPENS")
-          console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+          // console.log("GRABBING ONLY OPENS")
+          // console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
           
           // filter results that has contains query
           if (searchBy == "title") {
@@ -169,9 +169,9 @@ exports.setApp = function (app, client) {
 
           }
 
-          console.log("entering with this pipeline", pipeline)
-          console.log("GRABBING ONLY MATCHING QUERY NOW")
-          console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+          // console.log("entering with this pipeline", pipeline)
+          // console.log("GRABBING ONLY MATCHING QUERY NOW")
+          // console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
 
           // !initial == cursor is being sent over, remove/cut off data that has already been seen
           // initial, then do nothing, can potentially show everything, no need to cut off certain data since all have been unseen
@@ -260,9 +260,9 @@ exports.setApp = function (app, client) {
             }
           }
 
-          console.log("HERE IS THE PIPELINE, ", pipeline)
-          console.log("IF CURSOR WAS GIVEN, ONLY LOOKING AT EVERYTHING AFTER CURSOR")
-          console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+          // console.log("HERE IS THE PIPELINE, ", pipeline)
+          // console.log("IF CURSOR WAS GIVEN, ONLY LOOKING AT EVERYTHING AFTER CURSOR")
+          // console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
 
 
           // sort data
@@ -294,18 +294,19 @@ exports.setApp = function (app, client) {
             )
           }
 
-          console.log("LOOKING AT THE SORTED DATA BY SORT BY")
-          console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+          // console.log("LOOKING AT THE SORTED DATA BY SORT BY")
+          // console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
 
           // display first X data
           pipeline.push({
             $limit: count
           })
 
-          console.log("GOT MY SEARCH RESULTS");
-          console.log("SHOWING ONLY THE FIRST " + count)
-          console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+          // console.log("GOT MY SEARCH RESULTS");
+          // console.log("SHOWING ONLY THE FIRST " + count)
+          // console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
 
+          results = await db.collection("ProjectData").aggregate(pipeline).toArray()
 
           return res.status(200).json(results)
 
