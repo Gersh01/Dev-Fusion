@@ -62,7 +62,7 @@ exports.setApp = function (app, client) {
     })
 
     
-    app.post('/api/discover', async (req, res, next) => {
+    app.post('/api/discover', cookieJwtAuth, async (req, res, next) => {
         // const searchBy = req.query.searchBy;
         // const query = req.query.query;
         // const count = req.query.count;
