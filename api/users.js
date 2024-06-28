@@ -74,7 +74,9 @@ exports.setApp = function (app, client) {
                 bio = resultsUsername[0].bio;
                 technologies = resultsUsername[0].technologies;
                 const payload = { username };
-                var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
+                var token;
+                if(rememberMe) token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
+                else token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
                 res.cookie("token", token, {
                     httpOnly: true,
                     path: '/'
@@ -99,7 +101,7 @@ exports.setApp = function (app, client) {
                 const payload = { username };
                 var token;
                 if(rememberMe) token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
-                else token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
+                else token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
                 res.cookie("token", token, {
                     httpOnly: true,
                     path: '/'
