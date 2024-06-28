@@ -52,7 +52,7 @@ exports.setApp = function (app, client) {
             };
 
 
-            db.collection("ProjectData").insertOne(project);
+            db.collection("Projects").insertOne(project);
             return res.sendStatus(200);
         } catch (e) {
             error = e.toString();
@@ -62,48 +62,11 @@ exports.setApp = function (app, client) {
     })
 
     
-    app.post('/api/discover', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/discover', async (req, res, next) => {
         // const searchBy = req.query.searchBy;
         // const query = req.query.query;
         // const count = req.query.count;
         // const objectId = req.query.objectId
-        db = client.db("DevFusion");
-        
-        
-        const searchBy = req.body.searchBy;
-        const sortBy = req.body.sortBy;
-        const query = req.body.query;
-        const count = req.body.count;
-        const projectId = req.body.projectId
-        const userId = req.body.userId
-
-        const initial = Boolean(req.body.initial);
-
-        
-        // req.username
-        const user = await db.collection("Users").findOne({ username: req.username })
-        // const user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
-        
-        
-        let project;
-        let numOfMatches;
-        let date;
-        let userTechnologies;
-        let projectTechnologies;
-        if (!initial) {
-          project = await db.collection("ProjectData").findOne({ _id: new ObjectId(projectId)})
-          date = new Date(project.dateCreated)
-
-          // console.log("MY DATE BEFORE: ", project.dateCreated)
-          // console.log("MY DATE AFTER: ", date)
-
-          userTechnologies = user.technologies;
-          projectTechnologies = project.technologies;
-          
-
-          const matchingTechnologies = userTechnologies.filter(tech => projectTechnologies.includes(tech));
-          numOfMatches = matchingTechnologies.length;
-        }
 
         // derived variables
 
@@ -128,17 +91,58 @@ exports.setApp = function (app, client) {
         // console.log(numOfMatches)
         // console.log(date)
 
-        let results = null;
-        let pipeline = []
-
+        
         try {
+
+          db = client.db("DevFusion");
+        
+        
+          const searchBy = req.body.searchBy;
+          const sortBy = req.body.sortBy;
+          const query = req.body.query;
+          const count = req.body.count;
+          const projectId = req.body.projectId
+          const userId = req.body.userId
+
+          const initial = Boolean(req.body.initial);
+
+          if (projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"})
+          
+          // req.username
+          const user = await db.collection("Users").findOne({ username: req.username })
+          // const user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
+          
+          
+          let project;
+          let numOfMatches;
+          let date;
+          let userTechnologies;
+          let projectTechnologies;
+          if (!initial) {
+            project = await db.collection("Projects").findOne({ _id: new ObjectId(projectId)})
+            date = new Date(project.dateCreated)
+
+            // console.log("MY DATE BEFORE: ", project.dateCreated)
+            // console.log("MY DATE AFTER: ", date)
+
+            userTechnologies = user.technologies;
+            projectTechnologies = project.technologies;
+            
+
+            const matchingTechnologies = userTechnologies.filter(tech => projectTechnologies.includes(tech));
+            numOfMatches = matchingTechnologies.length;
+          }
+
+          let results = null;
+          let pipeline = []
+
           // want only open projects
           pipeline.push({
             $match: { isOpen: true }
           })
 
           // console.log("GRABBING ONLY OPENS")
-          // console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+          // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
           
           // filter results that has contains query
           if (searchBy == "title") {
@@ -171,7 +175,7 @@ exports.setApp = function (app, client) {
 
           // console.log("entering with this pipeline", pipeline)
           // console.log("GRABBING ONLY MATCHING QUERY NOW")
-          // console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+          // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
 
           // !initial == cursor is being sent over, remove/cut off data that has already been seen
           // initial, then do nothing, can potentially show everything, no need to cut off certain data since all have been unseen
@@ -262,7 +266,7 @@ exports.setApp = function (app, client) {
 
           // console.log("HERE IS THE PIPELINE, ", pipeline)
           // console.log("IF CURSOR WAS GIVEN, ONLY LOOKING AT EVERYTHING AFTER CURSOR")
-          // console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+          // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
 
 
           // sort data
@@ -295,7 +299,7 @@ exports.setApp = function (app, client) {
           }
 
           // console.log("LOOKING AT THE SORTED DATA BY SORT BY")
-          // console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+          // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
 
           // display first X data
           pipeline.push({
@@ -304,9 +308,9 @@ exports.setApp = function (app, client) {
 
           // console.log("GOT MY SEARCH RESULTS");
           // console.log("SHOWING ONLY THE FIRST " + count)
-          // console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+          // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
 
-          results = await db.collection("ProjectData").aggregate(pipeline).toArray()
+          results = await db.collection("Projects").aggregate(pipeline).toArray()
 
           return res.status(200).json(results)
 
