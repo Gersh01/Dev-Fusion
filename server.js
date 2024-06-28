@@ -62,7 +62,7 @@ var inboxAPI = require("./api/inbox.js");
 inboxAPI.setApp(app, client);
 
 if (process.env.NODE_ENV === "production") {
-	app.use(express.static("frontend"));
+	app.use(express.static("frontend/src"));
 
 	app.get("*", (req, res) => {
 		res.sendFile(
