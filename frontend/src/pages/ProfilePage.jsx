@@ -1,6 +1,7 @@
 import Divider from "../components/reusable/Divider";
 import { Fragment } from "react";
 import { useSelector } from "react-redux";
+import logo from "../assets/DFLogoFinal.png";
 
 const ProfilePage = () => {
 	let res = useSelector((state) => state.user);
@@ -14,8 +15,11 @@ const ProfilePage = () => {
 				<p>Profile</p>
 			</div>
 			<Divider />
-			<div className="bg-white text-3xl font-bold poppins text-black">
-				{res.username}
+			<div className="flex flex-row gap-4">
+				<img className="max-h-14 max-w-14" src={logo}></img>
+				<span className="bg-white text-3xl font-bold poppins text-center text-black">
+					{res.username}
+				</span>
 			</div>
 			<div className="flex flex-row gap-10">
 				<div className="bg-white h-[300px] w-[300px]"></div>
