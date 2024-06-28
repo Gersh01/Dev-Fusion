@@ -20,12 +20,14 @@ const cookieJwtAuth = (req, res, next) => {
 exports.setApp = function (app, client) {
     
     // create a project
-    app.post('/api/project', async (req, res, next) => {
+    app.post('/api/project', cookieJwtAuth, async (req, res, next) => {
+
+
         let isOpen = Boolean(req.body.isOpen);
         let isDone = Boolean(req.body.isDone);
         let isStarted = Boolean(req.body.isStarted);
         let dateCreated = new Date(req.body.dateCreated);
-        let ownerID = new ObjectId(req.body.ownerID);
+        let ownerID = new projectId(req.body.ownerID);
         let currentVsRequired = req.body.currentVsRequired;
         let deadline = new Date(req.body.deadline);
         let projectStartDate = new Date(req.body.projectStartDate);
@@ -60,23 +62,71 @@ exports.setApp = function (app, client) {
     })
 
     
-    app.get('/api/discover', async (req, res, next) => {
+    app.post('/api/discover', cookieJwtAuth, async (req, res, next) => {
         // const searchBy = req.query.searchBy;
         // const query = req.query.query;
         // const count = req.query.count;
         // const objectId = req.query.objectId
-        
         db = client.db("DevFusion");
-        const searchBy = "title";
-        const sortBy = "relevance";
-        const query = "";
-        const count = 5;
-        const objectId = new ObjectId("667147e07d5f8d94a8a374c2")
+        
+        
+        const searchBy = req.body.searchBy;
+        const sortBy = req.body.sortBy;
+        const query = req.body.query;
+        const count = req.body.count;
+        const projectId = req.body.projectId
+        const userId = req.body.userId
 
-        let user = await db.collection("Users").findOne({ _id: objectId })
+        const initial = Boolean(req.body.initial);
+
+        
+        req.username
+        const user = await db.collection("Users").findOne({ username: req.username })
+        // const user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
+        
+        
+        let project;
+        let numOfMatches;
+        let date;
+        let userTechnologies;
+        let projectTechnologies;
+        if (!initial) {
+          project = await db.collection("ProjectData").findOne({ _id: new ObjectId(projectId)})
+          date = new Date(project.dateCreated)
+
+          console.log("MY DATE BEFORE: ", project.dateCreated)
+          console.log("MY DATE AFTER: ", date)
+
+          userTechnologies = user.technologies;
+          projectTechnologies = project.technologies;
+          
+
+          const matchingTechnologies = userTechnologies.filter(tech => projectTechnologies.includes(tech));
+          numOfMatches = matchingTechnologies.length;
+        }
+
+        // derived variables
+
+        
+        console.log("PROJECT CURSOR: ")
+        console.log(project)
+
+        // const date = project.dateCreated
 
         console.log("MY USER: ", user)
-        const date = new Date("1900-05-24T10:00:00.000+00:00")
+        console.log(user._id)
+        console.log(user._id.toString())
+
+
+        console.log("HERE IS MY INFO")
+
+        console.log(searchBy)
+        console.log(sortBy)
+        console.log(query)
+        console.log(count)
+        console.log(projectId)
+        console.log(numOfMatches)
+        console.log(date)
 
         let results = null;
         let pipeline = []
@@ -86,52 +136,66 @@ exports.setApp = function (app, client) {
           pipeline.push({
             $match: { isOpen: true }
           })
+
+          console.log("GRABBING ONLY OPENS")
+          console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
           
           // filter results that has contains query
           if (searchBy == "title") {
+            console.log("LOOKING AT TITLE")
 
+            console.log("THIS IS MY QUERY: ", query)
             pipeline.push({
-              $match: {title: {$regex: '.*' + query + '.*'}}
+              $match: { title: {$regex: `.*${query}.*`, $options: 'i'}}
             })
 
           } else if (searchBy == "technologies") {
 
             pipeline.push({
-              $match: {technologies: {$regex: '.*' + query + '.*'}}
+              $match: { technologies: {$regex: `.*${query}.*`, $options: 'i'}}
             })
 
           } else if (searchBy == "roles") {
 
             pipeline.push({
-              $match: {technologies: {$regex: '.*' + query + '.*'}}
+              $match: { roles: {$regex: `.*${query}.*`, $options: 'i'}}
             })
 
           } else if (searchBy == "description") {
-            // wierd man
+
+            pipeline.push({
+              $match: { description: {$regex: `.*${query}.*`, $options: 'i'}}
+            })
+
           }
 
+          console.log("entering with this pipeline", pipeline)
+          console.log("GRABBING ONLY MATCHING QUERY NOW")
+          console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
 
           // !initial == cursor is being sent over, remove/cut off data that has already been seen
           // initial, then do nothing, can potentially show everything, no need to cut off certain data since all have been unseen
+          console.log("INITIAL IS: ", initial)
           if (!initial) {
+            console.log("GOING TO CUT OFF SOME STUFF")
 
-            if (searchBy == "relevance") {
+            if (sortBy == "relevance") {
 
               pipeline.push({
                 $match: {
                   $or: [
                     {
                       $expr: {
-                        $gt: [
+                        $lt: [
                           {
                             $size: {
                               $setIntersection: [
                                 '$technologies',
-                                user.technologies
+                                userTechnologies
                               ]
                             }
                           },
-                          1
+                          numOfMatches
                         ]
                       }
                     },
@@ -144,19 +208,17 @@ exports.setApp = function (app, client) {
                                 $size: {
                                   $setIntersection: [
                                     '$technologies',
-                                    user.technologies
+                                    userTechnologies
                                   ]
                                 }
                               },
-                              1
+                              numOfMatches
                             ]
                           }
                         },
                         {
                           _id: {
-                            $gt: ObjectId(
-                              user._id.toString()
-                            )
+                            $gt: project._id
                           }
                         }
                       ]
@@ -165,19 +227,42 @@ exports.setApp = function (app, client) {
                 }
               });
 
-            } else if (searchBy == "recent") {
+            } else if (sortBy == "recent") {
+
+              console.log("CUTTING OFF BY RECENCY")
 
               // does not account for projects created exactly AT the same time, but almost imposible so i don't think about it
               pipeline.push({
                 $match: {
-                  dateCreated: {
-                    $gt: date
-                  }
+                  $or: [
+                    {
+                      dateCreated: {
+                        $lt:  date
+                      }
+                    },
+                    {
+                      $and: [
+                        {
+                          dateCreated: {
+                            $eq: date
+                          }
+                        },
+                        {
+                          _id: {
+                            $gt: project._id
+                          }
+                        }
+                      ]
+                    }
+                  ]
                 }
               })
-
             }
           }
+
+          console.log("HERE IS THE PIPELINE, ", pipeline)
+          console.log("IF CURSOR WAS GIVEN, ONLY LOOKING AT EVERYTHING AFTER CURSOR")
+          console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
 
 
           // sort data
@@ -200,24 +285,28 @@ exports.setApp = function (app, client) {
                 }
               }
             },
-            { $sort: { relevance: 1, _id: 1 } })
+            { $sort: { relevance: -1, _id: 1 } })
 
           } else if (sortBy == "recent") {
 
             pipeline.push(
-              { $sort: { dateCreated: -1 } }
+              { $sort: { dateCreated: -1, _id: 1 } }
             )
           }
+
+          console.log("LOOKING AT THE SORTED DATA BY SORT BY")
+          console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
 
           // display first X data
           pipeline.push({
             $limit: count
           })
 
-          results = db.collection("ProjectData").aggregate(pipeline)
-
           console.log("GOT MY SEARCH RESULTS");
-          console.log(results)
+          console.log("SHOWING ONLY THE FIRST " + count)
+          console.log(await db.collection("ProjectData").aggregate(pipeline).toArray())
+
+
           return res.status(200).json(results)
 
         } catch(e) {
