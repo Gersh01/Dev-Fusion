@@ -56,6 +56,10 @@ exports.setApp = function (app, client) {
         let technologies = req.body.technologies;
         let title = req.body.title;
 
+        var description = req.body.description;
+        var communication = req.body.communication;
+        var teamMembers = [];
+
         try {
             db = client.db("DevFusion");
             project = {
@@ -69,7 +73,10 @@ exports.setApp = function (app, client) {
                 projectStartDate: projectStartDate,
                 roles: roles,
                 technologies: technologies,
-                title: title
+                title: title,
+                communications: communication,
+                description: description,
+                teamMembers: teamMembers
             };
 
 

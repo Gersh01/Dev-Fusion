@@ -41,8 +41,10 @@ exports.setApp = function (app, client) {
         var bio = '';
         var technologies = [];
         var error = '';
-        const { login, password } = req.body;
+        const { login, password, rememberMe } = req.body;
         var db;
+
+        if(rememberMe == null || rememberMe == undefined) rememberMe = false;
 
         var resultsUsername;
         var resultsEmail;
@@ -95,7 +97,9 @@ exports.setApp = function (app, client) {
                 bio = resultsEmail[0].bio;
                 technologies = resultsEmail[0].technologies;
                 const payload = { username };
-                var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
+                var token;
+                if(rememberMe) token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
+                else token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
                 res.cookie("token", token, {
                     httpOnly: true,
                     path: '/'
