@@ -1,12 +1,9 @@
-import React from "react";
-import { useSelector } from "react-redux";
 import Divider from "../components/reusable/Divider";
 import { Fragment } from "react";
+import { useSelector } from "react-redux";
 
 const ProfilePage = () => {
-  const user = useSelector((state) => state.user);
-
-  console.log(user.value.username);
+  let res = useSelector((state) => state.user.value.username);
 
   return (
     <Fragment>
@@ -18,7 +15,7 @@ const ProfilePage = () => {
       </div>
       <Divider />
       <div className="bg-white text-3xl font-bold poppins text-black">
-        {user.value.username}
+        {res}
       </div>
       <div className="flex flex-row gap-10">
         <div className="bg-white h-[300px] w-[300px]"></div>

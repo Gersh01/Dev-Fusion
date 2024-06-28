@@ -31,9 +31,6 @@ const LoginPage = () => {
     navigate("/reset-password-email");
   };
 
-  const loginSuccess = (user) => {
-    setUser(user);
-  };
   //POST for Login API
   //uses the err.response.data.error to distinguish between error codes
   const doLogin = async (e) => {

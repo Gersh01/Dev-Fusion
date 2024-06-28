@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const getUserFromJwt = async () => {
-	let auth = null;
+	let auth = null
 
 	try {
 		const response = await axios.post("http://localhost:5000/api/jwtTest");
@@ -13,7 +13,7 @@ const getUserFromJwt = async () => {
 		console.log(`Error: ${err.message}`);
 		return null;
 	}
-	// return auth;
+	//return auth;
 };
 
 export { getUserFromJwt };
