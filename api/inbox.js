@@ -54,6 +54,35 @@ exports.setApp = function (app, client) {
 
     //api for creating new application
     app.post('/api/inbox/apply', async (req, res, next) => {
+        const projectId = req.body.projectId || "";
+        const userId = req.body.userId || "";
+        const role = req.body.role || "";
+        if(projectId == "") return res.status(400).json({error: "projectId is empty"});
+        if(userId == "") return res.status(400).json({error: "userId is empty"});
+        if(role == "") return res.status(400).json({error: "role is empty"});
+
+        var error = "";
+        const projectNid = new ObjectId(projectId);
+        const userNid = new ObjectId(userId);
+        
+        var db;
+        var resultsFind;
+        var resultInsert;
+        try {
+            db = client.db('DevFusion');
+            resultsFind = await db.collection('Inbox').find({ projectID: projectNid, userID: userNid , role: role}).toArray();
+            if(resultsFind.length > 0) return res.status(403).json({ error:"User already applied for this role to this project" });
+            const newInbox = {
+                projectID: projectNid, userID: userNid , role: role
+            };
+            insertResult = await db.collection('Inbox').insertOne(newInbox);
+            var ret = {error : ""};
+            return res.status(201).json(ret);
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
 
     });
 
