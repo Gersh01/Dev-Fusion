@@ -16,7 +16,7 @@ import SignUpPage from "./pages/SignUpPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
 import ResetPasswordEmailPage from "./pages/ResetPasswordEmailPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import LogoutPage from "./pages/LogoutPage";
+import SettingsPage from "./pages/SettingsPage";
 import { getUserFromJwt } from "./pages/loaders/userLoader";
 import ProfilePage from "./pages/ProfilePage";
 
@@ -39,13 +39,14 @@ const router = createBrowserRouter(
             path="/email-verification"
             element={<EmailVerificationPage />}
           />
-          <Route
-            path="/reset-password-email"
-            element={<ResetPasswordEmailPage />}
-          />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Route>
+        <Route
+          path="/reset-password-email"
+          element={<ResetPasswordEmailPage />}
+        />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Route>
+
       {/* <Route element={<PrivateRoutes />}> */}
       <Route
         path="/"
@@ -62,8 +63,8 @@ const router = createBrowserRouter(
         />
         <Route path="/projects/my-projects" element={<ProjectsPage />} />
         <Route path="/projects/joined-projects" element={<ProjectsPage />} />
+        <Route path="/user-settings" element={<SettingsPage />} />
         <Route path="/my-profile" element={<ProfilePage />} />
-        <Route path="/logout" element={<LogoutPage />} />
       </Route>
       {/* </Route> */}
     </Route>

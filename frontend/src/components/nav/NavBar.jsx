@@ -4,6 +4,7 @@ import {
   MdOutlineFolder,
   MdAdd,
   MdPersonOutline,
+  MdOutlineSettings,
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
@@ -26,6 +27,11 @@ const NavBar = () => {
       title: "Profile",
       icon: <MdPersonOutline />,
       destination: "/my-profile",
+    },
+    {
+      title: "Settings",
+      icon: <MdOutlineSettings />,
+      destination: "/user-settings",
     },
   ];
 
