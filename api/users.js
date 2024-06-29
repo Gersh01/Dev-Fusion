@@ -80,7 +80,7 @@ exports.setApp = function (app, client) {
                     token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
                 }
                 else {
-                    token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1s" });
+                    token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
                 }
                 res.cookie("token", token, {
                     httpOnly: true,
@@ -109,7 +109,7 @@ exports.setApp = function (app, client) {
                     token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
                 }
                 else {
-                    token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1s" });
+                    token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
                 }
                 res.cookie("token", token, {
                     httpOnly: true,
