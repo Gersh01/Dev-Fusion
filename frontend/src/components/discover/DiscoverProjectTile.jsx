@@ -80,6 +80,7 @@ const DiscoverProjectTile = ({ project }) => {
 
 	return (
 		<ProjectTilePanel
+			projectId={project._id}
 			topContent={topContent}
 			bottomContent={bottomContent}
 		></ProjectTilePanel>
