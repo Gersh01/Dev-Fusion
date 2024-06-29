@@ -38,7 +38,6 @@ const LoginPage = () => {
         rememberMe: rememberMe,
       };
       try {
-        console.log(newLogin);
         const response = await Axios.post(
           "http://localhost:5000/api/login",
           newLogin,

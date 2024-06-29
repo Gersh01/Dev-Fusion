@@ -7,8 +7,12 @@ const userSlice = createSlice({
 		setUser: (_, action) => {
 			return action.payload;
 		},
+		updateBio:(state, action)=>{
+			state.bio=action.payload
+		}
 	},
 });
-export const { setUser } = userSlice.actions;
+
+export const { setUser, updateBio } = userSlice.actions;
 
 export default userSlice.reducer;
