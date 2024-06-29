@@ -9,15 +9,19 @@ const cookieJwtAuth = (req, res, next) => {
     const token = req.cookies.token;
     try {
         const payload = jwt.verify(token, process.env.SECRET_KEY);
-        req.username = payload.username;
-        req.rememberMe = payload.rememberMe;
+        var username = payload.username;
+        req.username = username;
+        var rememberMe = payload.rememberMe;
+        req.rememberMe = rememberMe;
+        var newToken;
+        var newPayload = { username, rememberMe };
         if (payload.rememberMe) {
-            token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
+            newToken = jwt.sign(newPayload, process.env.SECRET_KEY, { expiresIn: "1w" });
         }
         else {
-            token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
+            newToken = jwt.sign(newPayload, process.env.SECRET_KEY, { expiresIn: "1h" });
         }
-        res.cookie("token", token, {
+        res.cookie("token", newToken, {
             httpOnly: true,
             path: '/'
         });
