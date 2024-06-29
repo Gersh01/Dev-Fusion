@@ -103,7 +103,7 @@ paths:
         500:
           description: Server Error
 
-  /api/projects:
+  /api/project:
     post:
       tags:
       - Project
@@ -146,6 +146,91 @@ paths:
           description: Successful
         500:
           description: Server Error
+  
+  /api/edit-project:
+    post:
+      tags:
+      - Project
+      summary: Edits a Project
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: editProject
+        description: editProject
+        schema:
+          $ref: '#/definitions/editProject'
+      responses:
+        200:
+          description: Successful
+        500:
+          description: Server Error
+  
+  /api/discover:
+    post:
+      tags:
+      - Project
+    summary: Searches for open projects
+    consumes:
+    - application/json
+    produces:
+    - application/json
+    parameters:
+    - in: body
+      name: discoverProjects
+      description: discoverProjects
+      schema:
+        $ref: '#/definitions/discoverProjects'
+    responses:
+      200:
+        description: Successful
+      500:
+        description: Server Error
+  
+  /api/owned-projects:
+    post:
+      tags:
+      - Project
+    summary: Searches for owned projects
+    consumes:
+    - application/json
+    produces:
+    - application/json
+    parameters:
+    - in: body
+      name: ownedProjects
+      description: ownedProjects
+      schema:
+        $ref: '#/definitions/ownedProjects'
+    responses:
+      200:
+        description: Successful
+      500:
+        description: Server Error
+  
+  /api/joined-projects:
+    post:
+      tags:
+      - Project
+    summary: Searches for joined projects
+    consumes:
+    - application/json
+    produces:
+    - application/json
+    parameters:
+    - in: body
+      name: joinedProjects
+      description: joinedProjects
+      schema:
+        $ref: '#/definitions/joinedProjects'
+    responses:
+      200:
+        description: Successful
+      500:
+        description: Server Error
+
 
 definitions:
   Login:
@@ -263,6 +348,166 @@ definitions:
       title:
         type: string
         example: "Test Me"
+      description:
+        type: string
+        example: "Testing the create"
+      communications:
+        type: array
+        example: ["Twiiter", "X", "Instagram", "Facebok"]
+      teamMembers:
+        type: array
+        example: ["GoldenL: API", "AlperenY: APII", "JamesS: Frontend"]
+  
+  createProject:
+    type: object
+    required:
+    - projectId
+    - isOpen
+    - isDone
+    - isStarted
+    - dateCreated
+    - ownerID
+    - currentVsRequired
+    - deadline
+    - projectStartDate
+    - roles
+    - technologies
+    - title
+    properties:
+      projectId:
+        type: string
+        example: "667f6d371929b94ff10a35e9"
+      isOpen:
+        type: boolean
+        example: false
+      isDone:
+        type: boolean
+        example: false
+      isStarted:
+        type: boolean
+        example: false
+      dateCreated:
+        type: string
+        example: "2023-05-24T10:00:00Z"
+      ownerID:
+        type: string
+        example: "667147c37d5f8d94a8a374c1"
+      currentVsRequired:
+        type: array
+        example: [1, 9]
+      deadline:
+        type: string
+        example: "2029-05-24T10:00:00Z"
+      projectStartDate:
+        type: string
+        example: "2023-25-24T10:00:00Z"
+      roles:
+        type: array
+        example: ["Project Manager", "Frontend"]
+      technologies:
+        type: array
+        example: ["HTML"]
+      title:
+        type: string
+        example: "Test Me"
+      description:
+        type: string
+        example: "Testing the create"
+      communications:
+        type: array
+        example: ["Twiiter", "X", "Instagram", "Facebok"]
+      teamMembers:
+        type: array
+        example: ["GoldenL: API", "AlperenY: APII", "JamesS: Frontend"]
+
+  discoverProjects:
+    type: object
+    required:
+    - searchBy
+    - sortBy
+    - query
+    - count
+    - initial
+    - projectId
+    properties:
+      searchBy:
+        type: string
+        example: "title"
+      sortBy:
+        type: string
+        example: "relevance"
+      query:
+        type: string
+        example: ""
+      count:
+        type: string
+        example:  3
+      initial:
+        type: string
+        example: true
+      projectId:
+        type: string
+        example: "667147e07d5f8d94a8a374c2"
+  
+  ownedProjects:
+    type: object
+    required:
+    - searchBy
+    - sortBy
+    - query
+    - count
+    - initial
+    - projectId
+    properties:
+      searchBy:
+        type: string
+        example: "title"
+      sortBy:
+        type: string
+        example: "relevance"
+      query:
+        type: string
+        example: ""
+      count:
+        type: string
+        example:  3
+      initial:
+        type: string
+        example: true
+      projectId:
+        type: string
+        example: "667147e07d5f8d94a8a374c2"
+
+  joinedProjects:
+    type: object
+    required:
+    - searchBy
+    - sortBy
+    - query
+    - count
+    - initial
+    - projectId
+    properties:
+      searchBy:
+        type: string
+        example: "title"
+      sortBy:
+        type: string
+        example: "relevance"
+      query:
+        type: string
+        example: ""
+      count:
+        type: string
+        example:  3
+      initial:
+        type: string
+        example: true
+      projectId:
+        type: string
+        example: "667147e07d5f8d94a8a374c2"
+
+      
 
 host: dev-fusion-3adc28f56db6.herokuapp.com
 basePath: /api
