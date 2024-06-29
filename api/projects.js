@@ -312,7 +312,7 @@ exports.setApp = function (app, client) {
         let isDone = Boolean(req.body.isDone);
         let isStarted = Boolean(req.body.isStarted);
         let dateCreated = new Date(req.body.dateCreated);
-        let ownerID = new projectId(req.body.ownerID);
+        let ownerID = new ObjectId(req.body.ownerID);
         let currentVsRequired = req.body.currentVsRequired;
         let deadline = new Date(req.body.deadline);
         let projectStartDate = new Date(req.body.projectStartDate);
@@ -321,7 +321,7 @@ exports.setApp = function (app, client) {
         let title = req.body.title;
 
         var description = req.body.description;
-        var communication = req.body.communication;
+        var communications = req.body.communications;
         var teamMembers = [];
 
         try {
@@ -338,7 +338,7 @@ exports.setApp = function (app, client) {
                 roles: roles,
                 technologies: technologies,
                 title: title,
-                communications: communication,
+                communications: communications,
                 description: description,
                 teamMembers: teamMembers
             };
@@ -445,5 +445,82 @@ exports.setApp = function (app, client) {
     app.post('/api/joined-projects', cookieJwtAuth, async (req, res, next) => {
 
       return search(client, req, res, "joined");
+    })
+
+
+    app.post('/api/edit-project', cookieJwtAuth, async (req, res, next) => {
+
+      try {
+        db = client.db("DevFusion");
+
+        const user = await db.collection("Users").findOne({ username: req.username })
+        // const user = await db.collection("Users").findOne({ username: req.body.username })
+        const projectObj = await db.collection("Projects").findOne({ _id: new ObjectId(req.body.projectId) })
+
+        console.log("looking at this project")
+        console.log(projectObj)
+
+        console.log(user._id.toString())
+        console.log(projectObj.ownerID.toString())
+        if (user._id.toString() !== projectObj.ownerID.toString()) {
+          return res.status(400).json({"error": "This user can't edit the project since the user is not the owner"})
+        }
+
+        console.log("TRYING TO EDIT PROJECT")
+
+  
+        let isOpen = Boolean(req.body.isOpen);
+        let isDone = Boolean(req.body.isDone);
+        let isStarted = Boolean(req.body.isStarted);
+        let dateCreated = new Date(req.body.dateCreated);
+        let ownerID = new ObjectId(req.body.ownerID);
+        let currentVsRequired = req.body.currentVsRequired;
+        let deadline = new Date(req.body.deadline);
+        let projectStartDate = new Date(req.body.projectStartDate);
+        let roles = req.body.roles;
+        let technologies = req.body.technologies;
+        let title = req.body.title;
+
+
+        var description = req.body.description;
+        var communications = req.body.communications;
+        
+        let teamMembers = req.body.teamMembers;
+
+
+        project = {
+            isOpen: isOpen,
+            isDone: isDone,
+            isStarted: isStarted,
+            dateCreated: dateCreated,
+            ownerID: ownerID,
+            currentVsRequired: currentVsRequired,
+            deadline: deadline,
+            projectStartDate: projectStartDate,
+            roles: roles,
+            technologies: technologies,
+            title: title,
+            communications: communications,
+            description: description,
+            teamMembers: teamMembers
+        };
+
+
+        await db.collection('Projects').updateOne(
+          { _id: new ObjectId(projectObj._id.toString()) },
+          {
+            $set: project
+          }
+        )
+        
+        return res.sendStatus(200);
+          
+      } catch (e) {
+          error = e.toString();
+          let ret = {error: error};
+          return res.status(500).json(ret);
+      }
+
+
     })
 }
