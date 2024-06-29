@@ -27,7 +27,7 @@ const TechnologiesField = ({ technologies, title, type }) => {
     if (mode === false) {
       return (
         <Fragment>
-          {technologies.map((value) => (
+          {res.technologies.map((value) => (
             <Bubble removable text={value} key={value} />
           ))}
         </Fragment>
@@ -35,7 +35,7 @@ const TechnologiesField = ({ technologies, title, type }) => {
     } else {
       return (
         <Fragment>
-          {technologies.map((value) => (
+          {res.technologies.map((value) => (
             <Bubble text={value} key={value} />
           ))}
         </Fragment>
@@ -51,7 +51,9 @@ const TechnologiesField = ({ technologies, title, type }) => {
           {mode ? <BiSolidEdit /> : <MdOutlineSaveAlt />}
         </button>
       </div>
-      <div>{mode ? null : <TechnologySearchField />}</div>
+      <div className="flex min-w-[100px]">
+        {mode ? null : <TechnologySearchField />}
+      </div>
       <div className="flex gap-2 pt-4 flex-wrap">{bubbleMode()}</div>
     </Fragment>
   );

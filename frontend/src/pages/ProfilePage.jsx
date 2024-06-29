@@ -82,7 +82,7 @@ const ProfilePage = () => {
           <BioProfileFields title="Bio" info={res.bio} type={true} />
         </div>
         {/*Technologies fields*/}
-        <div className="flex-col flex-auto p-2 rounded-2xl dark:bg-gray-700 bg-gray-200 w-full md:w-1/5 poppins text-xl md:w-grow ">
+        <div className="flex-col flex-auto p-2 rounded-2xl dark:bg-gray-700 bg-gray-200 w-full md:w-1/5 md:grow poppins text-xl">
           <TechnologiesField
             technologies={tech}
             title="Technologies"

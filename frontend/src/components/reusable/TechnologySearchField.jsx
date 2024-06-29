@@ -1,41 +1,61 @@
 import { Fragment, useState } from "react";
 import { getTechnology } from "../../utils/utility";
+import { MdAdd } from "react-icons/md";
+import Axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUserTechnology } from "../../pages/loaders/updateUser";
+import { updateTechnologies } from "../../store/slices/userSlice";
 
 const TechnologySearchField = () => {
-	const [techList, setTechList] = useState(getTechnology(""));
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
-	const renderedTechnologiesOptions = techList.map((value) => {
-		return (
-			<option key={value} value={value}>
-				{value}
-			</option>
-		);
-	});
+  const [techList, setTechList] = useState(getTechnology(""));
+  const [newTech, setNewTech] = useState("");
+  const [existingTech, setExistingTech] = useState(user.technologies);
 
-	return (
-		<Fragment>
-			<div className="flex">
-				<div className="flex gap-1">
-					<input
-						type="text"
-						className="flex focus:outline-none text-black poppins"
-						placeholder="Search"
-						onChange={(e) => {
-							setTechList(getTechnology(e.target.value));
-						}}
-					></input>
+  const renderedTechnologiesOptions = techList.map((value) => {
+    return (
+      <option key={value} value={value}>
+        {value}
+      </option>
+    );
+  });
 
-					<select
-						className="w-40 bg-gray-200 dark:bg-gray-800 rounded-md px-1 focus:outline-none
+  const addNewTechnology = () => {
+    console.log(existingTech);
+    let array = existingTech.concat(newTech);
+    dispatch(updateTechnologies(array));
+    updateUserTechnology(user.id, array);
+    console.log(array);
+  };
+  return (
+    <Fragment>
+      <div className="flex flex-auto min-w-[100px]">
+        <div className="flex min-w-[100px] gap-1">
+          <input
+            type="text"
+            className="flex min-w-[100px] focus:outline-none text-black poppins"
+            placeholder="Search"
+            onChange={(e) => {
+              setTechList(getTechnology(e.target.value));
+            }}
+          ></input>
+
+          <select
+            className="w-40 bg-gray-200 dark:bg-gray-800 rounded-md px-1 focus:outline-none
 						flex gap-2 items-center"
-					>
-						{renderedTechnologiesOptions}
-						<option value="test">test</option>
-					</select>
-				</div>
-			</div>
-		</Fragment>
-	);
+            onChange={(e) => setNewTech([e.target.value])}
+          >
+            {renderedTechnologiesOptions}
+          </select>
+          <button onClick={addNewTechnology}>
+            <MdAdd />
+          </button>
+        </div>
+      </div>
+    </Fragment>
+  );
 };
 
 export default TechnologySearchField;
