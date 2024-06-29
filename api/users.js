@@ -21,6 +21,17 @@ const cookieJwtAuth = (req, res, next) => {
     try {
         const payload = jwt.verify(token, process.env.SECRET_KEY);
         req.username = payload.username;
+        req.rememberMe = payload.rememberMe;
+        if (payload.rememberMe) {
+            token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
+        }
+        else {
+            token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
+        }
+        res.cookie("token", token, {
+            httpOnly: true,
+            path: '/'
+        });
         next();
     } catch (e) {
         res.clearCookie("token");
@@ -46,7 +57,7 @@ exports.setApp = function (app, client) {
         var rememberMe = req.body.rememberMe;
         var db;
 
-        if(rememberMe == null || rememberMe == undefined) rememberMe = false;
+        if (rememberMe == null || rememberMe == undefined) rememberMe = false;
 
         var resultsUsername;
         var resultsEmail;
@@ -75,8 +86,8 @@ exports.setApp = function (app, client) {
                 username = resultsUsername[0].username;
                 bio = resultsUsername[0].bio;
                 technologies = resultsUsername[0].technologies;
-                const payload = { username };
-                if(rememberMe) {
+                const payload = { username, rememberMe };
+                if (rememberMe) {
                     token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
                 }
                 else {
@@ -103,9 +114,9 @@ exports.setApp = function (app, client) {
                 username = resultsEmail[0].username;
                 bio = resultsEmail[0].bio;
                 technologies = resultsEmail[0].technologies;
-                const payload = { username };
+                const payload = { username, rememberMe };
                 var token;
-                if(rememberMe) {
+                if (rememberMe) {
                     token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
                 }
                 else {
@@ -135,12 +146,12 @@ exports.setApp = function (app, client) {
                 error = "User is not verified";
                 var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 res.status(401).json(ret);
-            }else{
+            } else {
                 error = "password is wrong";
                 var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 res.status(401).json(ret);
             }
-            
+
         } else if (resultsEmailUnverified.length > 0) { //Login matched an unverified user's email
             if (resultsEmailUnverified[0].password === password) { //Password matched
                 id = resultsEmailUnverified[0]._id;
@@ -154,7 +165,7 @@ exports.setApp = function (app, client) {
                 error = "User is not verified";
                 var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 res.status(401).json(ret);
-            }else{
+            } else {
                 error = "password is wrong";
                 var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
                 res.status(401).json(ret);
@@ -191,7 +202,7 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         }
 
-        
+
         if (resultsUsername.length == 0 && resultsEmail.length == 0 && resultsUsernameUnverified.length == 0 && resultsEmailUnverified.length == 0) {
             try {
                 const payload = { email };
@@ -244,8 +255,8 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         }
 
-        if(resultEmail != null || resultEmail != undefined) return res.status(404).json({ error: "User is already verified"});
-        else if(resultEmailUnverified != null | resultEmailUnverified != undefined){
+        if (resultEmail != null || resultEmail != undefined) return res.status(404).json({ error: "User is already verified" });
+        else if (resultEmailUnverified != null | resultEmailUnverified != undefined) {
             const emailToken = resultEmailUnverified.emailToken;
             transporter.sendMail({
                 to: email,
@@ -258,8 +269,8 @@ exports.setApp = function (app, client) {
                 var ret = { error: error };
                 return res.status(500).json(ret);
             });
-            return res.status(200).json({error: "" });
-        }else return res.status(404).json({ error: "User not found"});
+            return res.status(200).json({ error: "" });
+        } else return res.status(404).json({ error: "User not found" });
     });
 
     //verify email api
@@ -292,7 +303,7 @@ exports.setApp = function (app, client) {
             resultsEmailUnverified = await db.collection('UnverifiedUsers').find({ email: email }).toArray();
         } catch (e) {
             error = e.toString;
-            var ret = {error: error };
+            var ret = { error: error };
             return res.status(500).json(ret);
         }
 
@@ -313,14 +324,15 @@ exports.setApp = function (app, client) {
             const newUser = {
                 firstName: firstName, lastName: lastName, password: password, username: username, email: email, bio: bio, technologies: technologies
             };
-            try{
+            try {
                 insertResult = await db.collection('Users').insertOne(newUser);
-                deleteResult = await db.collection('UnverifiedUsers').deleteOne({_id: _id});
-                return res.status(200).json({error:""});
+                deleteResult = await db.collection('UnverifiedUsers').deleteOne({ _id: _id });
+                return res.status(200).json({ error: "" });
                 // return res.redirect('/');
-            }catch(e){a
+            } catch (e) {
+                a
                 error = e.toString;
-                var ret = {error: error };
+                var ret = { error: error };
                 return res.status(500).json(ret);
             }
         } else { //emailToken did not match any user
@@ -340,7 +352,7 @@ exports.setApp = function (app, client) {
         var bio = '';
         var technologies = [];
         var error = '';
-        
+
         var db;
         var result;
 
@@ -355,7 +367,7 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         }
 
-        if(result.length > 0){
+        if (result.length > 0) {
             firstName = result[0].firstName;
             lastName = result[0].lastName;
             confirmation = result[0].confirmation;
@@ -365,7 +377,7 @@ exports.setApp = function (app, client) {
             technologies = result[0].technologies;
             var ret = { firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
             return res.status(200).json(ret);
-        }else{
+        } else {
             error = 'user not found'
             var ret = { error: error };
             return res.status(404).json(ret);
@@ -383,28 +395,28 @@ exports.setApp = function (app, client) {
         var technologies = req.body.technologies;
 
 
-        if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
+        if (userId.length != 24) return res.status(400).json({ error: "userId must be 24 characters" });
         const nid = new ObjectId(userId);
 
         var db;
         var resultFind;
 
-        try{
+        try {
             db = client.db('DevFusion');
-            resultFind = await db.collection('Users').findOne({_id: nid});
+            resultFind = await db.collection('Users').findOne({ _id: nid });
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
             return res.status(500).json(ret);
         }
 
-        if(resultFind == null || resultFind == undefined) return res.status(404).json({error: "user with the userId does not exist"});
-        if(req.username != resultFind.username) return res.status(403).json({error: "signed in user does not have access to the given user"});
-        
-        if(firstName == undefined || firstName == null) firstName = resultFind.firstName;
-        if(lastName == undefined || lastName == null) lastName = resultFind.lastName;
-        if(bio == undefined || bio == null) bio = resultFind.bio;
-        if(technologies == undefined || technologies == null) technologies = resultFind.technologies;
+        if (resultFind == null || resultFind == undefined) return res.status(404).json({ error: "user with the userId does not exist" });
+        if (req.username != resultFind.username) return res.status(403).json({ error: "signed in user does not have access to the given user" });
+
+        if (firstName == undefined || firstName == null) firstName = resultFind.firstName;
+        if (lastName == undefined || lastName == null) lastName = resultFind.lastName;
+        if (bio == undefined || bio == null) bio = resultFind.bio;
+        if (technologies == undefined || technologies == null) technologies = resultFind.technologies;
 
         var resultPut;
         var query = { _id: nid };
@@ -413,7 +425,7 @@ exports.setApp = function (app, client) {
         try {
             db = client.db('DevFusion');
             resultPut = await db.collection('Users').updateOne(query, newValues);
-            return res.status(200).json({error:error});
+            return res.status(200).json({ error: error });
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
@@ -443,15 +455,15 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         }
 
-        if(resultUnverified != null || resultUnverified != undefined) return res.status(403).json({ error: "User is not verified"});
-        if(result == null || result == undefined) return res.status(404).json({ error: "User not found"});
+        if (resultUnverified != null || resultUnverified != undefined) return res.status(403).json({ error: "User is not verified" });
+        if (result == null || result == undefined) return res.status(404).json({ error: "User not found" });
 
         const userId = result._id;
         const oldPassword = result.password;
         const combinedKey = process.env.EMAIL_SECRET + oldPassword;
         var payload = {};
         var token = jwt.sign(payload, combinedKey, { expiresIn: "1d" });
-        
+
 
         transporter.sendMail({
             to: email,
@@ -465,7 +477,7 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         });
 
-        return res.status(200).json({ error:"" });
+        return res.status(200).json({ error: "" });
 
     });
 
@@ -490,18 +502,18 @@ exports.setApp = function (app, client) {
             res.clearCookie("userIdToken");
             return res.status(403).json({ error: "Token is not valid" });
         }
-        
+
         const nid = new ObjectId(userId);
         var resultFind;
-        try{
-            resultFind = await db.collection('Users').findOne({_id: nid});
+        try {
+            resultFind = await db.collection('Users').findOne({ _id: nid });
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
             return res.status(500).json(ret);
         }
 
-        if(resultFind == null || resultFind == undefined) return res.status(404).json({error: "User not found"});
+        if (resultFind == null || resultFind == undefined) return res.status(404).json({ error: "User not found" });
 
         var resultPut;
         var query = { _id: nid };
@@ -509,7 +521,7 @@ exports.setApp = function (app, client) {
 
         try {
             resultPut = await db.collection('Users').updateOne(query, newValues);
-            return res.status(200).json({error:""});
+            return res.status(200).json({ error: "" });
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
@@ -522,7 +534,7 @@ exports.setApp = function (app, client) {
     app.get('/api/forgot_password/email/:userId/:token', async (req, res, next) => {
         const combinedToken = req.params.token;
         const userId = req.params.userId;
-        if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
+        if (userId.length != 24) return res.status(400).json({ error: "userId must be 24 characters" });
         const nid = new ObjectId(userId);
         var db;
         var result;
@@ -535,11 +547,11 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         }
 
-        if(result == null || result == undefined) return res.status(404).json({ error: "User not found"} );
+        if (result == null || result == undefined) return res.status(404).json({ error: "User not found" });
 
         const oldPassword = result.password;
         const combinedKey = process.env.EMAIL_SECRET + oldPassword;
-        
+
         try {
             var payloadVerify = jwt.verify(combinedToken, combinedKey);
         } catch (e) {
@@ -552,12 +564,12 @@ exports.setApp = function (app, client) {
             httpOnly: true
         });
 
-        return res.status(200).json({error:""});
+        return res.status(200).json({ error: "" });
         // return res.redirect('/');
 
 
     });
-    
+
     //api to test jwt authentication
     app.post('/api/jwtTest', cookieJwtAuth, async (req, res, next) => {
         var id = -1;

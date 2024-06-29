@@ -10,17 +10,28 @@ const cookieJwtAuth = (req, res, next) => {
     try {
         const payload = jwt.verify(token, process.env.SECRET_KEY);
         req.username = payload.username;
+        req.rememberMe = payload.rememberMe;
+        if (payload.rememberMe) {
+            token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
+        }
+        else {
+            token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
+        }
+        res.cookie("token", token, {
+            httpOnly: true,
+            path: '/'
+        });
         next();
     } catch (e) {
         res.clearCookie("token");
-        return res.status(403).json({error: "token is not valid"});
+        return res.status(403).json({ error: "token is not valid" });
     }
 }
 
 exports.setApp = function (app, client) {
 
     //api for getting all members who applied
-    app.get('/api/inbox', async (req, res, next) => {
+    app.get('/api/inbox', cookieJwtAuth, async (req, res, next) => {
         const projectId = req.body.projectId || "";
         if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
         const nid = new ObjectId(projectId);
@@ -53,7 +64,7 @@ exports.setApp = function (app, client) {
     });
 
     //api for creating new application
-    app.post('/api/inbox/apply', async (req, res, next) => {
+    app.post('/api/inbox/apply', cookieJwtAuth, async (req, res, next) => {
         const projectId = req.body.projectId || "";
         const userId = req.body.userId || "";
         const role = req.body.role || "";
@@ -87,7 +98,7 @@ exports.setApp = function (app, client) {
     });
 
     //api for accepting an application
-    app.post('/api/inbox/accept_member', async (req, res, next) => {
+    app.post('/api/inbox/accept_member', cookieJwtAuth, async (req, res, next) => {
         const projectId = req.body.projectId || "";
         const userId = req.body.userId || "";
         const role = req.body.role || "";
@@ -135,7 +146,7 @@ exports.setApp = function (app, client) {
     });
 
     //api for rejecting an application
-    app.post('/api/inbox/reject_member', async (req, res, next) => {
+    app.post('/api/inbox/reject_member', cookieJwtAuth, async (req, res, next) => {
         const projectId = req.body.projectId || "";
         const userId = req.body.userId || "";
         const role = req.body.role || "";
