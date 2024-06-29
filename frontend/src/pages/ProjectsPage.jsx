@@ -66,9 +66,9 @@ const ProjectsPage = () => {
 	);
 
 	let renderedProjectTiles;
-	if (location.pathname === "/projects/my-projects") {
+	if (location.pathname === "/my-projects") {
 		renderedProjectTiles = renderedOwnedProjectTiles;
-	} else if (location.pathname === "/projects/joined-projects") {
+	} else if (location.pathname === "/joined-projects") {
 		renderedProjectTiles = renderedJoinedProjectTiles;
 	}
 

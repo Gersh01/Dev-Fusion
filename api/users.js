@@ -41,7 +41,9 @@ exports.setApp = function (app, client) {
         var bio = '';
         var technologies = [];
         var error = '';
-        const { login, password, rememberMe } = req.body;
+        var login = req.body.login;
+        var password = req.body.password;
+        var rememberMe = req.body.rememberMe;
         var db;
 
         if(rememberMe == null || rememberMe == undefined) rememberMe = false;
@@ -74,7 +76,12 @@ exports.setApp = function (app, client) {
                 bio = resultsUsername[0].bio;
                 technologies = resultsUsername[0].technologies;
                 const payload = { username };
-                var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
+                if(rememberMe) {
+                    token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
+                }
+                else {
+                    token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
+                }
                 res.cookie("token", token, {
                     httpOnly: true,
                     path: '/'
@@ -98,8 +105,12 @@ exports.setApp = function (app, client) {
                 technologies = resultsEmail[0].technologies;
                 const payload = { username };
                 var token;
-                if(rememberMe) token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
-                else token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1d" });
+                if(rememberMe) {
+                    token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
+                }
+                else {
+                    token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
+                }
                 res.cookie("token", token, {
                     httpOnly: true,
                     path: '/'

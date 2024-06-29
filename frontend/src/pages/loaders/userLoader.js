@@ -2,7 +2,6 @@ import axios from "axios";
 
 const getUserFromJwt = async () => {
 	let auth = null;
-	// axios.defaults.withCredentials = true;
 
 	try {
 		const response = await axios.post(
@@ -15,7 +14,9 @@ const getUserFromJwt = async () => {
 			return auth;
 		}
 	} catch (err) {
-		console.log(`Error: ${err.message}`);
+		console.log(
+			`An error occurred while getting user from JWT: ${err.message}`
+		);
 		return null;
 	}
 	return auth;

@@ -2,7 +2,6 @@ import AuthPage from "./pages/AuthPage";
 import DisocverPage from "./pages/DiscoverPage";
 import {
   Route,
-  Navigate,
   createRoutesFromElements,
   createBrowserRouter,
   RouterProvider,
@@ -16,13 +15,18 @@ import SignUpPage from "./pages/SignUpPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
 import ResetPasswordEmailPage from "./pages/ResetPasswordEmailPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import LogoutPage from "./pages/LogoutPage";
-import { getUserFromJwt } from "./pages/loaders/userLoader";
+import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+import { getProjects } from "./pages/loaders/projectLoader";
+import ViewProjectPage from "./pages/ViewProjectPage";
+import AboutUsPage from "./pages/AboutUsPage";
+import { getUserFromJwt } from "./pages/loaders/userLoader";
+import { Navigate } from "react-router-dom";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
+      {/* AUTH ROUTES */}
       <Route>
         <Route
           path="/"
@@ -34,7 +38,6 @@ const router = createBrowserRouter(
           <Route path="/" element={<LanderPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
-
           <Route
             path="/email-verification"
             element={<EmailVerificationPage />}
@@ -46,7 +49,7 @@ const router = createBrowserRouter(
           <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Route>
       </Route>
-      {/* <Route element={<PrivateRoutes />}> */}
+      {/* CONTENT ROUTES */}
       <Route
         path="/"
         element={<ContentPageContainer />}
@@ -54,18 +57,20 @@ const router = createBrowserRouter(
           return getUserFromJwt();
         }}
       >
-        <Route path="/discover" element={<DisocverPage />} />
         <Route
-          path="/projects"
-          // * Redirect to /projects/my-project upon visit
-          element={<Navigate to="/projects/my-projects" />}
+          path="/discover"
+          element={<DisocverPage />}
+          loader={() => {
+            return getProjects();
+          }}
         />
-        <Route path="/projects/my-projects" element={<ProjectsPage />} />
-        <Route path="/projects/joined-projects" element={<ProjectsPage />} />
+        <Route path="/my-projects" element={<ProjectsPage />} />
+        <Route path="/joined-projects" element={<ProjectsPage />} />
+        <Route path="/projects/:id" element={<ViewProjectPage />} />
         <Route path="/my-profile" element={<ProfilePage />} />
-        <Route path="/logout" element={<LogoutPage />} />
+        <Route path="/user-settings" element={<SettingsPage />} />
+        <Route path="about" element={<AboutUsPage />} />
       </Route>
-      {/* </Route> */}
     </Route>
   )
 );
