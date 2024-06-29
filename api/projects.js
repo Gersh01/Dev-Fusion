@@ -294,6 +294,10 @@ exports.setApp = function (app, client) {
         if (id.length != 24) return res.status(400).json({error: "projectId must be 24 characters"})
   
         let project = await db.collection("Projects").findOne({ _id: new ObjectId(id) })
+
+        if (project == null) {
+          return res.status(404).json({"error": "Project ID does not exist"})
+        }
   
         return res.status(200).json(project)
 
@@ -305,14 +309,17 @@ exports.setApp = function (app, client) {
     })
     
     // create a project
-    app.post('/api/project', async (req, res, next) => {
+    app.post('/api/project', cookieJwtAuth, async (req, res, next) => {
 
+        let user = db.colleciton("Users").findOne( {username: req.username})
 
         let isOpen = Boolean(req.body.isOpen);
         let isDone = Boolean(req.body.isDone);
         let isStarted = Boolean(req.body.isStarted);
         let dateCreated = new Date(req.body.dateCreated);
-        let ownerID = new ObjectId(req.body.ownerID);
+
+        let ownerID = user._id
+
         let currentVsRequired = req.body.currentVsRequired;
         let deadline = new Date(req.body.deadline);
         let projectStartDate = new Date(req.body.projectStartDate);
@@ -448,12 +455,16 @@ exports.setApp = function (app, client) {
     })
 
 
-    app.post('/api/edit-project', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/edit-project', async (req, res, next) => {
 
       try {
+        console.log(req)
+        let username = req.cookies.username;
+        console.log("username: ", username)
+
         db = client.db("DevFusion");
 
-        const user = await db.collection("Users").findOne({ username: req.username })
+        const user = await db.collection("Users").findOne({ username: username })
         // const user = await db.collection("Users").findOne({ username: req.body.username })
         const projectObj = await db.collection("Projects").findOne({ _id: new ObjectId(req.body.projectId) })
 
@@ -480,12 +491,7 @@ exports.setApp = function (app, client) {
         let roles = req.body.roles;
         let technologies = req.body.technologies;
         let title = req.body.title;
-
-
-        var description = req.body.description;
-        var communications = req.body.communications;
-        
-        let teamMembers = req.body.teamMembers;
+        let description = req.body.description;
 
 
         project = {
@@ -500,9 +506,7 @@ exports.setApp = function (app, client) {
             roles: roles,
             technologies: technologies,
             title: title,
-            communications: communications,
-            description: description,
-            teamMembers: teamMembers
+            description: description
         };
 
 
