@@ -455,11 +455,11 @@ exports.setApp = function (app, client) {
     })
 
 
-    app.post('/api/edit-project', async (req, res, next) => {
+    app.post('/api/edit-project', cookieJwtAuth, async (req, res, next) => {
 
       try {
         console.log(req)
-        let username = req.cookies.username;
+        let username = req.username;
         console.log("username: ", username)
 
         db = client.db("DevFusion");
@@ -484,7 +484,7 @@ exports.setApp = function (app, client) {
         let isDone = Boolean(req.body.isDone);
         let isStarted = Boolean(req.body.isStarted);
         let dateCreated = new Date(req.body.dateCreated);
-        let ownerID = new ObjectId(req.body.ownerID);
+        let ownerID = user._id;
         let currentVsRequired = req.body.currentVsRequired;
         let deadline = new Date(req.body.deadline);
         let projectStartDate = new Date(req.body.projectStartDate);
