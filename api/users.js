@@ -360,6 +360,7 @@ exports.setApp = function (app, client) {
         var db;
         var result;
 
+        if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
         const nid = new ObjectId(userId);
 
         try {
@@ -507,6 +508,7 @@ exports.setApp = function (app, client) {
             return res.status(403).json({ error: "Token is not valid" });
         }
 
+        if (userId.length != 24) return res.status(400).json({ error: "userId must be 24 characters" });
         const nid = new ObjectId(userId);
         var resultFind;
         try {
