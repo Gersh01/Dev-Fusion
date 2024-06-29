@@ -2,52 +2,37 @@ import { useLoaderData } from "react-router-dom";
 import DiscoverProjectTile from "../components/discover/DiscoverProjectTile";
 import Divider from "../components/reusable/Divider";
 import SearchField from "../components/reusable/SearchField";
-import { Fragment, useEffect } from "react";
+import { Fragment, useState } from "react";
+import { getProjects } from "./loaders/projectLoader";
+import SortBySelector from "../components/reusable/SortBySelector";
 
 const DisocverPage = () => {
-	const projects = useLoaderData();
+	const [searchBy, setSearchBy] = useState("title");
+	const [sortBy, setSortBy] = useState("relevance");
+	const [query, setQuery] = useState("");
 
-	useEffect(() => {
-		console.log(projects);
-	}, [projects]);
+	const [projects, setProjects] = useState(useLoaderData());
 
-	// TODO - Mock Project (To be removed)
-	const mockProject = {
-		title: "Gym Fitness Tracker",
-		description:
-			"Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia vel atque aspernatur saepe praesentium minus, a distinctio dolor voluptates delectus?",
-		technologies: [
-			"React",
-			"Express",
-			"MongoDB",
-			"NodeJs",
-			"Passport",
-			"NodeMailer",
-			"JavaScript",
-			"React Redux",
-			"Flutter",
-		],
-		startDate: new Date("2024-7-12"),
-		endDate: new Date("2024-8-11"),
+	if (!projects) {
+		return null;
+	}
+
+	const renderedProjectTiles = projects.map((project) => {
+		return <DiscoverProjectTile key={project._id} project={project} />;
+	});
+
+	const onSearch = async () => {
+		setProjects(
+			await getProjects({
+				searchBy: searchBy,
+				sortBy: sortBy,
+				query: query,
+				count: 12,
+				initial: true,
+				projectId: "000000000000000000000000",
+			})
+		);
 	};
-
-	// TODO - Mock Project (To be removed)
-	const renderedProjectTiles = (
-		<Fragment>
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-			<DiscoverProjectTile project={mockProject} />
-		</Fragment>
-	);
 
 	return (
 		<Fragment>
@@ -56,7 +41,16 @@ const DisocverPage = () => {
 					text-black dark:text-white poppins text-4xl font-bold gap-x-6"
 			>
 				<p>Discover</p>
-				<SearchField />
+				<SearchField
+					searchBy={searchBy}
+					setSearchBy={setSearchBy}
+					query={query}
+					setQuery={setQuery}
+					onSearch={onSearch}
+				/>
+			</div>
+			<div className="self-end">
+				<SortBySelector sortBy={sortBy} setSortBy={setSortBy} />
 			</div>
 			<Divider />
 			<div className="grid md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">

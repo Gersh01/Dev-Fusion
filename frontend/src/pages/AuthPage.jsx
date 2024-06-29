@@ -1,15 +1,11 @@
-import { useEffect } from "react";
-import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useLoaderData } from "react-router-dom";
 
 const AuthPage = () => {
 	const user = useLoaderData();
-	const navigate = useNavigate();
 
-	useEffect(() => {
-		if (user !== null) {
-			navigate("/discover");
-		}
-	}, [user, navigate]);
+	if (user !== null) {
+		return <Navigate to="/discover" />;
+	}
 
 	return (
 		<div

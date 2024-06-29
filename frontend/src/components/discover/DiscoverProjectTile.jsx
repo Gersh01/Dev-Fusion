@@ -13,7 +13,12 @@ const DiscoverProjectTile = ({ project }) => {
 	// TODO - Calculate number of people still needed
 	const numPositionsNeeded = 2;
 	const numDaysTilStart = Math.floor(
-		(project.startDate - new Date()) / 1000 / 60 / 60 / 24 + 1
+		(new Date(project.projectStartDate) - new Date()) /
+			1000 /
+			60 /
+			60 /
+			24 +
+			1
 	);
 
 	const renderedTechnologyBubbles = technologies.map((technology) => {
@@ -23,8 +28,8 @@ const DiscoverProjectTile = ({ project }) => {
 	const topContent = (
 		<Fragment>
 			{/* ROW 1 */}
-			<div className="flex justify-between items-center flex-wrap">
-				<p className="text-xl sm:text-2xl league-spartan font-semibold text-white">
+			<div className="flex justify-between items-center gap-4">
+				<p className="text-xl sm:text-2xl league-spartan font-semibold text-white truncate">
 					{title}
 				</p>
 				<div className="bg-gray-200 dark:bg-gray-700 py-0.5 px-1.5 rounded-lg poppins truncate font-medium">
@@ -56,7 +61,7 @@ const DiscoverProjectTile = ({ project }) => {
 	const bottomContent = (
 		<Fragment>
 			{/* ROW 1 */}
-			<div className="max-h-28 flex flex-col gap-2">
+			<div className="h-28 flex flex-col gap-2">
 				<p className="poppins text-xl font-semibold">Description</p>
 				<p className="grow crimson-pro text-lg overflow-hidden leading-6">
 					{description}
