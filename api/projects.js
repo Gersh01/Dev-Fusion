@@ -354,7 +354,7 @@ exports.setApp = function (app, client) {
     })
 
     //edit roles or/and teamMembers API
-    app.put('/api/project/roles_and_members', async (req, res, next) => {
+    app.put('/api/project/roles_and_members', cookieJwtAuth, async (req, res, next) => {
       var projectId = req.body.projectId;
       var communication = req.body.communication;
       var teamMembers = req.body.teamMembers;
