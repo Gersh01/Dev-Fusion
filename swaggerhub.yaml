@@ -146,7 +146,7 @@ paths:
           description: Successful
         500:
           description: Server Error
-  
+
   /api/edit-project:
     post:
       tags:
@@ -358,7 +358,7 @@ definitions:
         type: array
         example: ["GoldenL: API", "AlperenY: APII", "JamesS: Frontend"]
   
-  createProject:
+  editProject:
     type: object
     required:
     - projectId
