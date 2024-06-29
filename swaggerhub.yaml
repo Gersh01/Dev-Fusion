@@ -144,6 +144,32 @@ paths:
       responses:
         200:
           description: Successful
+        400:
+          description: project Id must be 24 characters
+        500:
+          description: Server Error
+
+    delete:
+      tags:
+        -Project
+      summary: Deletes a Project
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: get a project
+        schema:
+          type: string
+        required: true
+        description: The ID of the project to delete
+      responses:
+        200:
+          description: Successful
+        400:
+          description: User not owner
         500:
           description: Server Error
 
@@ -165,6 +191,8 @@ paths:
       responses:
         200:
           description: Successful
+        400:
+          description: User is not Owner
         500:
           description: Server Error
   
@@ -186,6 +214,8 @@ paths:
     responses:
       200:
         description: Successful
+      400:
+        description: project id is not 24 characters
       500:
         description: Server Error
   
@@ -207,6 +237,8 @@ paths:
     responses:
       200:
         description: Successful
+      400:
+        description: project id is not 24 characters
       500:
         description: Server Error
   
@@ -228,6 +260,31 @@ paths:
     responses:
       200:
         description: Successful
+      400:
+        description: project id is not 24 characters
+      500:
+        description: Server Error
+
+  /api/leave/project:
+    post:
+      tags:
+      - Project
+    summary: Leaves a Project
+    consumes:
+    - application/json
+    produces:
+    - application/json
+    parameters:
+    - in: body
+      name: leaveProject
+      description: leaveProject
+      schema:
+        $ref: '#/definitions/leaveProjects'
+    responses:
+      200:
+        description: Successful
+      400:
+        description: user is not apart of the project
       500:
         description: Server Error
 
@@ -506,9 +563,17 @@ definitions:
       projectId:
         type: string
         example: "667147e07d5f8d94a8a374c2"
+  
+  leaveProject:
+    type: object
+    required:
+    - projectId
+    properties:
+      projectId:
+        type: string
+        example: "667147e07d5f8d94a8a374c2"
 
       
-
 host: dev-fusion-3adc28f56db6.herokuapp.com
 basePath: /api
 schemes:

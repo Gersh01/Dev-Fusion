@@ -520,6 +520,91 @@ exports.setApp = function (app, client) {
           let ret = {error: error};
           return res.status(500).json(ret);
       }
+    })
+
+    app.delete('/api/project/:projectId', cookieJwtAuth, async (req, res, next) => {
+
+      try {
+  
+        let db = client.db("DevFusion")
+  
+  
+        let user = await db.collection("Users").findOne({ username: req.username })
+  
+        // console.log(user)
+  
+        let project = await db.collection("Projects").findOne({ _id: new ObjectId(req.params.projectId) })
+  
+        // console.log(user._id, project.ownerID)
+        // console.log("project: ", project)
+        if (user._id.toString() !== project.ownerID.toString()) {
+          return res.status(400).json({"error": "This user cannot delete the project since the user is not the owner"})
+        }
+  
+        db.collection("Projects").deleteOne({_id: project._id })
+  
+  
+  
+        return res.sendStatus(200);
+
+      } catch(e) {
+        
+        return res.status(500).json(e)
+      }
+    })
+
+    app.post('/api/leave/project', cookieJwtAuth, async (req, res, next) => {
+
+
+      try {
+
+        let db = client.db("DevFusion")
+  
+        let username = req.username
+  
+        let project = await db.collection("Projects").findOne({ _id: new ObjectId(req.body.projectId) })
+  
+        // console.log("LOOKING AT PROJECT: ", project)
+  
+        let teamMembers = project.teamMembers
+        // console.log(teamMembers)
+  
+        let newTeamMembers = null;
+  
+        for (let i = 0; i < teamMembers.length; i++) {
+          
+          
+          let role = teamMembers[i]
+  
+          if (role.startsWith(`${username}:`)) {
+  
+            newTeamMembers = teamMembers.slice(0, i).concat(teamMembers.slice(i+1, teamMembers.length + 1))
+            break
+  
+          }
+        }
+  
+        // console.log(newTeamMembers)
+  
+        if (newTeamMembers == null) {
+          return res.status(400).json({"error": "can not leave project since member was not found in the project"})
+        }
+  
+        await db.collection('Projects').updateOne(
+          { _id: project._id },
+          {
+            $set: {
+              "teamMembers": newTeamMembers
+            }
+          }
+        )
+  
+  
+        return res.sendStatus(200)
+
+      } catch (e) {
+        return res.status(500).json(e)
+      }
 
 
     })
