@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const getUserFromJwt = async () => {
+const validateJwt = async () => {
 	let auth = null;
 
 	try {
@@ -22,4 +22,14 @@ const getUserFromJwt = async () => {
 	return auth;
 };
 
-export { getUserFromJwt };
+const getUserFromJwt = async () => {
+	const response = await axios.post(
+		"http://localhost:5000/api/jwtTest",
+		null,
+		{ withCredentials: true }
+	);
+
+	return response.data;
+};
+
+export { validateJwt, getUserFromJwt };

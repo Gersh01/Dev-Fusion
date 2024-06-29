@@ -1,32 +1,16 @@
 import axios from "axios";
 
-const getProjects = async () => {
-	let auth = null;
+const getProjects = async (queryConfig) => {
+	console.log("Debug: FETCHING PROJECTS");
 
-	try {
-		const response = await axios.post(
-			"http://localhost:5000/api/discover",
-			{
-				searchBy: "title",
-				sortBy: "relevance",
-				query: "",
-				count: 12,
-				initial: true,
-				projectId: "000000000000000000000000",
-			},
-			{ withCredentials: true }
-		);
-		if (response) {
-			auth = response.data;
-			return auth;
-		}
-	} catch (err) {
-		console.log(
-			`An error occurred while fetching all projects: ${err.message}`
-		);
-		return null;
-	}
-	return auth;
+	const response = await axios.post(
+		"http://localhost:5000/api/discover",
+
+		queryConfig,
+		{ withCredentials: true }
+	);
+
+	return response.data;
 };
 
 export { getProjects };

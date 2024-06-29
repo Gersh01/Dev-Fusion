@@ -36,8 +36,8 @@ const JoinedProjectTile = ({ project }) => {
 	const topContent = (
 		<Fragment>
 			{/* ROW 1 */}
-			<div className="flex justify-between items-center flex-wrap">
-				<p className="text-xl sm:text-2xl league-spartan font-semibold text-white">
+			<div className="flex justify-between items-center">
+				<p className="text-xl sm:text-2xl league-spartan font-semibold text-white truncate text-nowrap">
 					{title}
 				</p>
 			</div>
