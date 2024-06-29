@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import logo from "../assets/DFLogoFinal.png";
 import Bubble from "../components/reusable/Bubble";
 import DiscoverProjectTile from "../components/discover/DiscoverProjectTile";
+import ProfileFields from "../components/reusable/ProfileFields";
 
 const ProfilePage = () => {
   let res = useSelector((state) => state.user);
@@ -56,7 +57,7 @@ const ProfilePage = () => {
       <DiscoverProjectTile project={mockProject} />
     </Fragment>
   );
-
+  console.log(res.bio);
   return (
     <Fragment>
       <div
@@ -74,11 +75,9 @@ const ProfilePage = () => {
       </div>
       {/* Making this into their own componenets */}
       <div className="flex flex-wrap gap-8 py-4">
-        <div className="flex-col w-full p-2 rounded-2xl dark:bg-gray-700 bg-gray-200 md:w-3/5 text-xl poppins">
-          <span className="text-2xl font-semibold">Bio</span>
-          <div className="flex pt-3">{res.bio}</div>
+        <div className="flex-col flex-auto w-full p-2 rounded-2xl dark:bg-gray-700 bg-gray-200 md:w-3/5 text-xl poppins">
+          <ProfileFields title="Bio" info={res.bio} type={true} />
         </div>
-
         <div className="flex-col flex-auto p-2 rounded-2xl dark:bg-gray-700 bg-gray-200 w-full md:w-1/5 md:w-grow ">
           <p className="text-2xl pb-4 font-semibold poppins">Technologies</p>
           <div className="flex gap-2 flex-wrap">
