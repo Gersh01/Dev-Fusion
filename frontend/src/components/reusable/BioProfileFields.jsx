@@ -4,11 +4,10 @@ import { MdOutlineSaveAlt } from "react-icons/md";
 import { BiSolidEdit } from "react-icons/bi";
 import { updateUser } from "../../pages/loaders/updateUser";
 import { useSelector } from "react-redux";
-import getUserFromJwt from "../../store/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { updateBio } from "../../store/slices/userSlice";
 
-const ProfileFields = ({ type, title, info }) => {
+const BioProfileFields = ({ type, title, info }) => {
   let res = useSelector((state) => state.user);
   const [mode, setMode] = useState(type);
   const [newInfo, setNewInfo] = useState(info);
@@ -25,13 +24,13 @@ const ProfileFields = ({ type, title, info }) => {
   return (
     <Fragment>
       <div className="flex justify-between">
-        <span className="text-2xl font-semibold">{title}</span>
+        <span className="text-2xl font-semibold ">{title}</span>
         <button onClick={switchMode}>
           {mode ? <BiSolidEdit /> : <MdOutlineSaveAlt />}
         </button>
       </div>
       <textarea
-        className="flex w-full pt-3 h-full max-h-[250px] min-h-[250px] bg-transparent hover:outline-none"
+        className="flex w-full pt-3 h-full max-h-[250px] min-h-[250px] bg-transparent "
         role="textbox"
         disabled={mode}
         onChange={(e) => setNewInfo(e.target.value)}
@@ -41,4 +40,4 @@ const ProfileFields = ({ type, title, info }) => {
   );
 };
 
-export default ProfileFields;
+export default BioProfileFields;
