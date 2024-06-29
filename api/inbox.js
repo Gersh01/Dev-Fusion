@@ -128,7 +128,11 @@ exports.setApp = function (app, client) {
             }
             resultFind = await db.collection('Projects').findOne({ _id: projectNid });
             if(resultFind != null || resultFind != undefined){
-                if(resultFind.roles.includes(role)){
+                var roleFound = false;
+                resultFind.roles.forEach((x, i) => {
+                    if(x.role == role) roleFound = true;
+                });
+                if(roleFound){
                     resultFind.teamMembers.forEach((x, i) => {
                         if(x.includes(resultFindUser.username)) return res.status(401).json({error: "User already has a role"});
                     });

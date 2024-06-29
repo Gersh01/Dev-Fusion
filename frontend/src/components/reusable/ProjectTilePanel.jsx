@@ -1,8 +1,13 @@
-const ProjectTilePanel = ({ topContent, bottomContent }) => {
+import { useNavigate } from "react-router-dom";
+
+const ProjectTilePanel = ({ topContent, bottomContent, projectId }) => {
+	const navigate = useNavigate();
+
 	return (
 		<div
 			className="flex flex-col text-black dark:text-white cursor-pointer 
 			drop-shadow"
+			onClick={() => navigate(`/projects/${projectId}`)}
 		>
 			{/* TOP */}
 			<div className="bg-gray-200 dark:bg-gray-700 rounded-t-2xl">

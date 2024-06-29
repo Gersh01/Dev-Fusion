@@ -5,7 +5,6 @@ import {
 	createRoutesFromElements,
 	createBrowserRouter,
 	RouterProvider,
-	Navigate,
 } from "react-router-dom";
 import ContentPageContainer from "./pages/ContentPageContainer";
 import ProjectsPage from "./pages/ProjectsPage";
@@ -18,10 +17,11 @@ import ResetPasswordEmailPage from "./pages/ResetPasswordEmailPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
-import { getProjects } from "./pages/loaders/projectLoader";
+import { getProjectById, getProjects } from "./pages/loaders/projectLoader";
 import ViewProjectPage from "./pages/ViewProjectPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import { getUserFromJwt, validateJwt } from "./pages/loaders/userLoader";
+import ContentErrorPage from "./pages/ContentErrorPage";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -54,7 +54,7 @@ const router = createBrowserRouter(
 				loader={() => {
 					return getUserFromJwt();
 				}}
-				errorElement={<Navigate to="/" />}
+				errorElement={<ContentErrorPage />}
 			>
 				<Route
 					path="/discover"
@@ -64,7 +64,7 @@ const router = createBrowserRouter(
 							searchBy: "title",
 							sortBy: "relevance",
 							query: "",
-							count: 12,
+							count: 4,
 							initial: true,
 							projectId: "000000000000000000000000",
 						});
@@ -72,7 +72,13 @@ const router = createBrowserRouter(
 				/>
 				<Route path="/my-projects" element={<ProjectsPage />} />
 				<Route path="/joined-projects" element={<ProjectsPage />} />
-				<Route path="/projects/:id" element={<ViewProjectPage />} />
+				<Route
+					path="/projects/:id"
+					element={<ViewProjectPage />}
+					loader={({ params }) => {
+						return getProjectById(params.id);
+					}}
+				/>
 				<Route path="/my-profile" element={<ProfilePage />} />
 				<Route path="/user-settings" element={<SettingsPage />} />
 				<Route path="about" element={<AboutUsPage />} />
@@ -85,7 +91,9 @@ function App() {
 	const displayMode = useSelector((state) => state.system.displayMode);
 
 	return (
-		<div className={`${displayMode} text-black dark:text-white`}>
+		<div
+			className={`${displayMode} text-black dark:text-white overflow-hidden`}
+		>
 			<RouterProvider router={router} />
 		</div>
 	);

@@ -58,7 +58,7 @@ const JoinedProjectTile = ({ project }) => {
 	const bottomContent = (
 		<Fragment>
 			{/* ROW 1 */}
-			<div className="max-h-28 flex flex-col gap-2">
+			<div className="h-28 flex flex-col gap-2">
 				<p className="poppins text-xl font-semibold">Your Role</p>
 				<div className="flex flex-wrap gap-2">
 					<Bubble text="Frontend" />
@@ -66,7 +66,7 @@ const JoinedProjectTile = ({ project }) => {
 			</div>
 			<Divider />
 			{/* ROW 2 */}
-			<div className="max-h-28 flex flex-col gap-2">
+			<div className="h-28 flex flex-col gap-2">
 				<p className="poppins text-xl font-semibold">Description</p>
 				<p className="grow crimson-pro text-lg overflow-hidden leading-6">
 					{description}

@@ -2,14 +2,15 @@ import { getBubbleColor } from "../../utils/utility";
 
 // * text: string -> determines the color of the bubble
 // * children: <> -> Anything after the text
-const ContentBubble = ({ text, children }) => {
-	const bubbleColor = getBubbleColor(text);
+// * colorless: boolean -> bubble will have a gray color
+const ContentBubble = ({ text, children, colorless }) => {
+	const bubbleColor = colorless ? "bg-gray-500" : getBubbleColor(text);
 
 	return (
 		<div className={`flex rounded-md`}>
 			{/* Text Field */}
 			<p
-				className={`poppins px-2 text-white font-semibold text-nowrap flex 
+				className={`poppins p-2 text-white font-semibold text-nowrap flex 
 					items-center rounded-l-md ${bubbleColor}`}
 			>
 				{text}
