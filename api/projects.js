@@ -5,6 +5,255 @@ const jwt = require('jsonwebtoken');
 
 const ObjectId = require('mongodb').ObjectId;
 
+async function search(client, req, res, type) {
+  try {
+
+    db = client.db("DevFusion");
+  
+  
+    const searchBy = req.body.searchBy;
+    const sortBy = req.body.sortBy;
+    const query = req.body.query;
+    const count = req.body.count;
+    const projectId = req.body.projectId
+    const userId = req.body.userId
+
+    const initial = Boolean(req.body.initial);
+
+    if (projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"})
+    
+    // req.username
+    const user = await db.collection("Users").findOne({ username: req.username })
+    // const user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
+    
+    
+    let project;
+    let numOfMatches;
+    let date;
+    let userTechnologies;
+    let projectTechnologies;
+    if (!initial) {
+      project = await db.collection("Projects").findOne({ _id: new ObjectId(projectId)})
+      date = new Date(project.dateCreated)
+
+      // console.log("MY DATE BEFORE: ", project.dateCreated)
+      // console.log("MY DATE AFTER: ", date)
+
+      userTechnologies = user.technologies;
+      projectTechnologies = project.technologies;
+      
+
+      const matchingTechnologies = userTechnologies.filter(tech => projectTechnologies.includes(tech));
+      numOfMatches = matchingTechnologies.length;
+    }
+
+    let results = null;
+    let pipeline = []
+
+    if (type == "discover") {
+
+      // want only open projects
+      pipeline.push({
+        $match: { isOpen: true }
+      })
+
+    } else if (type == "owned") {
+
+      pipeline.push({
+        $match: {ownerID: new ObjectId(user._id.toString())}
+      })
+
+    } else if (type == "joined") {
+      pipeline.push({
+        $match: {
+          teamMembers: {
+            $elemMatch: { $regex: `${user.username}:` }
+          }
+        }
+      })
+    }
+
+
+    // console.log("GRABBING ONLY OPENS")
+    // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+    
+    // filter results that has contains query
+    if (searchBy == "title") {
+      console.log("LOOKING AT TITLE")
+
+      console.log("THIS IS MY QUERY: ", query)
+      pipeline.push({
+        $match: { title: {$regex: `.*${query}.*`, $options: 'i'}}
+      })
+
+    } else if (searchBy == "technologies") {
+
+      pipeline.push({
+        $match: { technologies: {$regex: `.*${query}.*`, $options: 'i'}}
+      })
+
+    } else if (searchBy == "roles") {
+
+      pipeline.push({
+        $match: { roles: {$regex: `.*${query}.*`, $options: 'i'}}
+      })
+
+    } else if (searchBy == "description") {
+
+      pipeline.push({
+        $match: { description: {$regex: `.*${query}.*`, $options: 'i'}}
+      })
+
+    }
+
+    // console.log("entering with this pipeline", pipeline)
+    // console.log("GRABBING ONLY MATCHING QUERY NOW")
+    // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+
+    // !initial == cursor is being sent over, remove/cut off data that has already been seen
+    // initial, then do nothing, can potentially show everything, no need to cut off certain data since all have been unseen
+    console.log("INITIAL IS: ", initial)
+    if (!initial) {
+      console.log("GOING TO CUT OFF SOME STUFF")
+
+      if (sortBy == "relevance") {
+
+        pipeline.push({
+          $match: {
+            $or: [
+              {
+                $expr: {
+                  $lt: [
+                    {
+                      $size: {
+                        $setIntersection: [
+                          '$technologies',
+                          userTechnologies
+                        ]
+                      }
+                    },
+                    numOfMatches
+                  ]
+                }
+              },
+              {
+                $and: [
+                  {
+                    $expr: {
+                      $eq: [
+                        {
+                          $size: {
+                            $setIntersection: [
+                              '$technologies',
+                              userTechnologies
+                            ]
+                          }
+                        },
+                        numOfMatches
+                      ]
+                    }
+                  },
+                  {
+                    _id: {
+                      $gt: project._id
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        });
+
+      } else if (sortBy == "recent") {
+
+        console.log("CUTTING OFF BY RECENCY")
+
+        // does not account for projects created exactly AT the same time, but almost imposible so i don't think about it
+        pipeline.push({
+          $match: {
+            $or: [
+              {
+                dateCreated: {
+                  $lt:  date
+                }
+              },
+              {
+                $and: [
+                  {
+                    dateCreated: {
+                      $eq: date
+                    }
+                  },
+                  {
+                    _id: {
+                      $gt: project._id
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        })
+      }
+    }
+
+    // console.log("HERE IS THE PIPELINE, ", pipeline)
+    // console.log("IF CURSOR WAS GIVEN, ONLY LOOKING AT EVERYTHING AFTER CURSOR")
+    // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+
+
+    // sort data
+    if (sortBy == "relevance") {
+
+      pipeline.push({$addFields: {
+          relevance: {
+            $size: {
+              $filter: {
+                input: '$technologies',
+                as: 'tech',
+                cond: {
+                  $in: [
+                    '$$tech',
+                    user.technologies
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      { $sort: { relevance: -1, _id: 1 } })
+
+    } else if (sortBy == "recent") {
+
+      pipeline.push(
+        { $sort: { dateCreated: -1, _id: 1 } }
+      )
+    }
+
+    // console.log("LOOKING AT THE SORTED DATA BY SORT BY")
+    // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+
+    // display first X data
+    pipeline.push({
+      $limit: count
+    })
+
+    // console.log("GOT MY SEARCH RESULTS");
+    // console.log("SHOWING ONLY THE FIRST " + count)
+    // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+
+    results = await db.collection("Projects").aggregate(pipeline).toArray()
+
+    return res.status(200).json(results)
+
+  } catch(e) {
+      console.log(e)
+
+      return res.status(500).json(e)
+  }
+}
+
 const cookieJwtAuth = (req, res, next) => {
     const token = req.cookies.token;
     try {
@@ -168,234 +417,18 @@ exports.setApp = function (app, client) {
         // console.log(numOfMatches)
         // console.log(date)
 
-        
-        try {
+      return search(client, req, res, "discover");
 
-          db = client.db("DevFusion");
-        
-        
-          const searchBy = req.body.searchBy;
-          const sortBy = req.body.sortBy;
-          const query = req.body.query;
-          const count = req.body.count;
-          const projectId = req.body.projectId
-          const userId = req.body.userId
-
-          const initial = Boolean(req.body.initial);
-
-          if (projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"})
-          
-          // req.username
-          const user = await db.collection("Users").findOne({ username: req.username })
-          // const user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
-          
-          
-          let project;
-          let numOfMatches;
-          let date;
-          let userTechnologies;
-          let projectTechnologies;
-          if (!initial) {
-            project = await db.collection("Projects").findOne({ _id: new ObjectId(projectId)})
-            date = new Date(project.dateCreated)
-
-            // console.log("MY DATE BEFORE: ", project.dateCreated)
-            // console.log("MY DATE AFTER: ", date)
-
-            userTechnologies = user.technologies;
-            projectTechnologies = project.technologies;
-            
-
-            const matchingTechnologies = userTechnologies.filter(tech => projectTechnologies.includes(tech));
-            numOfMatches = matchingTechnologies.length;
-          }
-
-          let results = null;
-          let pipeline = []
-
-          // want only open projects
-          pipeline.push({
-            $match: { isOpen: true }
-          })
-
-          // console.log("GRABBING ONLY OPENS")
-          // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
-          
-          // filter results that has contains query
-          if (searchBy == "title") {
-            console.log("LOOKING AT TITLE")
-
-            console.log("THIS IS MY QUERY: ", query)
-            pipeline.push({
-              $match: { title: {$regex: `.*${query}.*`, $options: 'i'}}
-            })
-
-          } else if (searchBy == "technologies") {
-
-            pipeline.push({
-              $match: { technologies: {$regex: `.*${query}.*`, $options: 'i'}}
-            })
-
-          } else if (searchBy == "roles") {
-
-            pipeline.push({
-              $match: { roles: {$regex: `.*${query}.*`, $options: 'i'}}
-            })
-
-          } else if (searchBy == "description") {
-
-            pipeline.push({
-              $match: { description: {$regex: `.*${query}.*`, $options: 'i'}}
-            })
-
-          }
-
-          // console.log("entering with this pipeline", pipeline)
-          // console.log("GRABBING ONLY MATCHING QUERY NOW")
-          // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
-
-          // !initial == cursor is being sent over, remove/cut off data that has already been seen
-          // initial, then do nothing, can potentially show everything, no need to cut off certain data since all have been unseen
-          console.log("INITIAL IS: ", initial)
-          if (!initial) {
-            console.log("GOING TO CUT OFF SOME STUFF")
-
-            if (sortBy == "relevance") {
-
-              pipeline.push({
-                $match: {
-                  $or: [
-                    {
-                      $expr: {
-                        $lt: [
-                          {
-                            $size: {
-                              $setIntersection: [
-                                '$technologies',
-                                userTechnologies
-                              ]
-                            }
-                          },
-                          numOfMatches
-                        ]
-                      }
-                    },
-                    {
-                      $and: [
-                        {
-                          $expr: {
-                            $eq: [
-                              {
-                                $size: {
-                                  $setIntersection: [
-                                    '$technologies',
-                                    userTechnologies
-                                  ]
-                                }
-                              },
-                              numOfMatches
-                            ]
-                          }
-                        },
-                        {
-                          _id: {
-                            $gt: project._id
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              });
-
-            } else if (sortBy == "recent") {
-
-              console.log("CUTTING OFF BY RECENCY")
-
-              // does not account for projects created exactly AT the same time, but almost imposible so i don't think about it
-              pipeline.push({
-                $match: {
-                  $or: [
-                    {
-                      dateCreated: {
-                        $lt:  date
-                      }
-                    },
-                    {
-                      $and: [
-                        {
-                          dateCreated: {
-                            $eq: date
-                          }
-                        },
-                        {
-                          _id: {
-                            $gt: project._id
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              })
-            }
-          }
-
-          // console.log("HERE IS THE PIPELINE, ", pipeline)
-          // console.log("IF CURSOR WAS GIVEN, ONLY LOOKING AT EVERYTHING AFTER CURSOR")
-          // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+    })
 
 
-          // sort data
-          if (sortBy == "relevance") {
+    app.post('/api/owned-projects', cookieJwtAuth, async (req, res, next) => {
 
-            pipeline.push({$addFields: {
-                relevance: {
-                  $size: {
-                    $filter: {
-                      input: '$technologies',
-                      as: 'tech',
-                      cond: {
-                        $in: [
-                          '$$tech',
-                          user.technologies
-                        ]
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            { $sort: { relevance: -1, _id: 1 } })
+      return search(client, req, res, "owned");
+    })
 
-          } else if (sortBy == "recent") {
+    app.post('/api/joined-projects', cookieJwtAuth, async (req, res, next) => {
 
-            pipeline.push(
-              { $sort: { dateCreated: -1, _id: 1 } }
-            )
-          }
-
-          // console.log("LOOKING AT THE SORTED DATA BY SORT BY")
-          // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
-
-          // display first X data
-          pipeline.push({
-            $limit: count
-          })
-
-          // console.log("GOT MY SEARCH RESULTS");
-          // console.log("SHOWING ONLY THE FIRST " + count)
-          // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
-
-          results = await db.collection("Projects").aggregate(pipeline).toArray()
-
-          return res.status(200).json(results)
-
-        } catch(e) {
-            console.log(e)
-
-            return res.status(500).json(e)
-        }
-
+      return search(client, req, res, "joined");
     })
 }
