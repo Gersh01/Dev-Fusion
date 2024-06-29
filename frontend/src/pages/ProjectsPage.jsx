@@ -83,7 +83,7 @@ const ProjectsPage = () => {
 			</div>
 			<Divider />
 			<ProjectTypeSelector />
-			<div className="grid md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
+			<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
 				{renderedProjectTiles}
 			</div>
 		</Fragment>

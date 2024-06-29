@@ -29,7 +29,7 @@ const DiscoverProjectTile = ({ project }) => {
 		<Fragment>
 			{/* ROW 1 */}
 			<div className="flex justify-between items-center gap-4">
-				<p className="text-xl sm:text-2xl league-spartan font-semibold text-white truncate">
+				<p className="text-xl sm:text-2xl league-spartan font-semibold text-nowrap truncate">
 					{title}
 				</p>
 				<div className="bg-gray-200 dark:bg-gray-700 py-0.5 px-1.5 rounded-lg poppins truncate font-medium">
@@ -69,9 +69,9 @@ const DiscoverProjectTile = ({ project }) => {
 			</div>
 			<Divider />
 			{/* ROW 2 */}
-			<div className="max-h-28 flex flex-col gap-2 overflow-hidden">
+			<div className="h-28 flex flex-col gap-2">
 				<p className="poppins text-xl font-semibold">Technologies</p>
-				<div className="flex flex-wrap gap-2">
+				<div className="flex flex-wrap gap-2 overflow-hidden">
 					{renderedTechnologyBubbles}
 				</div>
 			</div>

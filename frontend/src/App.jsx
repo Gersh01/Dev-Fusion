@@ -64,7 +64,7 @@ const router = createBrowserRouter(
 							searchBy: "title",
 							sortBy: "relevance",
 							query: "",
-							count: 12,
+							count: 4,
 							initial: true,
 							projectId: "000000000000000000000000",
 						});
@@ -85,7 +85,9 @@ function App() {
 	const displayMode = useSelector((state) => state.system.displayMode);
 
 	return (
-		<div className={`${displayMode} text-black dark:text-white`}>
+		<div
+			className={`${displayMode} text-black dark:text-white overflow-hidden`}
+		>
 			<RouterProvider router={router} />
 		</div>
 	);
