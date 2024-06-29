@@ -6,19 +6,18 @@ import { updateUser } from "../../pages/loaders/updateUser";
 import { useSelector } from "react-redux";
 import getUserFromJwt from "../../store/slices/userSlice";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../store/slices/userSlice";
+import { updateBio } from "../../store/slices/userSlice";
 
 const ProfileFields = ({ type, title, info }) => {
   let res = useSelector((state) => state.user);
   const [mode, setMode] = useState(type);
   const [newInfo, setNewInfo] = useState(info);
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const switchMode = () => {
     if (mode === false) {
-      console.log(newInfo);
+      dispatch(updateBio(newInfo));
       updateUser(newInfo, res.id);
-      //dispatch(setUser(getUserFromJwt()));
     }
     setMode(!mode);
   };

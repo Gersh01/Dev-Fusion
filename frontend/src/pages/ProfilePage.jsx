@@ -57,7 +57,6 @@ const ProfilePage = () => {
       <DiscoverProjectTile project={mockProject} />
     </Fragment>
   );
-  console.log(res.bio);
   return (
     <Fragment>
       <div
