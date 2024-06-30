@@ -29,7 +29,7 @@ const DiscoverProjectTile = ({ project }) => {
 		<Fragment>
 			{/* ROW 1 */}
 			<div className="flex justify-between items-center gap-4">
-				<p className="text-xl sm:text-2xl league-spartan font-semibold text-nowrap truncate">
+				<p className="text-xl sm:text-2xl league-spartan font-semibold text-white text-nowrap truncate">
 					{title}
 				</p>
 				<div className="bg-gray-200 dark:bg-gray-700 py-0.5 px-1.5 rounded-lg poppins truncate font-medium">

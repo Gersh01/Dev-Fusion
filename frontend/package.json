@@ -22,7 +22,8 @@
 		"react-router-dom": "^6.23.1",
 		"react-typed": "^2.0.12",
 		"serve": "^14.2.3",
-		"tailwind-merge": "^2.3.0"
+		"tailwind-merge": "^2.3.0",
+		"universal-cookie": "^7.1.4"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.3",

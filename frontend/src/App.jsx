@@ -97,7 +97,7 @@ const router = createBrowserRouter(
 					}}
 				/>
 				<Route path="/user-settings" element={<SettingsPage />} />
-				<Route path="about" element={<AboutUsPage />} />
+				<Route path="/about" element={<AboutUsPage />} />
 			</Route>
 		</Route>
 	)
@@ -107,9 +107,7 @@ function App() {
 	const displayMode = useSelector((state) => state.system.displayMode);
 
 	return (
-		<div
-			className={`${displayMode} text-black dark:text-white overflow-hidden`}
-		>
+		<div className={`${displayMode} text-black dark:text-white`}>
 			<RouterProvider router={router} />
 		</div>
 	);
