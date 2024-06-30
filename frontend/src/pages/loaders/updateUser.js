@@ -25,4 +25,17 @@ export const updateUserTechnology = async (id, tech) => {
 	}
 };
 
+export const updateUserName = async (id, first, last) =>{
+	const payload ={userId:id,firstName:first,lastName:last}
+	console.log(payload)
+	try {
+		await Axios.put("http://localhost:5000/api/users", payload, {
+			withCredentials: true,
+		});
+	} catch (err) {
+		console.log(`Error: ${err.message}`);
+	}
+}
+
+
 export default { updateUser, updateUserTechnology };
