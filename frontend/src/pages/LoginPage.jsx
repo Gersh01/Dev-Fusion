@@ -51,7 +51,6 @@ const LoginPage = () => {
       } catch (err) {
         let errorMessage = err.response.data.error;
         console.log(`Error: ${err.message}`);
-        console.log(errorMessage);
         if (errorMessage === "User is not verified") {
           navigate("/email-verification");
         } else {

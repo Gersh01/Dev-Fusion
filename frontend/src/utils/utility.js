@@ -74,7 +74,7 @@ const getBubbleColor = (text) => {
 //Searches through list of tech and returns results based on partial match
 const getTechnology=(tech)=>{
 	if(tech.length<1){
-		return ["none"]
+		return ["Searching..."]
 	}
 	let search = tech.trim().split(" ");
 	let re = new RegExp(search.join("|"), "i");
