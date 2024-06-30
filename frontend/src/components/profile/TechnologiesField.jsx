@@ -13,6 +13,7 @@ const TechnologiesField = ({ title, type }) => {
   const editStyles = !mode ? "bg-gray-100 dark:bg-gray-900 p-2 rounded-md" : "";
 
   const bubbleMode = () => {
+    console.log(res.technologies);
     if (mode === false) {
       return (
         <Fragment>
@@ -51,7 +52,7 @@ const TechnologiesField = ({ title, type }) => {
       </div>
       {mode ? null : <TechnologySearchField />}
       <div
-        className={`grow flex gap-2 flex-wrap overflow-y-auto ${editStyles} scroll-bar-light dark:scroll-bar-dark`}
+        className={`grow flex gap-2 min-h-12 flex-wrap overflow-y-auto ${editStyles} scroll-bar-light dark:scroll-bar-dark`}
       >
         {bubbleMode()}
       </div>

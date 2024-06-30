@@ -21,10 +21,6 @@ const TechnologySearchField = () => {
   });
 
   const addNewTechnology = () => {
-    // * If newTech already exist or is empty, do not add
-    if (newTech.length === 0 || user.technologies !== null) {
-      return;
-    }
     if (newTech.length === 0 || user.technologies.includes(newTech)) {
       return;
     }

@@ -8,8 +8,8 @@ import { updateTechnologies } from "../../store/slices/userSlice";
 const Bubble = ({ text, removable, countable }) => {
   const [count, setCount] = useState(1);
   const dispatch = useDispatch();
-  const user = useState(useSelector((state) => state.user));
-  const tech = useState(useSelector((state) => state.user.technologies));
+  const user = useSelector((state) => state.user);
+  const tech = useSelector((state) => state.user.technologies);
 
   const incrementCount = () => {
     // * Only allow maximum of 9 people per role
@@ -22,14 +22,11 @@ const Bubble = ({ text, removable, countable }) => {
     setCount(count - 1);
   };
 
-  const testingClick = () => {
-    console.log(text);
-    console.log(tech);
+  //deletes the technology the user clicks on
+  const deletingTech = () => {
     const newList = tech.filter((item) => item !== text);
-    console.log(newList);
-    //dispatch(updateTechnologies(newList));
-
-    //updateUserTechnology(user.id, newList);
+    dispatch(updateTechnologies(newList));
+    updateUserTechnology(user.id, newList);
   };
 
   const bubbleColor = getBubbleColor(text);
@@ -74,7 +71,7 @@ const Bubble = ({ text, removable, countable }) => {
             <button
               className="rounded-sm aspect-square text-white
 						flex justify-center items-center"
-              onClick={testingClick}
+              onClick={deletingTech}
             >
               <MdRemoveCircleOutline className="text-xl" />
             </button>
