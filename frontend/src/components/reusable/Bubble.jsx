@@ -30,9 +30,7 @@ const Bubble = ({ text, removable, countable }) => {
 				</p>
 			)}
 			{/* Text Field */}
-			<p className="poppins text-white font-semibold text-nowrap">
-				{text}
-			</p>
+			<p className="poppins text-base text-white font-semibold">{text}</p>
 			{/* Add, Minus, Remove Buttons  */}
 			{(countable || removable) && (
 				<div className="flex gap-1">

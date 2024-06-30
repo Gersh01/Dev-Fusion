@@ -7,6 +7,10 @@
 	font-family: "Poppins";
 }
 
+textarea {
+	resize: none;
+}
+
 .inter {
 	font-family: "Inter";
 }
@@ -25,4 +29,12 @@
 
 .playfair-display {
 	font-family: "Playfair Display";
+}
+
+.scroll-bar-light {
+	scrollbar-color: #374151 #111827;
+}
+
+.scroll-bar-dark {
+	scrollbar-color: #374151 #111827;
 }

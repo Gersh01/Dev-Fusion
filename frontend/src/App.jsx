@@ -21,12 +21,20 @@ import ProfilePage from "./pages/ProfilePage";
 import { getProjects } from "./pages/loaders/projectLoader";
 import ViewProjectPage from "./pages/ViewProjectPage";
 import AboutUsPage from "./pages/AboutUsPage";
-import { getUserFromJwt, validateJwt } from "./pages/loaders/userLoader";
+import { validateJwt } from "./pages/loaders/userLoader";
+import ResetAuthPage from "./pages/ResetAuthPage";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route>
 			{/* AUTH ROUTES */}
+			<Route path="/" element={<ResetAuthPage />}>
+				<Route
+					path="/reset-password-email"
+					element={<ResetPasswordEmailPage />}
+				/>
+				<Route path="/reset-password" element={<ResetPasswordPage />} />
+			</Route>
 			<Route
 				path="/"
 				element={<AuthPage />}
@@ -41,19 +49,11 @@ const router = createBrowserRouter(
 					path="/email-verification"
 					element={<EmailVerificationPage />}
 				/>
-				<Route
-					path="/reset-password-email"
-					element={<ResetPasswordEmailPage />}
-				/>
-				<Route path="/reset-password" element={<ResetPasswordPage />} />
 			</Route>
 			{/* CONTENT ROUTES */}
 			<Route
 				path="/"
 				element={<ContentPageContainer />}
-				loader={() => {
-					return getUserFromJwt();
-				}}
 				errorElement={<Navigate to="/" />}
 			>
 				<Route
