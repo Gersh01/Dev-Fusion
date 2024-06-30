@@ -23,6 +23,8 @@ const validateJwt = async () => {
 };
 
 const getUserFromJwt = async () => {
+	console.log("Debug: Getting user from JWT");
+
 	const response = await axios.post(
 		"http://localhost:5000/api/jwtTest",
 		null,
