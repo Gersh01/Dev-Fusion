@@ -24,6 +24,7 @@ import { validateJwt } from "./pages/loaders/userLoader";
 import ContentErrorPage from "./pages/ContentErrorPage";
 import ResetAuthPage from "./pages/ResetAuthPage";
 import CreatePage from "./pages/CreatePage";
+import VerifiedUsersWelcomePage from "./pages/VerifiedUsersWelcomePage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,6 +41,7 @@ const router = createBrowserRouter(
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/email-verification" element={<EmailVerificationPage />} />
+        <Route path="/verified-user" element={<VerifiedUsersWelcomePage />} />
       </Route>
       <Route path="/" element={<ResetAuthPage />}>
         <Route

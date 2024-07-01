@@ -334,7 +334,7 @@ exports.setApp = function (app, client) {
                 insertResult = await db.collection('Users').insertOne(newUser);
                 deleteResult = await db.collection('UnverifiedUsers').deleteOne({ _id: _id });
                 //if successful verification redirect 
-                return res.redirect(301, frontend + "/login");
+                return res.redirect(301, frontend + "/verified-user");
                 // return res.status(200).json({ error: "" });
                 // return res.redirect('/');
             } catch (e) {
