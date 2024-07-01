@@ -439,6 +439,39 @@ exports.setApp = function (app, client) {
         }
     });
 
+    app.put('/api/users/password', cookieJwtAuth, async (req, res, next) => {
+        const newPassword = req.body.newPassword;
+        const username = req.username;
+        var error = '';
+
+        var db;
+        var resultFind;
+
+        try {
+            db = client.db('DevFusion');
+            resultFind = await db.collection('Users').findOne({ username: username });
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+        var resultPut;
+        var query = { username: username };
+        var newValues = { $set: { password: newPassword } };
+
+        try {
+            db = client.db('DevFusion');
+            resultPut = await db.collection('Users').updateOne(query, newValues);
+            return res.status(200).json({ error: error });
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+    });
+
     //logout api
     app.post('/api/logout', cookieJwtAuth, async (req, res, next) => {
         res.clearCookie("token");
