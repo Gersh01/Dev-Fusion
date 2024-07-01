@@ -99,9 +99,18 @@ const ResetPasswordPage = () => {
           </div>
         </div>
       </div>
-      <Button onClick={resetPassword} large>
-        Reset Password
-      </Button>
+      <div className="flex flex-col gap-3">
+        <Button onClick={resetPassword} large>
+          Reset Password
+        </Button>
+        <hr></hr>
+        <button
+          className="text-black dark:text-white text-sm font-medium poppins"
+          onClick={() => navigate(-1)}
+        >
+          Go back
+        </button>
+      </div>
     </AuthPanel>
   );
 };

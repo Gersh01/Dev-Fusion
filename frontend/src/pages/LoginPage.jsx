@@ -68,9 +68,9 @@ const LoginPage = () => {
       <AuthHeader title="Login" />
       <div className="flex flex-col gap-2">
         <Input
-          titleText="First Name"
+          titleText="Email or Username"
           icon={<MdAccountCircle />}
-          placeholder="First Name"
+          placeholder="Example@email.com"
           onChange={(e) => setUserInput(e.target.value)}
         />
         <Input
