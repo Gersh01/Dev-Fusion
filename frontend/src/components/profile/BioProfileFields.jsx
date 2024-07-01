@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { MdOutlineSaveAlt } from "react-icons/md";
-import { BiSolidEdit } from "react-icons/bi";
+import {
+	MdOutlineModeEdit,
+	MdOutlineKeyboardDoubleArrowUp,
+} from "react-icons/md";
 import { updateUser } from "../../pages/loaders/updateUser";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -22,7 +24,7 @@ const BioProfileFields = ({ type, title, info }) => {
 	};
 
 	const editStyles = !mode
-		? "bg-gray-100 dark:bg-gray-900 p-2 rounded-md"
+		? "bg-gray-50 dark:bg-gray-900 p-2 rounded-md"
 		: "";
 
 	return (
@@ -31,15 +33,15 @@ const BioProfileFields = ({ type, title, info }) => {
 				<span className="text-2xl font-semibold ">{title}</span>
 				<button onClick={switchMode}>
 					{mode ? (
-						<BiSolidEdit className="text-2xl" />
+						<MdOutlineModeEdit className="text-2xl" />
 					) : (
-						<MdOutlineSaveAlt className="text-2xl" />
+						<MdOutlineKeyboardDoubleArrowUp className="text-2xl" />
 					)}
 				</button>
 			</div>
 			<textarea
 				className={`grow flex w-full min-h-60 max-h-60 bg-transparent text-base focus:outline-none 
-				${editStyles} scroll-bar-light dark:scroll-bar-dark`}
+				${editStyles} scroll-bar`}
 				role="textbox"
 				disabled={mode}
 				onChange={(e) => setNewInfo(e.target.value)}

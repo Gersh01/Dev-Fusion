@@ -22,7 +22,9 @@ const DisocverPage = () => {
 
 		// * Load
 		if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
-			retrieveMoreProjects();
+			if (!endOfSearch) {
+				retrieveMoreProjects();
+			}
 		}
 
 		return () => {

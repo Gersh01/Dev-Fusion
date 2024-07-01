@@ -11,6 +11,11 @@ textarea {
 	resize: none;
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+	display: none;
+	-webkit-appearance: none;
+}
+
 .inter {
 	font-family: "Inter";
 }
@@ -31,10 +36,6 @@ textarea {
 	font-family: "Playfair Display";
 }
 
-.scroll-bar-light {
-	scrollbar-color: #374151 #111827;
-}
-
-.scroll-bar-dark {
-	scrollbar-color: #374151 #111827;
+.scroll-bar {
+	scrollbar-color: #6b7280 transparent;
 }
