@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 
 const PORT = process.env.PORT || 5000;
 const appName = "http://localhost:" + PORT;
+const frontend = "http://localhost:5173";
 
 const ObjectId = require('mongodb').ObjectId;
 
@@ -332,7 +333,8 @@ exports.setApp = function (app, client) {
             try {
                 insertResult = await db.collection('Users').insertOne(newUser);
                 deleteResult = await db.collection('UnverifiedUsers').deleteOne({ _id: _id });
-                return res.status(200).json({ error: "" });
+                return res.redirect(301, frontend + "/login");
+                // return res.status(200).json({ error: "" });
                 // return res.redirect('/');
             } catch (e) {
                 a
@@ -604,7 +606,8 @@ exports.setApp = function (app, client) {
             httpOnly: true
         });
 
-        return res.status(200).json({ error: "" });
+        return res.redirect(301, frontend + "/reset-password");
+        // return res.status(200).json({ error: "" });
         // return res.redirect('/');
 
 
