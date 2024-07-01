@@ -1,10 +1,10 @@
 import AuthPage from "./pages/AuthPage";
 import DisocverPage from "./pages/DiscoverPage";
 import {
-  Route,
-  createRoutesFromElements,
-  createBrowserRouter,
-  RouterProvider,
+	Route,
+	createRoutesFromElements,
+	createBrowserRouter,
+	RouterProvider,
 } from "react-router-dom";
 import ContentPageContainer from "./pages/ContentPageContainer";
 import ProjectsPage from "./pages/ProjectsPage";
@@ -26,90 +26,93 @@ import ResetAuthPage from "./pages/ResetAuthPage";
 import CreatePage from "./pages/CreatePage";
 
 const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route>
-      {/* AUTH ROUTES */}
-      <Route
-        path="/"
-        element={<AuthPage />}
-        loader={() => {
-          return validateJwt();
-        }}
-      >
-        <Route path="/" element={<LanderPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/email-verification" element={<EmailVerificationPage />} />
-      </Route>
-      <Route path="/" element={<ResetAuthPage />}>
-        <Route
-          path="/reset-password-email"
-          element={<ResetPasswordEmailPage />}
-        />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-      </Route>
-      {/* CONTENT ROUTES */}
-      <Route
-        path="/"
-        element={<ContentPageContainer />}
-        // loader={() => {
-        // 	return getUserFromJwt();
-        // }}
-        errorElement={<ContentErrorPage />}
-      >
-        <Route
-          path="/discover"
-          element={<DisocverPage />}
-          loader={() => {
-            return getProjects({
-              searchBy: "title",
-              sortBy: "relevance",
-              query: "",
-              count: 4,
-              initial: true,
-              projectId: "000000000000000000000000",
-            });
-          }}
-        />
-        <Route path="/my-projects" element={<ProjectsPage />} />
-        <Route path="/joined-projects" element={<ProjectsPage />} />
-        <Route
-          path="/projects/:id"
-          element={<ViewProjectPage />}
-          loader={({ params }) => {
-            return getProjectById(params.id);
-          }}
-        />
-        <Route
-          path="/my-profile"
-          element={<ProfilePage />}
-          loader={() => {
-            return getProjects({
-              searchBy: "title",
-              sortBy: "relevance",
-              query: "",
-              count: 4,
-              initial: true,
-              projectId: "000000000000000000000000",
-            });
-          }}
-        />
-        <Route path="/user-settings" element={<SettingsPage />} />
-        <Route path="/create" element={<CreatePage />} />
-        <Route path="/about" element={<AboutUsPage />} />
-      </Route>
-    </Route>
-  )
+	createRoutesFromElements(
+		<Route>
+			{/* AUTH ROUTES */}
+			<Route
+				path="/"
+				element={<AuthPage />}
+				loader={() => {
+					return validateJwt();
+				}}
+			>
+				<Route path="/" element={<LanderPage />} />
+				<Route path="/login" element={<LoginPage />} />
+				<Route path="/signup" element={<SignUpPage />} />
+				<Route
+					path="/email-verification"
+					element={<EmailVerificationPage />}
+				/>
+			</Route>
+			<Route path="/" element={<ResetAuthPage />}>
+				<Route
+					path="/reset-password-email"
+					element={<ResetPasswordEmailPage />}
+				/>
+				<Route path="/reset-password" element={<ResetPasswordPage />} />
+			</Route>
+			{/* CONTENT ROUTES */}
+			<Route
+				path="/"
+				element={<ContentPageContainer />}
+				// loader={() => {
+				// 	return getUserFromJwt();
+				// }}
+				errorElement={<ContentErrorPage />}
+			>
+				<Route
+					path="/discover"
+					element={<DisocverPage />}
+					loader={() => {
+						return getProjects({
+							searchBy: "title",
+							sortBy: "relevance",
+							query: "",
+							count: 4,
+							initial: true,
+							projectId: "000000000000000000000000",
+						});
+					}}
+				/>
+				<Route path="/my-projects" element={<ProjectsPage />} />
+				<Route path="/joined-projects" element={<ProjectsPage />} />
+				<Route
+					path="/projects/:id"
+					element={<ViewProjectPage />}
+					loader={({ params }) => {
+						return getProjectById(params.id);
+					}}
+				/>
+				<Route
+					path="/my-profile"
+					element={<ProfilePage />}
+					loader={() => {
+						return getProjects({
+							searchBy: "title",
+							sortBy: "relevance",
+							query: "",
+							count: 4,
+							initial: true,
+							projectId: "000000000000000000000000",
+						});
+					}}
+				/>
+				<Route path="/user-settings" element={<SettingsPage />} />
+				<Route path="/create" element={<CreatePage />} />
+				<Route path="/about" element={<AboutUsPage />} />
+			</Route>
+		</Route>
+	)
 );
 
 function App() {
-  const displayMode = useSelector((state) => state.system.displayMode);
+	const displayMode = useSelector((state) => state.system.displayMode);
 
-  return (
-    <div className={`${displayMode} text-black dark:text-white`}>
-      <RouterProvider router={router} />
-    </div>
-  );
+	return (
+		<div className={`${displayMode} text-black dark:text-white`}>
+			<RouterProvider router={router} />
+		</div>
+	);
 }
 
 export default App;

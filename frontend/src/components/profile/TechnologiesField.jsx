@@ -1,37 +1,70 @@
 import { useState } from "react";
 import { Fragment } from "react";
 import Bubble from "../reusable/Bubble";
-import { MdOutlineSaveAlt } from "react-icons/md";
-import { BiSolidEdit } from "react-icons/bi";
+import {
+	MdOutlineModeEdit,
+	MdOutlineKeyboardDoubleArrowUp,
+} from "react-icons/md";
 import { useSelector } from "react-redux";
-import TechnologySearchField from "./TechnologySearchField";
+import { useDispatch } from "react-redux";
+import { getTechnology } from "../../utils/utility";
+import { updateUserTechnology } from "../../pages/loaders/updateUser";
+import { updateTechnologies } from "../../store/slices/userSlice";
+import SelectionSearchField from "../reusable/SelectionSearchField";
 
 const TechnologiesField = ({ title, type }) => {
-	let res = useSelector((state) => state.user);
+	const user = useSelector((state) => state.user);
 	const [mode, setMode] = useState(type);
+	const dispatch = useDispatch();
 
 	const editStyles = !mode
-		? "bg-gray-100 dark:bg-gray-900 p-2 rounded-md"
+		? "bg-gray-50 dark:bg-gray-900 p-2 rounded-md"
 		: "";
 
 	const bubbleMode = () => {
 		if (mode === false) {
 			return (
 				<Fragment>
-					{res.technologies?.map((value) => (
-						<Bubble removable text={value} key={value} />
+					{user.technologies?.map((value) => (
+						<Bubble
+							removable
+							text={value}
+							key={value}
+							onRemove={removeTech}
+						/>
 					))}
 				</Fragment>
 			);
 		} else {
 			return (
 				<Fragment>
-					{res.technologies?.map((value) => (
+					{user.technologies?.map((value) => (
 						<Bubble text={value} key={value} />
 					))}
 				</Fragment>
 			);
 		}
+	};
+
+	//deletes the technology the user clicks on
+	const removeTech = (text) => {
+		const newList = user.technologies.filter((item) => {
+			return item !== text;
+		});
+		dispatch(updateTechnologies(newList));
+		updateUserTechnology(user.id, newList);
+	};
+
+	const addNewTechnology = (newTech) => {
+		if (newTech.length === 0 || user.technologies.includes(newTech)) {
+			return;
+		}
+
+		let updatedTechnologies = [...user.technologies, newTech];
+
+		dispatch(updateTechnologies(updatedTechnologies));
+
+		updateUserTechnology(user.id, updatedTechnologies);
 	};
 
 	return (
@@ -45,15 +78,20 @@ const TechnologiesField = ({ title, type }) => {
 					}}
 				>
 					{mode ? (
-						<BiSolidEdit className="text-2xl" />
+						<MdOutlineModeEdit className="text-2xl" />
 					) : (
-						<MdOutlineSaveAlt className="text-2xl" />
+						<MdOutlineKeyboardDoubleArrowUp className="text-2xl" />
 					)}
 				</button>
 			</div>
-			{mode ? null : <TechnologySearchField />}
+			{mode ? null : (
+				<SelectionSearchField
+					onAdd={addNewTechnology}
+					selectionFunc={getTechnology}
+				/>
+			)}
 			<div
-				className={`grow flex gap-2 min-h-12 flex-wrap overflow-y-auto ${editStyles} scroll-bar-light dark:scroll-bar-dark`}
+				className={`grow flex gap-2 min-h-12 flex-wrap overflow-y-auto ${editStyles} scroll-bar`}
 			>
 				{bubbleMode()}
 			</div>

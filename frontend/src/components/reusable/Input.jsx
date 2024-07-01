@@ -20,9 +20,9 @@ const Input = ({ titleText, placeholder, icon, password = false, ...rest }) => {
 			<div className="flex gap-2 items-center">
 				<input
 					className="grow poppins bg-transparent focus:outline-none text-base min-w-0 font-normal"
-					{...rest}
 					type={inputVisibility ? "password" : "text"}
 					placeholder={placeholder}
+					{...rest}
 				/>
 				{password && (
 					<div
