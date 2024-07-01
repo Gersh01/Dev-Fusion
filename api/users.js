@@ -261,7 +261,7 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         }
 
-        if (resultEmail != null || resultEmail != undefined) return res.status(404).json({ error: "User is already verified" });
+        if (resultEmail != null || resultEmail != undefined) return res.status(401).json({ error: "User is already verified" });
         else if (resultEmailUnverified != null | resultEmailUnverified != undefined) {
             const emailToken = resultEmailUnverified.emailToken;
             transporter.sendMail({
