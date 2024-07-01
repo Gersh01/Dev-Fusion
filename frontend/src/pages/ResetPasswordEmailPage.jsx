@@ -5,7 +5,10 @@ import AuthPanel from "../components/reusable/AuthPanel";
 import { useState } from "react";
 import Axios from "axios";
 
+import { useNavigate } from "react-router-dom";
+
 const ResetPasswordEmailPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const validEmail = new RegExp(
     "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
@@ -30,6 +33,10 @@ const ResetPasswordEmailPage = () => {
     }
   };
 
+  const goToLogin = () => {
+    navigate("/login");
+  };
+
   return (
     <AuthPanel width={480} minHeight={500}>
       <div className="flex flex-col justify-center items-center gap-2">
@@ -46,9 +53,18 @@ const ResetPasswordEmailPage = () => {
         icon={<MdMailOutline />}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <Button large onClick={sendResetPasswordRequest}>
-        Submit
-      </Button>
+      <div className="flex-col flex gap-3">
+        <Button large onClick={sendResetPasswordRequest}>
+          Submit
+        </Button>
+        <hr></hr>
+        <button
+          className="text-black dark:text-white text-sm font-medium poppins"
+          onClick={goToLogin}
+        >
+          Go back to Login
+        </button>
+      </div>
     </AuthPanel>
   );
 };
