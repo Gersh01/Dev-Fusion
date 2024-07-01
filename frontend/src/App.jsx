@@ -20,7 +20,7 @@ import ProfilePage from "./pages/ProfilePage";
 import { getProjectById, getProjects } from "./pages/loaders/projectLoader";
 import ViewProjectPage from "./pages/ViewProjectPage";
 import AboutUsPage from "./pages/AboutUsPage";
-import { validateJwt } from "./pages/loaders/userLoader";
+import { getUserFromJwt, validateJwt } from "./pages/loaders/userLoader";
 import ContentErrorPage from "./pages/ContentErrorPage";
 import ResetAuthPage from "./pages/ResetAuthPage";
 import CreatePage from "./pages/CreatePage";
@@ -60,9 +60,9 @@ const router = createBrowserRouter(
 			<Route
 				path="/"
 				element={<ContentPageContainer />}
-				// loader={() => {
-				// 	return getUserFromJwt();
-				// }}
+				loader={() => {
+					return getUserFromJwt();
+				}}
 				errorElement={<ContentErrorPage />}
 			>
 				<Route

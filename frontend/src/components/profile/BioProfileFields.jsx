@@ -9,16 +9,15 @@ import { useDispatch } from "react-redux";
 import { updateBio } from "../../store/slices/userSlice";
 
 const BioProfileFields = ({ type, title, info }) => {
-	let res = useSelector((state) => state.user);
+	let user = useSelector((state) => state.user);
 	const [mode, setMode] = useState(type);
-	const [newInfo, setNewInfo] = useState(info);
+	const [bio, setBio] = useState(info);
 	const dispatch = useDispatch();
 
 	const switchMode = () => {
 		if (mode === false) {
-			// console.log(newInfo);
-			dispatch(updateBio(newInfo));
-			updateUser(res.id, newInfo);
+			updateUser(user.id, bio);
+			dispatch(updateBio(bio));
 		}
 		setMode(!mode);
 	};
@@ -44,8 +43,8 @@ const BioProfileFields = ({ type, title, info }) => {
 				${editStyles} scroll-bar`}
 				role="textbox"
 				disabled={mode}
-				onChange={(e) => setNewInfo(e.target.value)}
-				defaultValue={res.bio}
+				onChange={(e) => setBio(e.target.value)}
+				defaultValue={user.bio}
 			></textarea>
 		</div>
 	);
