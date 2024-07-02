@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import PasswordChecklist from "react-password-checklist";
 import Button from "../components/reusable/Button";
 import Axios from "axios";
+import { apiDomain } from "../utils/utility";
 
 const ResetPasswordPage = () => {
   const navigate = useNavigate();
@@ -35,11 +36,9 @@ const ResetPasswordPage = () => {
         try {
           console.log("Debug: Payload Sent");
           console.log(payload);
-          await Axios.post(
-            "http://localhost:5000/api/forgot_password/reset",
-            payload,
-            { withCredentials: true }
-          );
+          await Axios.post(apiDomain + "/api/forgot_password/reset", payload, {
+            withCredentials: true,
+          });
           if (payload) {
             console.log("Password has been changed successfully");
           }
