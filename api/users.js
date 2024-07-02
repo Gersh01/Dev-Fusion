@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
 const PORT = process.env.PORT || 5000;
-const appName = "http://localhost:" + PORT;
-const frontend = "http://localhost:5173";
+const appName = "http://dev-fusion.com";
+const frontend = "http://dev-fusion.com";
 
 const ObjectId = require('mongodb').ObjectId;
 
@@ -334,7 +334,7 @@ exports.setApp = function (app, client) {
                 insertResult = await db.collection('Users').insertOne(newUser);
                 deleteResult = await db.collection('UnverifiedUsers').deleteOne({ _id: _id });
                 //if successful verification redirect 
-                return res.redirect(301, frontend + "/verified-user");
+                return res.redirect("/verified-user");
                 // return res.status(200).json({ error: "" });
                 // return res.redirect('/');
             } catch (e) {
@@ -607,7 +607,7 @@ exports.setApp = function (app, client) {
             httpOnly: true
         });
 
-        return res.redirect(301, frontend + "/reset-password");
+        return res.redirect("/reset-password");
         // return res.status(200).json({ error: "" });
         // return res.redirect('/');
 

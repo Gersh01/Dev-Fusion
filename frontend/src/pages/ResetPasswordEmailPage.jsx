@@ -4,7 +4,7 @@ import Button from "../components/reusable/Button";
 import AuthPanel from "../components/reusable/AuthPanel";
 import { useState } from "react";
 import Axios from "axios";
-
+import { apiDomain } from "../utils/utility";
 import { useNavigate } from "react-router-dom";
 
 const ResetPasswordEmailPage = () => {
@@ -18,11 +18,9 @@ const ResetPasswordEmailPage = () => {
     if (validEmail.test(email)) {
       const payload = { email: email };
       try {
-        await Axios.post(
-          "http://localhost:5000/api/forgot_password/send",
-          payload,
-          { withCredentials: true }
-        );
+        await Axios.post(apiDomain + "/api/forgot_password/send", payload, {
+          withCredentials: true,
+        });
         console.log("DEBUG: Sent Payload");
         console.log(payload);
       } catch (err) {

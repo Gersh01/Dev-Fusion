@@ -7,7 +7,7 @@ import { useState } from "react";
 import PasswordChecklist from "react-password-checklist";
 import Axios from "axios";
 import { useDispatch } from "react-redux";
-
+import { apiDomain } from "../utils/utility";
 import { setVerificationEmail } from "../store/slices/systemSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -57,7 +57,7 @@ const SignUpPage = () => {
         };
         try {
           const response = await Axios.post(
-            "http://localhost:5000/api/register",
+            apiDomain + "/api/register",
             newSignup
           );
           console.log(response.status);

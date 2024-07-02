@@ -1,9 +1,11 @@
 import Axios from "axios";
+import { apiDomain } from "../../utils/utility";
+
 
 export const updateUser = async (id, newInfo) => {
 	try {
 		await Axios.put(
-			"http://localhost:5000/api/users",
+			apiDomain + "/api/users",
 			{ bio: newInfo, userId: id },
 			{ withCredentials: true }
 		);
@@ -17,7 +19,7 @@ export const updateUser = async (id, newInfo) => {
 export const updateUserTechnology = async (id, tech) => {
 	const payload = { technologies: tech, userId: id };
 	try {
-		await Axios.put("http://localhost:5000/api/users", payload, {
+		await Axios.put(apiDomain + "/api/users", payload, {
 			withCredentials: true,
 		});
 	} catch (err) {
@@ -29,7 +31,7 @@ export const updateUserName = async (id, first, last) =>{
 	const payload ={userId:id,firstName:first,lastName:last}
 	console.log(payload)
 	try {
-		await Axios.put("http://localhost:5000/api/users", payload, {
+		await Axios.put(apiDomain + "/api/users", payload, {
 			withCredentials: true,
 		});
 	} catch (err) {

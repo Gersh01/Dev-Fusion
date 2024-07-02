@@ -9,6 +9,7 @@ import { useNavigate, Outlet } from "react-router-dom";
 import { setUser } from "../store/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { setVerificationEmail } from "../store/slices/systemSlice";
+import { apiDomain } from "../utils/utility";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -38,11 +39,9 @@ const LoginPage = () => {
         rememberMe: rememberMe,
       };
       try {
-        const response = await Axios.post(
-          "http://localhost:5000/api/login",
-          newLogin,
-          { withCredentials: true }
-        );
+        const response = await Axios.post(apiDomain + "/api/login", newLogin, {
+          withCredentials: true,
+        });
 
         if (response && response.data) {
           dispatch(setUser(response.data));

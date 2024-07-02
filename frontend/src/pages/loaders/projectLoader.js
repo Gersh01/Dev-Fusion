@@ -1,10 +1,11 @@
 import axios from "axios";
+import { apiDomain } from "../../utils/utility";
 
 const getProjects = async (queryConfig) => {
 	console.log("Debug: FETCHING PROJECTS");
 
 	const response = await axios.post(
-		"http://localhost:5000/api/discover",
+		apiDomain + "/api/discover",
 
 		queryConfig,
 		{ withCredentials: true }
@@ -17,7 +18,7 @@ const getProjectById = async (projectId) => {
 	console.log("Debug: Fetching project with ID: " + projectId);
 
 	const response = await axios.get(
-		`http://localhost:5000/api/project/${projectId}`,
+		`${apiDomain}/api/project/${projectId}`,
 		{},
 		{ withCredentials: true }
 	);
