@@ -1,11 +1,8 @@
-import { useState } from "react";
 import { getCommunication } from "../../utils/utility";
 import SelectionSearchField from "../reusable/SelectionSearchField";
 import Bubble from "../reusable/Bubble";
 
-const CreateCommunicationsPanel = () => {
-	const [comms, setComms] = useState([]);
-
+const CreateCommunicationsPanel = ({ comms, setComms }) => {
 	const onRemove = (commNameToRemove) => {
 		const updatedBubbles = comms.filter((bubble) => {
 			return bubble.name !== commNameToRemove;

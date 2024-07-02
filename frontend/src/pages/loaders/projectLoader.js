@@ -6,7 +6,30 @@ const getProjects = async (queryConfig) => {
 
 	const response = await axios.post(
 		apiDomain + "/api/discover",
+		queryConfig,
+		{ withCredentials: true }
+	);
 
+	return response.data;
+};
+
+const getOwnedProjects = async (queryConfig) => {
+	console.log("Debug: FETCHING OWNED PROJECTS");
+
+	const response = await axios.post(
+		apiDomain + "/api/owned-projects",
+		queryConfig,
+		{ withCredentials: true }
+	);
+
+	return response.data;
+};
+
+const getJoinedProjects = async (queryConfig) => {
+	console.log("Debug: FETCHING OWNED PROJECTS");
+
+	const response = await axios.post(
+		apiDomain + "/api/joined-projects",
 		queryConfig,
 		{ withCredentials: true }
 	);
@@ -15,7 +38,7 @@ const getProjects = async (queryConfig) => {
 };
 
 const getProjectById = async (projectId) => {
-	console.log("Debug: Fetching project with ID: " + projectId);
+	console.log("Debug: FETCHING PROJECTS WITH ID: " + projectId);
 
 	const response = await axios.get(
 		`${apiDomain}/api/project/${projectId}`,
@@ -26,4 +49,14 @@ const getProjectById = async (projectId) => {
 	return response.data;
 };
 
-export { getProjects, getProjectById };
+
+const getProfileProjects = async (queryConfig)=>{
+	const response = await axios.post(
+		apiDomain + "/api/owned-joined", 
+		queryConfig, {withCredentials:true}
+	)
+
+	return response.data;
+}
+
+export { getProjects, getProjectById, getOwnedProjects, getJoinedProjects, getProfileProjects };
