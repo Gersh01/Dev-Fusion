@@ -56,6 +56,7 @@ const router = createBrowserRouter(
                     element={<ResetPasswordEmailPage />}
                 />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/*" element={<UrlNotFound />} />
             </Route>
             {/* CONTENT ROUTES */}
             <Route
@@ -107,7 +108,6 @@ const router = createBrowserRouter(
                 <Route path="/create" element={<CreatePage />} />
                 <Route path="/about" element={<AboutUsPage />} />
             </Route>
-            <Route path="/*" element={<UrlNotFound />} />
         </Route>
     )
 );
