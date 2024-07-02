@@ -514,7 +514,7 @@ exports.setApp = function (app, client) {
     })
 
 
-    app.put('/api/edit-project', async (req, res, next) => {
+    app.put('/api/edit-project', cookieJwtAuth, async (req, res, next) => {
 
       try {
         let username = req.username;
