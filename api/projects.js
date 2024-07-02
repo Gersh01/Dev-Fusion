@@ -327,11 +327,12 @@ exports.setApp = function (app, client) {
 
       
       try {
+
           db = client.db("DevFusion");
     
           let user = await db.collection("Users").findOne( {username: req.username})
-          console.log("OWNER ID: ", user)
-    
+
+          
           let isOpen = true;
           let isDone = false;
           let isStarted = false;
@@ -513,10 +514,10 @@ exports.setApp = function (app, client) {
     })
 
 
-    app.post('/api/edit-project', cookieJwtAuth, async (req, res, next) => {
+    app.put('/api/edit-project', async (req, res, next) => {
 
       try {
-        let username = req.cookies.username;
+        let username = req.username;
 
         db = client.db("DevFusion");
 
@@ -545,7 +546,7 @@ exports.setApp = function (app, client) {
         let communication = req.body.communication;
 
 
-        project = {
+        let project = {
             isOpen: isOpen,
             isDone: isDone,
             isStarted: isStarted,
@@ -563,7 +564,7 @@ exports.setApp = function (app, client) {
 
 
         await db.collection('Projects').updateOne(
-          { _id: new ObjectId(projectObj._id.toString()) },
+          { _id: projectObj._id },
           {
             $set: project
           }
