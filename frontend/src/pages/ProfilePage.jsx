@@ -1,17 +1,18 @@
 import Divider from "../components/reusable/Divider";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getProjects } from "./loaders/projectLoader";
 import logo from "../assets/DFLogoFinal.png";
 import DiscoverProjectTile from "../components/discover/DiscoverProjectTile";
 import BioProfileFields from "../components/profile/BioProfileFields";
 import TechnologiesField from "../components/profile/TechnologiesField";
+import Button from "../components/reusable/Button";
 
 const ProfilePage = () => {
     let res = useSelector((state) => state.user);
     const tech = res.technologies;
-
+    const navigate = useNavigate();
     const [projects, setProjects] = useState(useLoaderData());
     const [endOfSearch, setEndOfSearch] = useState(false);
 
@@ -74,7 +75,22 @@ const ProfilePage = () => {
 
     const displayError = () => {
         console.log("Returning error");
-        return <p className="text-3xl">There are no projects to render</p>;
+        return (
+            <Fragment>
+                <p className="text-xl text-center pb-4">
+                    You are not apart of any projects
+                </p>
+                <div className="flex gap-5 flex-col items-center grow-0 sm:flex-row justify-center">
+                    <Button onClick={() => navigate("/create")} large>
+                        Create New Project
+                    </Button>
+                    <span className="league-spartan flex">Or</span>
+                    <Button large onClick={() => navigate("/discover")}>
+                        Discover Projects
+                    </Button>
+                </div>
+            </Fragment>
+        );
     };
 
     return (
@@ -116,7 +132,7 @@ const ProfilePage = () => {
             >
                 {projects.length !== 0 ? renderedProjectTiles : null}
             </div>
-            <div className="flex justify-center">
+            <div className="flex flex-col grow-0 poppins justify-center">
                 {projects.length === 0 ? displayError() : null}
             </div>
             {endOfSearch && (
