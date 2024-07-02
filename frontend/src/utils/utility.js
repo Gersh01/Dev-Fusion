@@ -212,6 +212,8 @@ const getBubbleColor = (text) => {
 	return bubbleBgColors[hash % bubbleBgColors.length];
 };
 
+const apiDomain = "http://www.dev-fusion.com";
+
 //Searches through list of tech and returns results based on partial match
 const getTechnology = (tech) => {
 	if (tech.length < 1) {
@@ -243,4 +245,4 @@ const getCommunication = (comm) => {
 	return communications.filter((entry) => re.test(entry));
 };
 
-export { getBubbleColor, getTechnology, getRole, getCommunication };
+export { getBubbleColor, getTechnology, getRole, getCommunication, apiDomain };

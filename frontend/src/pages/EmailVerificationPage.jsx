@@ -2,6 +2,7 @@ import AuthPanel from "../components/reusable/AuthPanel";
 import { useSelector } from "react-redux";
 import Axios from "axios";
 import { useState } from "react";
+import { apiDomain } from "../utils/utility";
 
 const EmailverificationPage = () => {
   const email = useSelector((state) => state.system.email);
@@ -16,7 +17,7 @@ const EmailverificationPage = () => {
       try {
         console.log(payload);
         const response = await Axios.post(
-          "http://localhost:5000/api/resend_verification_email",
+          apiDomain + "/api/resend_verification_email",
           payload,
           { withCredentials: true }
         );

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../reusable/Button";
 import Axios from "axios";
+import { apiDomain } from "../../utils/utility";
 
 const PasswordSettings = () => {
   const navigate = useNavigate();
@@ -8,7 +9,7 @@ const PasswordSettings = () => {
   const resetPassword = async () => {
     try {
       const response = await Axios.put(
-        "http://localhost:5000/api/users/password",
+        apiDomain + "/api/users/password",
         {},
         { withCredentials: true }
       );
