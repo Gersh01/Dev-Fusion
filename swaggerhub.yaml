@@ -1,0 +1,880 @@
+swagger: "2.0"
+info:
+  description: This is the API documentation for the Dev Fusion
+  version: 1.0.0
+  title: Dev Fusion
+  contact:
+    email: alex.gershfeld@gmail.com
+
+paths:
+  /login:
+    post:
+      tags:
+      - Authentication
+      summary: Logs in a user with the given values
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: login
+        description: login
+        schema:
+          $ref: '#/definitions/Login'
+      responses:
+        200:
+          description: Successful
+        401:
+          description: Password is wrong/User is not verified
+        404:
+          description: URL Not Found/User not found
+        500:
+          description: Server Error
+  /register:
+    post:
+      tags:
+      - Authentication
+      summary: Register a user with the given values
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: register
+        description: register
+        schema:
+          $ref: '#/definitions/Register'
+      responses:
+        201:
+          description: User Created
+        403:
+          description: Username/Email is taken
+        404:
+          description: URL Not Found
+        500:
+          description: Server Error
+  /users:
+    get:
+      tags:
+      - Users
+      summary: Gets the user with the given userId
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: getUser
+        description: getUser
+        schema:
+          $ref: '#/definitions/usersGet'
+      responses:
+        200:
+          description: Successful
+        403:
+          description: Token is not valid
+        404:
+          description: URL Not Found/User not found
+        500:
+          description: Server Error
+    put:
+      tags:
+      - Users
+      summary: Updates the user with the given userId
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: updateUser
+        description: updateUser
+        schema:
+          $ref: '#/definitions/usersPut'
+      responses:
+        200:
+          description: Successful
+        403:
+          description: Token is not valid/Signed in user does not have access to the given user
+        404:
+          description: URL Not Found/User with the userId does not exist
+        500:
+          description: Server Error
+  /resend_verification_email:
+    post:
+      tags:
+      - Users
+      summary: Resends the verification email
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: .
+        description: .
+        schema:
+          $ref: '#/definitions/ResendEmail'
+      responses:
+        200:
+          description: Successful
+        404:
+          description: URL Not Found/User not found
+        500:
+          description: Server Error
+  /forgot_password/send:
+    post:
+      tags:
+      - Users
+      summary: Sends the forgot password email to the given email
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: .
+        description: .
+        schema:
+          $ref: '#/definitions/ForgotPasswordSend'
+      responses:
+        200:
+          description: Successful
+        403:
+          description: User is not verified
+        404:
+          description: URL Not Found/User not found
+        500:
+          description: Server Error
+  /forgot_password/reset:
+    post:
+      tags:
+      - Users
+      summary: Resets the password of the user(from the token that was set when the link on email was clicked) to the given newPassword
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: .
+        description: .
+        schema:
+          $ref: '#/definitions/ForgotPasswordReset'
+      responses:
+        200:
+          description: Successful
+        403:
+          description: Token is not valid
+        404:
+          description: URL Not Found/User not found
+        500:
+          description: Server Error
+  /logout:
+    post:
+      tags:
+      - Authentication
+      summary: Clears the cookies that is supposed to have the users jwt token
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful
+        403:
+          description: Token is not valid (still cleared from cookies)
+        404:
+          description: URL Not Found
+  /jwtTest:
+    post:
+      tags:
+      - Users
+      summary: Gets the user information from the token that is in the cookies if the token is still valid
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful
+        403:
+          description: Token is not valid
+        404:
+          description: URL Not Found/User not found
+        500:
+          description: Server Error
+  /api/inbox:
+    get:
+      tags:
+      - Inbox
+      summary: Gets all the applied users
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: inbox
+        description: c
+        schema:
+          $ref: '#/definitions/Inbox'
+      responses:
+        200:
+          description: Successful
+        400:
+          description: ProjectId must be 24 characters
+        403:
+          description: Token is not valid
+        404:
+          description: URL Not Found/No Applied User
+        500:
+          description: Server Error
+  /api/inbox/apply:
+    post:
+      tags:
+      - Inbox
+      summary: Creates a new application
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: inboxApply
+        description: Creates a new application with the given info
+        schema:
+          $ref: '#/definitions/InboxApply'
+      responses:
+        201:
+          description: Successfully Created
+        400:
+          description: ProjectId/UserId must be 24 characters/role is empty
+        403:
+          description: Token is not valid
+        404:
+          description: URL Not Found
+        500:
+          description: Server Error
+  /api/inbox/accept_member:
+    post:
+      tags:
+      - Inbox
+      summary: Accepts an applied user
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: inboxAcceptMember
+        description: Accepts an applied user with the given information
+        schema:
+          $ref: '#/definitions/InboxAccept'
+      responses:
+        200:
+          description: Successful
+        400:
+          description: ProjectId/UserId must be 24 characters
+        401:
+          description: User already has a role
+        403:
+          description: Token is not valid
+        404:
+          description: URL Not Found/Project, Role or User not found
+        500:
+          description: Server Error
+  /api/inbox/reject_member:
+    post:
+      tags:
+      - Inbox
+      summary: Rejects an applied user
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: inboxRejectMember
+        description: Rejects an applied user with the given information
+        schema:
+          $ref: '#/definitions/InboxReject'
+      responses:
+        200:
+          description: Successful
+        400:
+          description: ProjectId/UserId must be 24 characters
+        403:
+          description: Token is not valid
+        404:
+          description: URL Not Found/No Applied User
+        500:
+          description: Server Error
+          
+  
+  /api/project:
+    post:
+      tags:
+      - Project
+      summary: Creates a Project
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: createProject
+        description: createProject
+        schema:
+          $ref: '#/definitions/createProject'
+      responses:
+        200:
+          description: Successful
+        500:
+          description: Server Error
+
+  /project/{projectId}:
+    get:
+      tags:
+        - Project
+      summary: Gets a Project
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: projectId
+          description: The ID of the project to retrieve
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful
+        400:
+          description: Project ID must be 24 characters
+        500:
+          description: Server Error
+    delete:
+      tags:
+        - Project
+      summary: Deletes a Project
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: projectId
+          description: The ID of the project to delete
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful
+        404:
+          description: Invalid Project ID
+        500:
+          description: Server Error
+
+  /api/edit-project:
+    post:
+      tags:
+      - Project
+      summary: Edits a Project
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: editProject
+        description: editProject
+        schema:
+          $ref: '#/definitions/editProject'
+      responses:
+        200:
+          description: Successful
+        400:
+          description: User is not Owner
+        500:
+          description: Server Error
+  
+  /api/discover:
+    post:
+      tags:
+        - Project
+      summary: Searches for open projects
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: discoverProjects
+          description: The criteria to discover projects
+          required: true
+          schema:
+            $ref: '#/definitions/discoverProjects'
+      responses:
+        200:
+          description: Successful
+        400:
+          description: Project ID is not 24 characters
+        500:
+          description: Server Error
+  
+  /owned-projects:
+    post:
+      tags:
+        - Project
+      summary: Searches for owned projects
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: ownedProjects
+          description: The criteria to search for owned projects
+          required: true
+          schema:
+            $ref: '#/definitions/ownedProjects'
+      responses:
+        200:
+          description: Successful
+        400:
+          description: Project ID is not 24 characters
+        500:
+          description: Server Error
+  
+  /joined-projects:
+    post:
+      tags:
+        - Project
+      summary: Searches for joined projects
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: joinedProjects
+          description: The criteria to search for joined projects
+          required: true
+          schema:
+            $ref: '#/definitions/joinedProjects'
+      responses:
+        200:
+          description: Successful
+        400:
+          description: Project ID is not 24 characters
+        500:
+          description: Server Error
+
+  /leave/project:
+    post:
+      tags:
+        - Project
+      summary: Leaves a Project
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: leaveProject
+          description: The criteria to leave a project
+          required: true
+          schema:
+            $ref: '#/definitions/leaveProject'
+      responses:
+        200:
+          description: Successful
+        400:
+          description: User is not part of the project
+        500:
+          description: Server Error
+
+definitions:
+  Login:
+    type: object
+    required:
+    - login
+    - password
+    - rememberMe
+    properties:
+      login:
+        type: string
+        example: "AlperenY"
+      password:
+        type: string
+        example: "hashed"
+      rememberMe:
+        type: boolean
+        example: true
+  Register:
+    type: object
+    required:
+    - firstName
+    - lastName
+    - password
+    - username
+    - email
+    properties:
+      firstName:
+        type: string
+        example: "Alperen"
+      lastName:
+        type: string
+        example: "Yazmaci"
+      password:
+        type: string
+        example: "abc123!"
+      username:
+        type: string
+        example: "alpereny"
+      email:
+        type: string
+        example: "alperen.yazmaci@gmail.com"
+  usersGet:
+    type: object
+    required:
+    - userId
+    properties:
+      userId:
+        type: string
+        example: "667148327d5f8d94a8a374c5"
+  usersPut:
+    type: object
+    required:
+    - userId
+    properties:
+      userId: 
+        type: string
+        example: "667148327d5f8d94a8a374c5"
+      firstName:
+        type: string
+        example: "Alperen"
+      lastName:
+        type: string
+        example: "Yazmaci"
+      bio:
+        type: string
+        example: "abc123!"
+      technologies:
+        type: array
+        items:
+          type: string
+          example: "API"
+  Inbox:
+    type: object
+    required:
+    - projectId
+    properties:
+      projectId:
+        type: string
+        example: "6672f2afe4773ed033d42f46"
+  InboxApply:
+    type: object
+    required:
+    - projectId
+    - userId
+    - role
+    properties:
+      projectId:
+        type: string
+        example: "6672f2afe4773ed033d42f46"
+      userId:
+        type: string
+        example: "667146ff7d5f8d94a8a374bf"
+      role:
+        type: string
+        example: "Database"
+  InboxAccept:
+    type: object
+    required:
+    - projectId
+    - userId
+    - role
+    properties:
+      projectId:
+        type: string
+        example: "6672f2afe4773ed033d42f46"
+      userId:
+        type: string
+        example: "667147e07d5f8d94a8a374c2"
+      role:
+        type: string
+        example: "Frontend"
+  InboxReject:
+    type: object
+    required:
+    - projectId
+    - userId
+    properties:
+      projectId:
+        type: string
+        example: "6672f2afe4773ed033d42f46"
+      userId:
+        type: string
+        example: "667146ff7d5f8d94a8a374bf"
+      role:
+        type: string
+        example: "Database"
+  ResendEmail:
+    type: object
+    required:
+    - email
+    properties:
+      email:
+        type: string
+        example: "alperen.yazmaci@gmail.com"
+  ForgotPasswordSend:
+    type: object
+    required:
+    - email
+    properties:
+      email:
+        type: string
+        example: "alperen.yazmaci@gmail.com"
+  ForgotPasswordReset:
+    type: object
+    required:
+    - newPassword
+    properties:
+      newPassword:
+        type: string
+        example: "Abc123!"
+        
+        
+  createProject:
+    type: object
+    required:
+      - isOpen
+      - isDone
+      - isStarted
+      - dateCreated
+      - currentVsRequired
+      - deadline
+      - projectStartDate
+      - roles
+      - technologies
+      - title
+    properties:
+      isOpen:
+        type: boolean
+        example: false
+      isDone:
+        type: boolean
+        example: false
+      isStarted:
+        type: boolean
+        example: false
+      dateCreated:
+        type: string
+        example: "2023-05-24T10:00:00Z"
+      currentVsRequired:
+        type: array
+        items:
+          type: integer
+        example: [1, 9]
+      deadline:
+        type: string
+        example: "2029-05-24T10:00:00Z"
+      projectStartDate:
+        type: string
+        example: "2023-05-24T10:00:00Z"
+      roles:
+        type: array
+        items:
+          type: object
+          properties:
+            count:
+              type: integer
+              example: 1
+            role:
+              type: string
+              example: "Project Manager"
+            description:
+              type: string
+              example: "Manages a Project"
+        example:
+          - count: 1
+            role: "Project Manager"
+            description: "Manages a Project"
+          - count: 2
+            role: "Frontend"
+            description: "Makes webpages look nice"
+      technologies:
+        type: array
+        items:
+          type: string
+        example: ["HTML"]
+      title:
+        type: string
+        example: "Test Me"
+      description:
+        type: string
+        example: "Testing the create"
+      communications:
+        type: array
+        items:
+          type: string
+        example: ["Twitter", "X", "Instagram", "Facebook"]
+  
+  editProject:
+    type: object
+    required:
+      - projectId
+      - isOpen
+      - isDone
+      - isStarted
+      - dateCreated
+      - currentVsRequired
+      - deadline
+      - projectStartDate
+      - technologies
+      - title
+    properties:
+      projectId:
+        type: string
+        example: "667f6d371929b94ff10a35e9"
+      isOpen:
+        type: boolean
+        example: false
+      isDone:
+        type: boolean
+        example: false
+      isStarted:
+        type: boolean
+        example: false
+      dateCreated:
+        type: string
+        example: "2023-05-24T10:00:00Z"
+      currentVsRequired:
+        type: array
+        items:
+          type: integer
+        example: [1, 9]
+      deadline:
+        type: string
+        example: "2029-05-24T10:00:00Z"
+      projectStartDate:
+        type: string
+        example: "2023-05-24T10:00:00Z"
+      technologies:
+        type: array
+        items:
+          type: string
+        example: ["HTML"]
+      title:
+        type: string
+        example: "Test Me"
+      description:
+        type: string
+        example: "Testing the create"
+      communications:
+        type: array
+        items:
+          type: string
+        example: ["Twitter", "X", "Instagram", "Facebook"]
+
+  discoverProjects:
+    type: object
+    required:
+    - searchBy
+    - sortBy
+    - query
+    - count
+    - initial
+    - projectId
+    properties:
+      searchBy:
+        type: string
+        example: "title"
+      sortBy:
+        type: string
+        example: "relevance"
+      query:
+        type: string
+        example: ""
+      count:
+        type: string
+        example:  3
+      initial:
+        type: string
+        example: true
+      projectId:
+        type: string
+        example: "667147e07d5f8d94a8a374c2"
+  
+  ownedProjects:
+    type: object
+    required:
+    - searchBy
+    - sortBy
+    - query
+    - count
+    - initial
+    - projectId
+    properties:
+      searchBy:
+        type: string
+        example: "title"
+      sortBy:
+        type: string
+        example: "relevance"
+      query:
+        type: string
+        example: ""
+      count:
+        type: string
+        example:  3
+      initial:
+        type: string
+        example: true
+      projectId:
+        type: string
+        example: "667147e07d5f8d94a8a374c2"
+
+  joinedProjects:
+    type: object
+    required:
+    - searchBy
+    - sortBy
+    - query
+    - count
+    - initial
+    - projectId
+    properties:
+      searchBy:
+        type: string
+        example: "title"
+      sortBy:
+        type: string
+        example: "relevance"
+      query:
+        type: string
+        example: ""
+      count:
+        type: string
+        example:  3
+      initial:
+        type: string
+        example: true
+      projectId:
+        type: string
+        example: "667147e07d5f8d94a8a374c2"
+  
+  leaveProject:
+    type: object
+    required:
+    - projectId
+    properties:
+      projectId:
+        type: string
+        example: "667147e07d5f8d94a8a374c2"
+
+host: dev-fusion-3adc28f56db6.herokuapp.com
+basePath: /api
+schemes:
+  - http
