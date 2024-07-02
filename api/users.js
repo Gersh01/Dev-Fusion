@@ -353,6 +353,7 @@ exports.setApp = function (app, client) {
 
     //get user api
     app.get('/api/users', cookieJwtAuth, async (req, res, next) => {
+        console.log("Debug: Cookie Auth in getting users")
         const { userId } = req.body;
         var firstName = '';
         var lastName = '';
@@ -364,10 +365,10 @@ exports.setApp = function (app, client) {
 
         var db;
         var result;
-
+        
         if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
         const nid = new ObjectId(userId);
-
+        
         try {
             db = client.db('DevFusion');
             result = await db.collection('Users').find({ _id: nid }).toArray();
@@ -397,6 +398,7 @@ exports.setApp = function (app, client) {
 
     //update user api
     app.put('/api/users', cookieJwtAuth, async (req, res, next) => {
+        console.log("Debug: Cookie Auth in updating users")
         var error = '';
         var userId = req.body.userId;
         var firstName = req.body.firstName;

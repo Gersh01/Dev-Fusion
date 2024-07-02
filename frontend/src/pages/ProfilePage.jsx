@@ -8,17 +8,27 @@ import DiscoverProjectTile from "../components/discover/DiscoverProjectTile";
 import BioProfileFields from "../components/profile/BioProfileFields";
 import TechnologiesField from "../components/profile/TechnologiesField";
 import Button from "../components/reusable/Button";
+import { getUsersProfile } from "./loaders/userLoader";
 
 const ProfilePage = () => {
     let res = useSelector((state) => state.user);
+    let id = "66816e44edbab2c4d116387d";
     const tech = res.technologies;
     const navigate = useNavigate();
     const [projects, setProjects] = useState(useLoaderData());
     const [endOfSearch, setEndOfSearch] = useState(false);
+    const [myProfile, SetMyProfile] = useState(true);
 
     const projectsContainerRef = useRef();
 
+    // if (res.id !== profileId) {
+    //     SetMyProfile(false);
+    // }
+
     useEffect(() => {
+        // if (res.id !== id) {
+        //     SetMyProfile(false);
+        // }
         // * Adding scroll listener to window
         window.addEventListener("scroll", handleScroll);
         console.log("Debug: Adding Event listner");
@@ -93,6 +103,11 @@ const ProfilePage = () => {
         );
     };
 
+    const testUsers = () => {
+        let profile = getUsersProfile(id);
+        console.log(profile);
+    };
+
     return (
         <Fragment>
             <div
@@ -100,6 +115,9 @@ const ProfilePage = () => {
 					poppins text-4xl font-bold gap-x-6"
             >
                 <p>Profile</p>
+                <button className="text-sm bg-gray-300" onClick={testUsers}>
+                    Testing
+                </button>
             </div>
             <Divider />
             <div className="flex min-w-[100px] gap-5">
@@ -114,7 +132,12 @@ const ProfilePage = () => {
             <div className="flex flex-wrap gap-8 py-4">
                 {/* Bio Field*/}
                 <div className="flex flex-col w-full h-80 p-4 rounded-2xl dark:bg-gray-900 bg-gray-50 lg:w-3/5 text-xl poppins">
-                    <BioProfileFields title="Bio" info={res.bio} type={true} />
+                    <BioProfileFields
+                        title="Bio"
+                        info={res.bio}
+                        type={true}
+                        privateView={myProfile}
+                    />
                 </div>
                 {/*Technologies fields*/}
                 <div className="flex flex-col p-4 rounded-2xl h-80 dark:bg-gray-900 bg-gray-50 w-full lg:w-1/5 lg:grow poppins text-xl">
@@ -122,6 +145,7 @@ const ProfilePage = () => {
                         technologies={tech}
                         title="Technologies"
                         type={true}
+                        privateView={myProfile}
                     />
                 </div>
             </div>

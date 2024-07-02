@@ -26,12 +26,17 @@ import {
 } from "./pages/loaders/projectLoader";
 import ViewProjectPage from "./pages/ViewProjectPage";
 import AboutUsPage from "./pages/AboutUsPage";
-import { getUserFromJwt, validateJwt } from "./pages/loaders/userLoader";
+import {
+    getUserFromJwt,
+    validateJwt,
+    getUsersProfile,
+} from "./pages/loaders/userLoader";
 import ContentErrorPage from "./pages/ContentErrorPage";
 import ResetAuthPage from "./pages/ResetAuthPage";
 import CreatePage from "./pages/CreatePage";
 import VerifiedUsersWelcomePage from "./pages/VerifiedUsersWelcomePage";
-import UrlNotFound from "./pages/UrlNotFound";
+import UrlNotFoundPage from "./pages/UrlNotFoundPage";
+import ProjectsApplicationsPage from "./pages/ProjectsApplicationsPage";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -57,6 +62,7 @@ const router = createBrowserRouter(
                 />
             </Route>
             <Route path="/" element={<ResetAuthPage />}>
+                <Route path="/*" element={<UrlNotFoundPage />} />
                 <Route
                     path="/reset-password-email"
                     element={<ResetPasswordEmailPage />}
@@ -122,7 +128,7 @@ const router = createBrowserRouter(
                     }}
                 />
                 <Route
-                    path="/my-profile"
+                    path="/profile"
                     element={<ProfilePage />}
                     loader={() => {
                         return getProfileProjects({
@@ -135,11 +141,29 @@ const router = createBrowserRouter(
                         });
                     }}
                 />
+                <Route
+                    path="/profile/:id"
+                    element={<ProfilePage />}
+                    loader={({ params }) => {
+                        return getUsersProfile(params.id);
+                    }}
+                    // return getProfileProjects({
+                    //     searchBy: "title",
+                    //     sortBy: "recent",
+                    //     query: "",
+                    //     count: 4,
+                    //     initial: true,
+                    //     projectId: "000000000000000000000000",
+                    // });
+                />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/create" element={<CreatePage />} />
+                <Route
+                    path="/applications"
+                    element={<ProjectsApplicationsPage />}
+                />
                 <Route path="/about" element={<AboutUsPage />} />
             </Route>
-            <Route path="/*" element={<UrlNotFound />} />
         </Route>
     )
 );
