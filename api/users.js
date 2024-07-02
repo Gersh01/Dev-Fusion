@@ -443,7 +443,6 @@ exports.setApp = function (app, client) {
     });
 
     app.post('/api/users/password', cookieJwtAuth, async (req, res, next) => {
-        const newPassword = req.body.newPassword;
         const username = req.username;
         var error = '';
 
