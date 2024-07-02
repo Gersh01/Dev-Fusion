@@ -55,6 +55,9 @@ const DisocverPage = () => {
 
 	// * Lazy loading more projects
 	const retrieveMoreProjects = async () => {
+		if (projects.length === 0) {
+			return;
+		}
 		const newProjects = await getProjects({
 			searchBy: searchBy,
 			sortBy: sortBy,

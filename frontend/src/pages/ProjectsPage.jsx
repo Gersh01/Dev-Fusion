@@ -1,76 +1,119 @@
-import { Fragment } from "react";
-import SearchField from "../components/reusable/SearchField";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Divider from "../components/reusable/Divider";
 import ProjectTypeSelector from "../components/projects/ProjectTypeSelector";
 import OwnedProjectTile from "../components/projects/OwnedProjectTile";
-import { useLocation } from "react-router-dom";
+import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import JoinedProjectTile from "../components/projects/JoinedProjectTile";
+import Button from "../components/reusable/Button";
+import { getJoinedProjects, getOwnedProjects } from "./loaders/projectLoader";
 
 const ProjectsPage = () => {
 	const location = useLocation();
+	const navigate = useNavigate();
 
-	// TODO - Mock Project (To be removed)
-	const mockProject = {
-		title: "Gym Fitness Tracker",
-		description:
-			"Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia vel atque aspernatur saepe praesentium minus, a distinctio dolor voluptates delectus?",
-		technologies: [
-			"React",
-			"Express",
-			"MongoDB",
-			"NodeJs",
-			"Passport",
-			"NodeMailer",
-			"JavaScript",
-			"React Redux",
-			"Flutter",
-		],
-		startDate: new Date("2024-6-12"),
-		endDate: new Date("2024-8-11"),
+	const [projects, setProjects] = useState(useLoaderData());
+	const [endOfSearch, setEndOfSearch] = useState(false);
+
+	const projectsContainerRef = useRef();
+
+	useEffect(() => {
+		// * Adding scroll listener to window
+		window.addEventListener("scroll", handleScroll);
+
+		// * Load
+		if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
+			if (!endOfSearch) {
+				retrieveMoreProjects();
+			}
+		}
+
+		return () => {
+			window.removeEventListener("scroll", handleScroll);
+		};
+	});
+
+	// * Only lazy load when reaching end of projects
+	const handleScroll = () => {
+		const bottom =
+			window.innerHeight + window.scrollY >= document.body.scrollHeight;
+
+		if (bottom) {
+			retrieveMoreProjects();
+		}
 	};
 
-	// TODO - Mock Project (To be removed)
-	const renderedOwnedProjectTiles = (
-		<Fragment>
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-			<OwnedProjectTile project={mockProject} />
-		</Fragment>
-	);
+	// * Lazy loading more projects
+	const retrieveMoreProjects = async () => {
+		if (projects.length === 0) {
+			return;
+		}
 
-	// TODO - Mock Project (To be removed)
-	const renderedJoinedProjectTiles = (
-		<Fragment>
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-			<JoinedProjectTile project={mockProject} />
-		</Fragment>
-	);
+		let newProjects;
+		if (location.pathname === "/my-projects") {
+			newProjects = await getOwnedProjects({
+				searchBy: "title",
+				sortBy: "recent",
+				query: "",
+				count: 4,
+				initial: false,
+				projectId: projects[projects.length - 1]._id,
+			});
+		} else {
+			newProjects = await getJoinedProjects({
+				searchBy: "title",
+				sortBy: "recent",
+				query: "",
+				count: 4,
+				initial: false,
+				projectId: projects[projects.length - 1]._id,
+			});
+		}
 
-	let renderedProjectTiles;
-	if (location.pathname === "/my-projects") {
-		renderedProjectTiles = renderedOwnedProjectTiles;
-	} else if (location.pathname === "/joined-projects") {
-		renderedProjectTiles = renderedJoinedProjectTiles;
+		setProjects([...projects, ...newProjects]);
+
+		if (newProjects.length === 0) {
+			setEndOfSearch(true);
+		}
+	};
+
+	if (!projects) {
+		return null;
 	}
+
+	const renderedProjectsTiles = projects.map((project) => {
+		if (location.pathname === "/my-projects") {
+			return <OwnedProjectTile key={project.id} project={project} />;
+		} else if (location.pathname === "/joined-projects") {
+			return <JoinedProjectTile key={project.id} project={project} />;
+		}
+	});
+
+	const emptyProjectsMessage =
+		location.pathname === "/my-projects" ? (
+			<Fragment>
+				<p>You have not created any projects</p>
+				<Button
+					large
+					onClick={() => {
+						navigate("/create");
+					}}
+				>
+					Create New Project
+				</Button>
+			</Fragment>
+		) : (
+			<Fragment>
+				<p>You have not joined any projects</p>
+				<Button
+					large
+					onClick={() => {
+						navigate("/discover");
+					}}
+				>
+					Discover Projects
+				</Button>
+			</Fragment>
+		);
 
 	return (
 		<Fragment>
@@ -79,13 +122,22 @@ const ProjectsPage = () => {
 					text-black dark:text-white poppins text-4xl font-bold gap-x-6"
 			>
 				<p>Projects</p>
-				<SearchField />
 			</div>
 			<Divider />
 			<ProjectTypeSelector />
-			<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
-				{renderedProjectTiles}
+			<div
+				className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8"
+				ref={projectsContainerRef}
+			>
+				{renderedProjectsTiles}
 			</div>
+			{projects.length === 0 && (
+				<div className="font-medium text-lg flex justify-center">
+					<div className="flex flex-col gap-4 items-center">
+						{emptyProjectsMessage}
+					</div>
+				</div>
+			)}
 		</Fragment>
 	);
 };
