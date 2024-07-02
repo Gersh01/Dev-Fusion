@@ -442,7 +442,7 @@ exports.setApp = function (app, client) {
         }
     });
 
-    app.put('/api/users/password', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/users/password', cookieJwtAuth, async (req, res, next) => {
         const newPassword = req.body.newPassword;
         const username = req.username;
         var error = '';
@@ -459,19 +459,12 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         }
 
-        var resultPut;
-        var query = { username: username };
-        var newValues = { $set: { password: newPassword } };
-
-        try {
-            db = client.db('DevFusion');
-            resultPut = await db.collection('Users').updateOne(query, newValues);
-            return res.status(200).json({ error: error });
-        } catch (e) {
-            error = e.toString;
-            var ret = { error: error };
-            return res.status(500).json(ret);
-        }
+        const userId = resultFind._id;
+        const payload = { userId };
+        var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "15m" });
+        res.cookie("userIdToken", token, {
+            httpOnly: true
+        });
 
     });
 
