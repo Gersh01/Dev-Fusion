@@ -81,12 +81,20 @@ exports.setApp = function (app, client) {
         const userNid = new ObjectId(userId);
         
         var db;
-        var resultsFind;
+        var resultsFindInbox;
         var resultInsert;
+        var resultFindProjects;
         try {
             db = client.db('DevFusion');
-            resultsFind = await db.collection('Inbox').find({ projectID: projectNid, userID: userNid , role: role}).toArray();
-            if(resultsFind.length > 0) return res.status(403).json({ error:"User already applied for this role to this project" });
+            resultsFindInbox = await db.collection('Inbox').find({ projectID: projectNid, userID: userNid}).toArray();
+            if(resultsFindInbox.length > 0) return res.status(403).json({ error:"User already applied to this project" });
+            resultFindProjects = await db.collection('Projects').findOne({ _id: projectNid });
+            if(resultFindProjects == null || resultFindProjects == undefined) return res.status(404).json({error: "project with given projectId not found"});
+            var roleFound = false;
+            resultFindProjects.roles.forEach((x, i) => {
+                if(x.role == role) roleFound = true;
+            });
+            if(!roleFound) return res.status(404).json({error: "given role not found in the project the given projectId"});
             const newInbox = {
                 projectID: projectNid, userID: userNid , role: role
             };
@@ -105,10 +113,10 @@ exports.setApp = function (app, client) {
     app.post('/api/inbox/accept_member', cookieJwtAuth, async (req, res, next) => {
         const projectId = req.body.projectId || "";
         const userId = req.body.userId || "";
-        const role = req.body.role || "";
+        // const role = req.body.role || "";
         if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
         if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
-        if(role == "") return res.status(400).json({error: "role is empty"});
+        // if(role == "") return res.status(400).json({error: "role is empty"});
 
         
         var error = "";
@@ -134,11 +142,11 @@ exports.setApp = function (app, client) {
                 });
                 if(roleFound){
                     resultFind.teamMembers.forEach((x, i) => {
-                        if(x.includes(resultFindUser.username)) return res.status(401).json({error: "User already has a role"});
+                        if(x.userId == userId) return res.status(401).json({error: "User already has a role"});
                     });
-                    var newTeamMember = resultFindUser.username + ": " + role;
+                    var newTeamMember = {"role": role, "userId": userId, "username": resultFind.username};
                     resultPut = await db.collection('Projects').updateOne({ _id: projectNid }, { $push: {teamMembers : newTeamMember} });
-                    resultsDelete = await db.collection('Inbox').deleteMany({projectID: projectNid, userID: userNid, role: role});
+                    resultDelete = await db.collection('Inbox').deleteMany({projectID: projectNid, userID: userNid});
                     return res.status(200).json({error:""});
                 }else{
                     return res.status(404).json({error: "Role not found"});
