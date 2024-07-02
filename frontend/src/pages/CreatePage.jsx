@@ -1,64 +1,60 @@
-import Bubble from "../components/reusable/Bubble";
 import Input from "../components/reusable/Input";
 import Button from "../components/reusable/Button";
-import NavBar from "../components/nav/NavBar";
-import BubblePanel from "../components/reusable/BubblePanel";
+
+import { Fragment } from "react";
+import Divider from "../components/reusable/Divider";
+import TextArea from "../components/reusable/TextArea";
+import CreateTechnologiesPanel from "../components/create/CreateTechnologiesPanel";
+import CreateRolesPanel from "../components/create/CreateRolesPanel";
+import CreateCommunicationsPanel from "../components/create/CreateCommunicationsPanel";
 
 const CreatePage = () => {
-	//TODO: Finish Creation Function
-	const doCreate = async (e) => {};
-
 	return (
-		<div>
-			<NavBar />
-			<div className="">
+		<Fragment>
+			<div
+				className="flex justify-between items-end flex-wrap gap-y-2 
+				text-black dark:text-white poppins text-4xl font-bold gap-x-6"
+			>
+				<p>Create</p>
+			</div>
+			<Divider />
+			<div className="flex flex-col gap-4">
 				{/* Project Title */}
 				<Input
 					titleText="Project Title"
-					placeHolder="Enter Project Title"
-				></Input>
-
+					placeholder="Enter Project Title"
+				/>
 				{/* TODO: Look into different format for date input */}
-				<div className="flex gap-2">
+				<div className="grid gap-4 grid-cols-2">
 					{/* Start Date */}
 					<Input
 						titleText="Start Date"
-						placeHolder="Enter the start date"
-					></Input>
-
+						placeholder="Enter the start date"
+						type="date"
+					/>
 					{/* Deadline */}
 					<Input
 						titleText="Deadline"
-						placeHolder="Enter the deadline"
-					></Input>
+						placeholder="Enter the deadline"
+						type="date"
+					/>
 				</div>
-
 				{/* Description */}
-				<Input
+				<TextArea
 					titleText="Description"
-					placeHolder="Tell us all about your project"
-				></Input>
-
-				{/* TODO: Technologies */}
-				<BubblePanel titleText="Technologies" techType></BubblePanel>
-
-				{/* Expectations */}
-				<Input
-					titleText="Expectations"
-					placeHolder="What do you need from your roles?"
-				></Input>
-
-				{/* TODO: Roles */}
-				<BubblePanel titleText="Roles" roleType></BubblePanel>
-
-				{/* TODO: Communication */}
-				<BubblePanel titleText="Communication" commsType></BubblePanel>
-
+					placeholder="tell us about your project"
+				/>
+				{/* Technologies */}
+				<CreateTechnologiesPanel />
+				{/* Roles */}
+				<CreateRolesPanel />
+				{/* Communications */}
+				<CreateCommunicationsPanel />
 				{/* Publish */}
-				<Button onClick={doCreate} large>
-					Publish
-				</Button>
+				<Button large>Publish</Button>
 			</div>
-		</div>
+		</Fragment>
 	);
 };
+
+export default CreatePage;

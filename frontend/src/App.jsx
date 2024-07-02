@@ -20,9 +20,11 @@ import ProfilePage from "./pages/ProfilePage";
 import { getProjectById, getProjects } from "./pages/loaders/projectLoader";
 import ViewProjectPage from "./pages/ViewProjectPage";
 import AboutUsPage from "./pages/AboutUsPage";
-import { validateJwt } from "./pages/loaders/userLoader";
+import { getUserFromJwt, validateJwt } from "./pages/loaders/userLoader";
 import ContentErrorPage from "./pages/ContentErrorPage";
 import ResetAuthPage from "./pages/ResetAuthPage";
+import CreatePage from "./pages/CreatePage";
+import VerifiedUsersWelcomePage from "./pages/VerifiedUsersWelcomePage";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -42,6 +44,10 @@ const router = createBrowserRouter(
 					path="/email-verification"
 					element={<EmailVerificationPage />}
 				/>
+				<Route
+					path="/verified-user"
+					element={<VerifiedUsersWelcomePage />}
+				/>
 			</Route>
 			<Route path="/" element={<ResetAuthPage />}>
 				<Route
@@ -54,9 +60,9 @@ const router = createBrowserRouter(
 			<Route
 				path="/"
 				element={<ContentPageContainer />}
-				// loader={() => {
-				// 	return getUserFromJwt();
-				// }}
+				loader={() => {
+					return getUserFromJwt();
+				}}
 				errorElement={<ContentErrorPage />}
 			>
 				<Route
@@ -97,6 +103,7 @@ const router = createBrowserRouter(
 					}}
 				/>
 				<Route path="/user-settings" element={<SettingsPage />} />
+				<Route path="/create" element={<CreatePage />} />
 				<Route path="/about" element={<AboutUsPage />} />
 			</Route>
 		</Route>

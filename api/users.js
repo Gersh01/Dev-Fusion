@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 
 const PORT = process.env.PORT || 5000;
 const appName = "http://localhost:" + PORT;
+const frontend = "http://localhost:5173";
 
 const ObjectId = require('mongodb').ObjectId;
 
@@ -260,7 +261,7 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         }
 
-        if (resultEmail != null || resultEmail != undefined) return res.status(404).json({ error: "User is already verified" });
+        if (resultEmail != null || resultEmail != undefined) return res.status(401).json({ error: "User is already verified" });
         else if (resultEmailUnverified != null | resultEmailUnverified != undefined) {
             const emailToken = resultEmailUnverified.emailToken;
             transporter.sendMail({
@@ -332,7 +333,9 @@ exports.setApp = function (app, client) {
             try {
                 insertResult = await db.collection('Users').insertOne(newUser);
                 deleteResult = await db.collection('UnverifiedUsers').deleteOne({ _id: _id });
-                return res.status(200).json({ error: "" });
+                //if successful verification redirect 
+                return res.redirect(301, frontend + "/verified-user");
+                // return res.status(200).json({ error: "" });
                 // return res.redirect('/');
             } catch (e) {
                 a
@@ -437,6 +440,39 @@ exports.setApp = function (app, client) {
             var ret = { error: error };
             return res.status(500).json(ret);
         }
+    });
+
+    app.put('/api/users/password', cookieJwtAuth, async (req, res, next) => {
+        const newPassword = req.body.newPassword;
+        const username = req.username;
+        var error = '';
+
+        var db;
+        var resultFind;
+
+        try {
+            db = client.db('DevFusion');
+            resultFind = await db.collection('Users').findOne({ username: username });
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+        var resultPut;
+        var query = { username: username };
+        var newValues = { $set: { password: newPassword } };
+
+        try {
+            db = client.db('DevFusion');
+            resultPut = await db.collection('Users').updateOne(query, newValues);
+            return res.status(200).json({ error: error });
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
     });
 
     //logout api
@@ -571,7 +607,8 @@ exports.setApp = function (app, client) {
             httpOnly: true
         });
 
-        return res.status(200).json({ error: "" });
+        return res.redirect(301, frontend + "/reset-password");
+        // return res.status(200).json({ error: "" });
         // return res.redirect('/');
 
 

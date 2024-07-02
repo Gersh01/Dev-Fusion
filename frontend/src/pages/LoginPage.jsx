@@ -8,6 +8,7 @@ import Axios from "axios";
 import { useNavigate, Outlet } from "react-router-dom";
 import { setUser } from "../store/slices/userSlice";
 import { useDispatch } from "react-redux";
+import { setVerificationEmail } from "../store/slices/systemSlice";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -15,7 +16,6 @@ const LoginPage = () => {
   // * Keeps track of remember me
   const [rememberMe, setRememberMe] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
-  const [errors, setErrors] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [userInput, setUserInput] = useState([]);
 
@@ -43,7 +43,7 @@ const LoginPage = () => {
           newLogin,
           { withCredentials: true }
         );
-        console.log(response);
+
         if (response && response.data) {
           dispatch(setUser(response.data));
           navigate("/discover");
@@ -52,6 +52,7 @@ const LoginPage = () => {
         let errorMessage = err.response.data.error;
         console.log(`Error: ${err.message}`);
         if (errorMessage === "User is not verified") {
+          dispatch(setVerificationEmail(err.response.data.email));
           navigate("/email-verification");
         } else {
           setErrorMessage("Username/Password is incorrect");
@@ -68,9 +69,9 @@ const LoginPage = () => {
       <AuthHeader title="Login" />
       <div className="flex flex-col gap-2">
         <Input
-          titleText="First Name"
+          titleText="Email or Username"
           icon={<MdAccountCircle />}
-          placeholder="First Name"
+          placeholder="Example@email.com"
           onChange={(e) => setUserInput(e.target.value)}
         />
         <Input

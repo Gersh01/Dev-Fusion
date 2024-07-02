@@ -1,7 +1,9 @@
 import { Navigate, useRouteError } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 
 const ContentErrorPage = () => {
 	const routeError = useRouteError();
+	const user = useLoaderData();
 
 	console.log(routeError);
 
