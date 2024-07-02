@@ -1,13 +1,8 @@
-import { useState } from "react";
 import { getRole } from "../../utils/utility";
 import SelectionSearchField from "../reusable/SelectionSearchField";
 import Bubble from "../reusable/Bubble";
 
-const CreateRolesPanel = () => {
-	const [roles, setRoles] = useState([
-		{ name: "Project Manager", count: 1, description: "" },
-	]);
-
+const CreateRolesPanel = ({ roles, setRoles }) => {
 	const onRemove = (roleNameToRemove) => {
 		// * Project Manager cannot be removed
 		if (roleNameToRemove === "Project Manager") {

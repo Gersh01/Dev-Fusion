@@ -1,11 +1,8 @@
-import { useState } from "react";
 import { getTechnology } from "../../utils/utility";
 import SelectionSearchField from "../reusable/SelectionSearchField";
 import Bubble from "../reusable/Bubble";
 
-const CreateTechnologiesPanel = () => {
-	const [techs, setTechs] = useState([]);
-
+const CreateTechnologiesPanel = ({ techs, setTechs }) => {
 	const onRemove = (TechNameToRemove) => {
 		const updatedBubbles = techs.filter((bubble) => {
 			return bubble.name !== TechNameToRemove;
