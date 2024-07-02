@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const { log } = require("console");
 require("dotenv").config();
+const multer = require("multer");
 
 const PORT = process.env.PORT || 5000;
 
@@ -77,3 +78,29 @@ if (process.env.NODE_ENV === "production") {
 app.listen(PORT, () => {
 	console.log("Server listening on port " + PORT);
 });
+
+app.use(express.static(path.join(__dirname, "frontend")));
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, ".uploads/");
+	},
+	filename: function (req, file, cb) {
+		cb(null, file.originalname);
+	},
+});
+
+const upload = multer({ storage: storage });
+
+app.post("/api/upload", upload.single("profile-file"), function (req, res, next) {
+
+	console.log(JSON.stringify(req.file))
+
+	let response = ""
+	response+= "File uploaded successfully <br>"
+
+	response+= "<img src='/uploads/" + req.file.filename + "' />"
+	return res.send(response);
+})
