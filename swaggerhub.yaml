@@ -314,22 +314,23 @@ paths:
     post:
       tags:
       - Project
-      summary: Creates a Project
+      summary: Create a new project
+      description: Creates a new project
       consumes:
       - application/json
       produces:
       - application/json
       parameters:
       - in: body
-        name: createProject
-        description: createProject
+        name: project
+        description: The project to create
         schema:
           $ref: '#/definitions/createProject'
       responses:
         200:
-          description: Successful
+          description: Project created successfully
         500:
-          description: Server Error
+          description: Internal Server Error
 
   /project/{projectId}:
     get:
@@ -376,27 +377,28 @@ paths:
           description: Server Error
 
   /api/edit-project:
-    post:
+    put:
       tags:
       - Project
-      summary: Edits a Project
+      summary: Edit an existing project
+      description: Edits the details of an existing project.
       consumes:
       - application/json
       produces:
       - application/json
       parameters:
       - in: body
-        name: editProject
-        description: editProject
+        name: project
+        description: The project details to edit
         schema:
           $ref: '#/definitions/editProject'
       responses:
         200:
-          description: Successful
+          description: Project updated successfully
         400:
-          description: User is not Owner
+          description: Bad Request - User is not the owner or invalid data
         500:
-          description: Server Error
+          description: Internal Server Error
   
   /api/discover:
     post:
@@ -648,41 +650,21 @@ definitions:
         
   createProject:
     type: object
-    required:
-      - isOpen
-      - isDone
-      - isStarted
-      - dateCreated
-      - currentVsRequired
-      - deadline
-      - projectStartDate
-      - roles
-      - technologies
-      - title
     properties:
-      isOpen:
-        type: boolean
-        example: false
-      isDone:
-        type: boolean
-        example: false
-      isStarted:
-        type: boolean
-        example: false
-      dateCreated:
+      title:
         type: string
-        example: "2023-05-24T10:00:00Z"
-      currentVsRequired:
-        type: array
-        items:
-          type: integer
-        example: [1, 9]
-      deadline:
-        type: string
-        example: "2029-05-24T10:00:00Z"
+        description: The title of the project.
       projectStartDate:
         type: string
-        example: "2023-05-24T10:00:00Z"
+        format: date-time
+        description: The start date of the project.
+      deadline:
+        type: string
+        format: date-time
+        description: The deadline of the project.
+      description:
+        type: string
+        description: A brief description of the project.
       roles:
         type: array
         items:
@@ -690,93 +672,109 @@ definitions:
           properties:
             count:
               type: integer
-              example: 1
+              description: The number of people needed for this role.
             role:
               type: string
-              example: "Project Manager"
+              description: The role name.
             description:
               type: string
-              example: "Manages a Project"
-        example:
-          - count: 1
-            role: "Project Manager"
-            description: "Manages a Project"
-          - count: 2
-            role: "Frontend"
-            description: "Makes webpages look nice"
+              description: A brief description of the role.
       technologies:
         type: array
         items:
           type: string
-        example: ["HTML"]
-      title:
-        type: string
-        example: "Test Me"
-      description:
-        type: string
-        example: "Testing the create"
+        description: The technologies used in the project.
       communications:
         type: array
         items:
-          type: string
-        example: ["Twitter", "X", "Instagram", "Facebook"]
-  
+          type: object
+          properties:
+            name:
+              type: string
+              description: The name of the communication channel.
+            link:
+              type: string
+              description: The link to the communication channel.
+    required:
+      - title
+      - projectStartDate
+      - deadline
+      - description
+      - roles
+      - technologies
+      - communications
+        
   editProject:
     type: object
-    required:
-      - projectId
-      - isOpen
-      - isDone
-      - isStarted
-      - dateCreated
-      - currentVsRequired
-      - deadline
-      - projectStartDate
-      - technologies
-      - title
     properties:
       projectId:
         type: string
-        example: "667f6d371929b94ff10a35e9"
-      isOpen:
-        type: boolean
-        example: false
-      isDone:
-        type: boolean
-        example: false
-      isStarted:
-        type: boolean
-        example: false
-      dateCreated:
+        description: The ID of the project to be edited.
+      title:
         type: string
-        example: "2023-05-24T10:00:00Z"
-      currentVsRequired:
-        type: array
-        items:
-          type: integer
-        example: [1, 9]
-      deadline:
-        type: string
-        example: "2029-05-24T10:00:00Z"
+        description: The title of the project.
       projectStartDate:
         type: string
-        example: "2023-05-24T10:00:00Z"
+        format: date-time
+        description: The start date of the project.
+      deadline:
+        type: string
+        format: date-time
+        description: The deadline of the project.
+      description:
+        type: string
+        description: A brief description of the project.
+      roles:
+        type: array
+        items:
+          type: object
+          properties:
+            count:
+              type: integer
+              description: The number of people needed for this role.
+            role:
+              type: string
+              description: The role name.
+            description:
+              type: string
+              description: A brief description of the role.
       technologies:
         type: array
         items:
           type: string
-        example: ["HTML"]
-      title:
-        type: string
-        example: "Test Me"
-      description:
-        type: string
-        example: "Testing the create"
+        description: The technologies used in the project.
       communications:
         type: array
         items:
-          type: string
-        example: ["Twitter", "X", "Instagram", "Facebook"]
+          type: object
+          properties:
+            name:
+              type: string
+              description: The name of the communication channel.
+            link:
+              type: string
+              description: The link to the communication channel.
+      isOpen:
+        type: boolean
+        description: Whether the project is open.
+      isDone:
+        type: boolean
+        description: Whether the project is done.
+      isStarted:
+        type: boolean
+        description: Whether the project has started.
+    required:
+      - projectId
+      - title
+      - projectStartDate
+      - deadline
+      - description
+      - roles
+      - technologies
+      - communications
+      - isOpen
+      - isDone
+      - isStarted
 
   discoverProjects:
     type: object
