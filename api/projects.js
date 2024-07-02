@@ -16,6 +16,7 @@ async function search(client, req, res, type) {
     const query = req.body.query;
     const count = req.body.count;
     const projectId = req.body.projectId
+
     const userId = req.body.userId
 
     const initial = Boolean(req.body.initial);
@@ -23,7 +24,14 @@ async function search(client, req, res, type) {
     if (projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"})
     
     // req.username
-    const user = await db.collection("Users").findOne({ username: req.username })
+    let user;
+    
+    if (type == "owned-joined") {
+      user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
+
+    } else {
+      user = await db.collection("Users").findOne({ username: req.username })
+    }
     // const user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
     
     
@@ -81,7 +89,7 @@ async function search(client, req, res, type) {
       })
 
       pipeline.push({
-        $match: {ownerID: new ObjectId(user._id.toString())}
+        $match: {ownerID: user._id }
       })
 
     }
