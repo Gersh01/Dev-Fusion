@@ -5,8 +5,9 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
 const PORT = process.env.PORT || 5000;
-const appName = "http://www.dev-fusion.com";
-const frontend = "http://www.dev-fusion.com";
+// const appName = "http://www.dev-fusion.com";
+const appName = "http://localhost" + PORT
+// const frontend = "http://www.dev-fusion.com";
 
 const ObjectId = require('mongodb').ObjectId;
 

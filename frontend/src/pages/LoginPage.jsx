@@ -38,6 +38,7 @@ const LoginPage = () => {
         password: passwordInput,
         rememberMe: rememberMe,
       };
+      console.log(newLogin);
       try {
         const response = await Axios.post(apiDomain + "/api/login", newLogin, {
           withCredentials: true,
