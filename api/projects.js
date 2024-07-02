@@ -71,6 +71,19 @@ async function search(client, req, res, type) {
           }
         }
       })
+    } else if (type == "owned-joined") {
+      pipeline.push({
+        $match: {
+          teamMembers: {
+            $elemMatch: { $regex: `${user.username}:` }
+          }
+        }
+      })
+
+      pipeline.push({
+        $match: {ownerID: new ObjectId(user._id.toString())}
+      })
+
     }
 
 
@@ -311,48 +324,56 @@ exports.setApp = function (app, client) {
     // create a project
     app.post('/api/project', cookieJwtAuth, async (req, res, next) => {
 
-        let user = db.colleciton("Users").findOne( {username: req.username})
 
-        let isOpen = Boolean(req.body.isOpen);
-        let isDone = Boolean(req.body.isDone);
-        let isStarted = Boolean(req.body.isStarted);
-        let dateCreated = new Date(req.body.dateCreated);
+      
+      try {
+          db = client.db("DevFusion");
+    
+          let user = await db.collection("Users").findOne( {username: req.username})
+          console.log("OWNER ID: ", user)
+    
+          let isOpen = true;
+          let isDone = false;
+          let isStarted = false;
+          let dateCreated = new Date()
+          
+          let ownerID = user._id
+          
+          let title = req.body.title;
+          let projectStartDate = new Date(req.body.projectStartDate);
+          let deadline = new Date(req.body.deadline);
+          var description = req.body.description;
+    
+          let roles = req.body.roles;
+          let technologies = req.body.technologies;
+    
+          let communications = req.body.communications;
+          let teamMembers = [];
+    
+          project = {
+              isOpen: isOpen,
+              isDone: isDone,
+              isStarted: isStarted,
+              dateCreated: dateCreated,
 
-        let ownerID = user._id
+              ownerID: ownerID,
 
-        let currentVsRequired = req.body.currentVsRequired;
-        let deadline = new Date(req.body.deadline);
-        let projectStartDate = new Date(req.body.projectStartDate);
-        let roles = req.body.roles;
-        let technologies = req.body.technologies;
-        let title = req.body.title;
+              title: title,
+              projectStartDate: projectStartDate,
+              deadline: deadline,
+              description: description,
 
-        var description = req.body.description;
-        var communications = req.body.communications;
-        var teamMembers = [];
+              roles: roles,
+              technologies: technologies,
 
-        try {
-            db = client.db("DevFusion");
-            project = {
-                isOpen: isOpen,
-                isDone: isDone,
-                isStarted: isStarted,
-                dateCreated: dateCreated,
-                ownerID: ownerID,
-                currentVsRequired: currentVsRequired,
-                deadline: deadline,
-                projectStartDate: projectStartDate,
-                roles: roles,
-                technologies: technologies,
-                title: title,
-                communications: communications,
-                description: description,
-                teamMembers: teamMembers
-            };
+              communications: communications,
+              teamMembers: teamMembers
+          };
 
 
-            db.collection("Projects").insertOne(project);
-            return res.sendStatus(200);
+          db.collection("Projects").insertOne(project);
+          return res.sendStatus(200);
+
         } catch (e) {
             error = e.toString();
             let ret = {error: error};
@@ -484,13 +505,16 @@ exports.setApp = function (app, client) {
       return search(client, req, res, "joined");
     })
 
+    app.post('/api/owned-joined', cookieJwtAuth, async (req, res, next) => {
+
+      return search(client, req, res, "owned-joined");
+    })
+
 
     app.post('/api/edit-project', cookieJwtAuth, async (req, res, next) => {
 
       try {
-        console.log(req)
-        let username = req.username;
-        console.log("username: ", username)
+        let username = req.cookies.username;
 
         db = client.db("DevFusion");
 
@@ -498,24 +522,18 @@ exports.setApp = function (app, client) {
         // const user = await db.collection("Users").findOne({ username: req.body.username })
         const projectObj = await db.collection("Projects").findOne({ _id: new ObjectId(req.body.projectId) })
 
-        console.log("looking at this project")
-        console.log(projectObj)
 
-        console.log(user._id.toString())
-        console.log(projectObj.ownerID.toString())
         if (user._id.toString() !== projectObj.ownerID.toString()) {
           return res.status(400).json({"error": "This user can't edit the project since the user is not the owner"})
         }
-
-        console.log("TRYING TO EDIT PROJECT")
 
   
         let isOpen = Boolean(req.body.isOpen);
         let isDone = Boolean(req.body.isDone);
         let isStarted = Boolean(req.body.isStarted);
-        let dateCreated = new Date(req.body.dateCreated);
+
         let ownerID = user._id;
-        let currentVsRequired = req.body.currentVsRequired;
+
         let deadline = new Date(req.body.deadline);
         let projectStartDate = new Date(req.body.projectStartDate);
         let roles = req.body.roles;
@@ -528,9 +546,9 @@ exports.setApp = function (app, client) {
             isOpen: isOpen,
             isDone: isDone,
             isStarted: isStarted,
-            dateCreated: dateCreated,
+
             ownerID: ownerID,
-            currentVsRequired: currentVsRequired,
+
             deadline: deadline,
             projectStartDate: projectStartDate,
             roles: roles,
