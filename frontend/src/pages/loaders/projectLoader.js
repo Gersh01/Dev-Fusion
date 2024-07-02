@@ -26,4 +26,14 @@ const getProjectById = async (projectId) => {
 	return response.data;
 };
 
-export { getProjects, getProjectById };
+const getProfileProjects = async (queryConfig)=>{
+	const response = await axios.post(
+		apiDomain + "/api/owned-joined", 
+		queryConfig, {withCredentials:true}
+	)
+
+	return response.data;
+}
+
+
+export { getProjects, getProjectById, getProfileProjects };

@@ -17,7 +17,11 @@ import ResetPasswordEmailPage from "./pages/ResetPasswordEmailPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
-import { getProjectById, getProjects } from "./pages/loaders/projectLoader";
+import {
+    getProfileProjects,
+    getProjectById,
+    getProjects,
+} from "./pages/loaders/projectLoader";
 import ViewProjectPage from "./pages/ViewProjectPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import { getUserFromJwt, validateJwt } from "./pages/loaders/userLoader";
@@ -94,9 +98,9 @@ const router = createBrowserRouter(
                     path="/my-profile"
                     element={<ProfilePage />}
                     loader={() => {
-                        return getProjects({
+                        return getProfileProjects({
                             searchBy: "title",
-                            sortBy: "relevance",
+                            sortBy: "recent",
                             query: "",
                             count: 4,
                             initial: true,
@@ -104,7 +108,7 @@ const router = createBrowserRouter(
                         });
                     }}
                 />
-                <Route path="/user-settings" element={<SettingsPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/create" element={<CreatePage />} />
                 <Route path="/about" element={<AboutUsPage />} />
             </Route>
