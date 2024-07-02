@@ -15,7 +15,8 @@ const ProfilePage = () => {
     let id = "66816e44edbab2c4d116387d";
     const tech = res.technologies;
     const navigate = useNavigate();
-    const [projects, setProjects] = useState(useLoaderData());
+    const [projects, setProjects] = useState(useLoaderData().projects);
+    const [usersProfile, setUsersProfile] = useState(useLoaderData().user);
     const [endOfSearch, setEndOfSearch] = useState(false);
     const [myProfile, SetMyProfile] = useState(true);
 
@@ -48,9 +49,10 @@ const ProfilePage = () => {
         return null;
     }
 
-    const renderedProjectTiles = projects.map((project) => {
-        return <DiscoverProjectTile key={project._id} project={project} />;
-    });
+    // const renderedProjectTiles = projects.map((project) => {
+    //     console.log(projects);
+    //     return <DiscoverProjectTile key={project._id} project={project} />;
+    // });
 
     // * Lazy loading more projects
     const retrieveMoreProjects = async () => {
@@ -154,7 +156,7 @@ const ProfilePage = () => {
                 className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12"
                 ref={projectsContainerRef}
             >
-                {projects.length !== 0 ? renderedProjectTiles : null}
+                {/* {projects.length !== 0 ? renderedProjectTiles : null} */}
             </div>
             <div className="flex flex-col grow-0 poppins justify-center">
                 {projects.length === 0 ? displayError() : null}

@@ -131,30 +131,36 @@ const router = createBrowserRouter(
                     path="/profile"
                     element={<ProfilePage />}
                     loader={() => {
-                        return getProfileProjects({
-                            searchBy: "title",
-                            sortBy: "recent",
-                            query: "",
-                            count: 4,
-                            initial: true,
-                            projectId: "000000000000000000000000",
-                        });
+                        return {
+                            user: null,
+                            projects: getProfileProjects({
+                                searchBy: "title",
+                                sortBy: "recent",
+                                query: "",
+                                count: 4,
+                                initial: true,
+                                projectId: "000000000000000000000000",
+                            }),
+                        };
                     }}
                 />
                 <Route
                     path="/profile/:id"
                     element={<ProfilePage />}
                     loader={({ params }) => {
-                        return getUsersProfile(params.id);
+                        return {
+                            user: getUsersProfile(params.id),
+                            projects: getProfileProjects({
+                                userId: params.id,
+                                searchBy: "title",
+                                sortBy: "recent",
+                                query: "",
+                                count: 4,
+                                initial: true,
+                                projectId: "000000000000000000000000",
+                            }),
+                        };
                     }}
-                    // return getProfileProjects({
-                    //     searchBy: "title",
-                    //     sortBy: "recent",
-                    //     query: "",
-                    //     count: 4,
-                    //     initial: true,
-                    //     projectId: "000000000000000000000000",
-                    // });
                 />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/create" element={<CreatePage />} />
