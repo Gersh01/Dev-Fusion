@@ -421,6 +421,7 @@ exports.setApp = function (app, client) {
   
     });
 
+    /*
     //edit communications API
     app.put('/api/project/communication', cookieJwtAuth, async (req, res, next) => {
       var projectId = req.body.projectId;
@@ -460,6 +461,7 @@ exports.setApp = function (app, client) {
       }
   
     });
+    */
     
     app.post('/api/discover', cookieJwtAuth, async (req, res, next) => {
         // const searchBy = req.query.searchBy;
@@ -540,6 +542,7 @@ exports.setApp = function (app, client) {
         let technologies = req.body.technologies;
         let title = req.body.title;
         let description = req.body.description;
+        let communication = req.body.communication;
 
 
         project = {
@@ -554,7 +557,8 @@ exports.setApp = function (app, client) {
             roles: roles,
             technologies: technologies,
             title: title,
-            description: description
+            description: description,
+            communications: communication
         };
 
 
