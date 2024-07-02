@@ -7,9 +7,8 @@ import {
 import Divider from "../components/reusable/Divider";
 import Button from "../components/reusable/Button";
 import Bubble from "../components/reusable/Bubble";
-import ContentBubble from "../components/reusable/ContentBubble";
-import UserBubble from "../components/reusable/UserBubble";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import RolesBubble from "../components/view/RolesBubble";
 
 const ViewProjectPage = () => {
 	const projectData = useLoaderData();
@@ -23,11 +22,12 @@ const ViewProjectPage = () => {
 
 	const {
 		title,
+		projectStartDate,
+		deadline,
 		description,
 		technologies,
 		communications,
-		projectStartDate,
-		deadline,
+		roles,
 	} = projectData;
 
 	const numDaysTilStart = Math.floor(
@@ -57,8 +57,45 @@ const ViewProjectPage = () => {
 		return <Bubble key={technology} text={technology} />;
 	});
 
-	const renderedCommunicationBubble = communications?.map((communication) => {
-		return <Bubble key={communication} text={communication} />;
+	const renderedRolesRequirementBubbles = roles?.map((role) => {
+		// TODO - Mock members (to be removed)
+		const members = [
+			{
+				name: "Alex",
+				id: "abc",
+			},
+			{
+				name: "James",
+				id: "abcd",
+			},
+			{
+				name: "Xutao",
+				id: "abcde",
+			},
+		];
+
+		return (
+			<RolesBubble
+				key={role.role}
+				role={role.role}
+				description={role.description}
+				count={role.count}
+				currentCount={0}
+				members={members}
+			/>
+		);
+	});
+
+	const renderedCommunicationsBubbles = communications?.map((comm) => {
+		return (
+			<Bubble
+				key={comm.name}
+				text={comm.name}
+				input={comm.link.length === 0 ? "None" : comm.link}
+				writable
+				readOnly
+			/>
+		);
 	});
 
 	return (
@@ -97,64 +134,25 @@ const ViewProjectPage = () => {
 				<p className="text-xl font-semibold">Description</p>
 				<p>{description}</p>
 			</div>
-			{/* POSITIONS NEEDED */}
-			<div className="flex flex-col gap-2">
-				<p className="text-xl font-semibold">Positions Needed</p>
-				<div className="flex flex-wrap gap-4">
-					<ContentBubble text="Frontend">(0/2)</ContentBubble>
-					<ContentBubble text="API">(1/2)</ContentBubble>
-					<ContentBubble text="Database">(0/1)</ContentBubble>
-				</div>
-			</div>
 			{/* POSITION REQUIREMENTS */}
 			<div className="flex flex-col gap-2">
 				<p className="text-xl font-semibold">Position Requirements</p>
 				<div className="flex flex-col gap-4">
-					<ContentBubble text="Project Manager"></ContentBubble>
-					<ContentBubble text="Frontend"></ContentBubble>
-					<ContentBubble text="API"></ContentBubble>
-					<ContentBubble text="Database"></ContentBubble>
+					{renderedRolesRequirementBubbles}
 				</div>
 			</div>
 			{/* TECHNOLOGIES */}
 			<div className="flex flex-col gap-2">
 				<p className="text-xl font-semibold">Technologies</p>
-				<div className="flex flex-wrap gap-2">
+				<div className="flex flex-wrap gap-4">
 					{renderedTechnologyBubbles}
 				</div>
 			</div>
 			{/* COMMUICATION */}
 			<div className="flex flex-col gap-2">
 				<p className="text-xl font-semibold">Communications</p>
-				<div className="flex flex-wrap gap-2">
-					{renderedCommunicationBubble}
-				</div>
-			</div>
-			{/* CURRENT TEAM */}
-			<div className="flex flex-col gap-4">
-				<p className="text-xl font-semibold">Current Team</p>
-				<div className="flex flex-col">
-					<ContentBubble text="Project Manager">
-						<UserBubble text="@Alex" />
-					</ContentBubble>
-				</div>
-				<div className="flex flex-col">
-					<ContentBubble text="Frontend">
-						<UserBubble text="@Xutao" />
-						<UserBubble text="@James" />
-						<UserBubble text="@Jacob" />
-					</ContentBubble>
-				</div>
-				<div className="flex flex-col">
-					<ContentBubble text="API">
-						<UserBubble text="@Alperen" />
-						<UserBubble text="@Golden" />
-					</ContentBubble>
-				</div>
-				<div className="flex flex-col">
-					<ContentBubble text="Database">
-						<UserBubble text="@Tony" />
-					</ContentBubble>
+				<div className="flex flex-wrap gap-4">
+					{renderedCommunicationsBubbles}
 				</div>
 			</div>
 		</Fragment>

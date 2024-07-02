@@ -3,17 +3,20 @@ import { Fragment } from "react";
 import { getBubbleColor } from "../../utils/utility";
 
 const Bubble = ({
-	text,
-	countable,
-	count,
-	onCountChange,
-	writable,
-	useTextArea,
-	input,
-	onTextAreaChange,
-	placeholder,
-	removable,
-	onRemove,
+	text, // * Title
+	countable, // * Make bubble increment or decrement in count
+	count, // * Control current count
+	onCountChange, // * Event listener when count is changed
+	writable, // * Make bubble writable
+	useTextArea, // * Use textarea for writing instead of input
+	useContainer, // * Shows a div showing content
+	children, // * Control current content contained within div content
+	input, // * Control input or textarea data
+	onTextAreaChange, // * Event listener when input or textarea is changed
+	readOnly, // * Make input or textarea read only
+	placeholder, // * Placeholder text for textarea or input
+	removable, // * Make bubble remoable
+	onRemove, // * Event listener when remove icon is clicked
 }) => {
 	const incrementCount = () => {
 		onCountChange(text, count + 1);
@@ -91,21 +94,29 @@ const Bubble = ({
 					</div>
 				)}
 			</div>
+			{/* Div Container */}
+			{useContainer && (
+				<div className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md flex gap-2">
+					{children}
+				</div>
+			)}
 			{/* Text Field */}
 			{writable &&
 				(useTextArea ? (
 					<textarea
 						className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md 
-					focus:outline-none h-24 scroll-bar min-w-0"
+							focus:outline-none h-24 scroll-bar min-w-0"
 						value={input}
+						disabled={readOnly}
 						onChange={onType}
 						placeholder={placeholder}
 					/>
 				) : (
 					<input
 						className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md 
-					focus:outline-none min-w-0"
+							focus:outline-none min-w-0"
 						value={input}
+						disabled={readOnly}
 						onChange={onType}
 						placeholder={placeholder}
 					/>
