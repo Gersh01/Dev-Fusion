@@ -37,6 +37,15 @@ export const updateUserName = async (id, first, last) =>{
 	} catch (err) {
 		console.log(`Error: ${err.message}`);
 	}
+};
+
+export const updateProfilePicture = async (id, link)=>{
+	const payload = {userId:id, link:link};
+	try{
+		const response=await Axios.put(apiDomain+"/api/users",payload,{withCredentials:true})
+	}catch(err){
+		console.log(`Error: ${err.message}`)
+	}
 }
 
 

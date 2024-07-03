@@ -194,6 +194,7 @@ const ProfilePage = () => {
 
     const displayProfilePic = () => {
         if (!usersProfile) {
+            console.log(res.link);
             return res.link;
         } else {
             return usersProfile.link;
@@ -211,8 +212,8 @@ const ProfilePage = () => {
             <Divider />
             <div className="flex min-w-[100px] gap-5">
                 <img
-                    className="max-h-20 max-w-20 md:max-h-28 md:max-w-28 rounded-full"
-                    src={logo}
+                    className="h-28 w-28 rounded-full"
+                    src={displayProfilePic()}
                 ></img>
                 <p className="flex items-center text-2xl md:text-4xl font-bold poppins text-wrap text-center ">
                     {!usersProfile ? res.username : usersProfile.username}
