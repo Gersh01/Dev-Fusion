@@ -351,8 +351,54 @@ exports.setApp = function (app, client) {
         }
     });
 
+    //get user api
+    app.get('/api/users', cookieJwtAuth, async (req, res, next) => {
+        console.log("Debug: Cookie Auth in getting users")
+        const { userId } = req.body;
+        var firstName = '';
+        var lastName = '';
+        var email = '';
+        var username = '';
+        var bio = '';
+        var technologies = [];
+        var error = '';
+
+        var db;
+        var result;
+        
+        if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
+        const nid = new ObjectId(userId);
+        
+        try {
+            db = client.db('DevFusion');
+            result = await db.collection('Users').find({ _id: nid }).toArray();
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+        if (result.length > 0) {
+            firstName = result[0].firstName;
+            lastName = result[0].lastName;
+            confirmation = result[0].confirmation;
+            email = result[0].email;
+            username = result[0].username;
+            bio = result[0].bio;
+            technologies = result[0].technologies;
+            var ret = { firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            return res.status(200).json(ret);
+        } else {
+            error = 'user not found'
+            var ret = { error: error };
+            return res.status(404).json(ret);
+        }
+
+    });
+
     //update user api
     app.put('/api/users', cookieJwtAuth, async (req, res, next) => {
+        console.log("Debug: Cookie Auth in updating users")
         var error = '';
         var userId = req.body.userId;
         var firstName = req.body.firstName;

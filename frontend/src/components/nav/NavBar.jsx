@@ -26,7 +26,7 @@ const NavBar = () => {
         {
             title: "Profile",
             icon: <MdPersonOutline />,
-            destination: "/my-profile",
+            destination: "/profile",
         },
         {
             title: "Settings",
