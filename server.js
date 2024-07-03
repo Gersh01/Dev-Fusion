@@ -12,7 +12,7 @@ const cloudinary = require("cloudinary").v2;
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
 	api_key: process.env.CLOUDINARY_API_KEY,
-	api_secret: process.env.CLOUDINARY_API_SECRET
+	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const PORT = process.env.PORT || 5000;
@@ -21,14 +21,16 @@ const app = express();
 
 app.set("port", PORT);
 
-const corsOptions ={
-	origin: ["http://localhost:5173", 
-		"http://www.dev-fusion.com/", 
-		"https://www.dev-fusion.com/", 
-		"https://dev-fusion-production-65209ae3025b.herokuapp.com/"],
-    credentials:true,            //access-control-allow-credentials:true
-    optionSuccessStatus:200
-}
+const corsOptions = {
+	origin: [
+		"http://localhost:5173",
+		"http://www.dev-fusion.com/",
+		"https://www.dev-fusion.com/",
+		"https://dev-fusion-production-65209ae3025b.herokuapp.com/",
+	],
+	credentials: true, //access-control-allow-credentials:true
+	optionSuccessStatus: 200,
+};
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
@@ -36,7 +38,7 @@ app.use(cookieParser());
 
 app.use((req, res, next) => {
 	// res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-    // res.setHeader("Access-Control-Allow-Credentials", "true");
+	// res.setHeader("Access-Control-Allow-Credentials", "true");
 	res.setHeader(
 		"Access-Control-Allow-Headers",
 		"Origin, X-Requested-With, Content-Type, Accept, Authorization"
@@ -76,9 +78,7 @@ if (process.env.NODE_ENV === "production") {
 	app.use(express.static(path.join(__dirname, "./frontend/dist/")));
 
 	app.get("*", (req, res) => {
-		res.sendFile(
-			path.resolve(__dirname, "frontend", "dist", "index.html")
-		);
+		res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
 	});
 }
 
@@ -86,13 +86,11 @@ app.listen(PORT, () => {
 	console.log("Server listening on port " + PORT);
 });
 
+// const image = "https://images.unsplash.com/photo-1712237309240-aa707ccb516f?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 
+// (async () => {
 
-const image = "https://images.unsplash.com/photo-1712237309240-aa707ccb516f?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+//     const result = await cloudinary.uploader.upload(image);
 
-(async () => {
-
-    const result = await cloudinary.uploader.upload(image);
-    
-    console.log(result.secure_url);
-})();
+//     console.log(result.secure_url);
+// })();
