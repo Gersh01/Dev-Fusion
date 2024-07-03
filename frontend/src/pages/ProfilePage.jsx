@@ -15,8 +15,9 @@ const ProfilePage = () => {
     let id = "66816e44edbab2c4d116387d";
     const tech = res.technologies;
     const navigate = useNavigate();
-    const [loadProjects, setLoadProjects] = useState(useLoaderData().projects);
-    const [usersProfile, setUsersProfile] = useState(useLoaderData().user);
+    const [loadProjects, setLoadProjects] = useState(useLoaderData());
+
+    // const [usersProfile, setUsersProfile] = useState(useLoaderData().user);
     const [endOfSearch, setEndOfSearch] = useState(false);
     const [myProfile, SetMyProfile] = useState(true);
 
@@ -28,7 +29,7 @@ const ProfilePage = () => {
 
     useEffect(() => {
         // * Adding scroll listener to window
-
+        console.log(loadProjects);
         window.addEventListener("scroll", handleScroll);
 
         // * Load
@@ -43,18 +44,17 @@ const ProfilePage = () => {
         };
     });
 
-    if (loadProjects === null) {
+    if (loadProjects) {
         return null;
     }
 
-    // const renderedProjectTiles = loadProjects.map((project) => {
-    //
-    //     return <DiscoverProjectTile key={project._id} project={project} />;
-    // });
+    const renderedProjectTiles = loadProjects.map((project) => {
+        return <DiscoverProjectTile key={project._id} project={project} />;
+    });
 
     // * Lazy loading more projects
     const retrieveMoreProjects = async () => {
-        if (projects.length === 0) {
+        if (loadProjects.length === 0) {
             return;
         }
         const newProjects = await getProjects({
@@ -63,7 +63,7 @@ const ProfilePage = () => {
             query: "",
             count: 4,
             initial: false,
-            projectId: projects[projects.length - 1]._id,
+            projectId: loadProjects[loadProjects.length - 1]._id,
         });
 
         setLoadProjects([...projects, ...newProjects]);
@@ -154,7 +154,7 @@ const ProfilePage = () => {
                 className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12"
                 ref={projectsContainerRef}
             >
-                {/* {projects.length !== 0 ? renderedProjectTiles : null} */}
+                {projects.length !== 0 ? renderedProjectTiles : null}
             </div>
             <div className="flex flex-col grow-0 poppins justify-center">
                 {loadProjects.length === 0 ? displayError() : null}

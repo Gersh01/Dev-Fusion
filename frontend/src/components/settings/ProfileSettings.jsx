@@ -1,10 +1,10 @@
-import logo from "../../assets/DFLogoFinal.png";
-import Button from "../reusable/Button";
+import { useSelector } from "react-redux";
 
 const ProfileSettings = () => {
+    const res = useSelector((state) => state.user.link);
     return (
         <div className="flex justify-between gap-4">
-            <img className="max-h-28 max-w-28 rounded-full" src={logo}></img>
+            <img className="h-28 w-28 rounded-full" src={res}></img>
             <div className="self-end">
                 <input
                     onChange={(e) => console.log(e.target.value)}

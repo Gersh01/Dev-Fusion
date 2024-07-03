@@ -131,18 +131,28 @@ const router = createBrowserRouter(
                     path="/profile"
                     element={<ProfilePage />}
                     loader={() => {
-                        return {
-                            user: null,
-                            projects: getProfileProjects({
-                                userId: "",
-                                searchBy: "title",
-                                sortBy: "recent",
-                                query: "",
-                                count: 4,
-                                initial: true,
-                                projectId: "000000000000000000000000",
-                            }),
-                        };
+                        return getProfileProjects({
+                            userId: "",
+                            searchBy: "title",
+                            sortBy: "recent",
+                            query: "",
+                            count: 4,
+                            initial: true,
+                            projectId: "000000000000000000000000",
+                        });
+
+                        // return {
+                        //     user: null,
+                        //     projects: getProfileProjects({
+                        //         userId: "",
+                        //         searchBy: "title",
+                        //         sortBy: "recent",
+                        //         query: "",
+                        //         count: 4,
+                        //         initial: true,
+                        //         projectId: "000000000000000000000000",
+                        //     }),
+                        // };
                     }}
                 />
                 <Route
