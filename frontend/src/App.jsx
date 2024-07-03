@@ -129,7 +129,7 @@ const router = createBrowserRouter(
                 />
                 <Route
                     path="/profile"
-                    loader={async () => {
+                    loader={() => {
                         // return getProfileProjects({
                         //     userId: "",
                         //     searchBy: "title",
