@@ -8,6 +8,7 @@ import DiscoverProjectTile from "../components/discover/DiscoverProjectTile";
 import BioProfileFields from "../components/profile/BioProfileFields";
 import TechnologiesField from "../components/profile/TechnologiesField";
 import Button from "../components/reusable/Button";
+import { getProfileProjects } from "./loaders/projectLoader";
 
 const ProfilePage = () => {
 	let res = useSelector((state) => state.user);
@@ -58,6 +59,45 @@ const ProfilePage = () => {
 
 		// * Adding scroll listener to window
 		window.addEventListener("scroll", handleScroll);
+		// * Lazy loading more projects
+		const retrieveMoreProjects = async () => {
+			if (loadProjects.length === 0) {
+				return;
+			}
+			//retrieves signed in users projects
+			if (!usersProfile) {
+				const newProjects = await getProjects({
+					searchBy: "title",
+					sortBy: "recent",
+					query: "",
+					count: 4,
+					initial: false,
+					projectId: loadProjects[loadProjects.length - 1]._id,
+				});
+
+				setLoadProjects([...loadProjects, ...newProjects]);
+
+				if (newProjects.length === 0) {
+					setEndOfSearch(true);
+				}
+				//retrieves a different users projects
+			} else {
+				const newProjects = await getProfileProjects({
+					userId: usersProfile.id,
+					searchBy: "title",
+					sortBy: "recent",
+					query: "",
+					count: 4,
+					initial: true,
+					projectId: loadProjects[loadProjects.length - 1]._id,
+				});
+				setLoadProjects([...loadProjects, ...newProjects]);
+
+				if (newProjects.length === 0) {
+					setEndOfSearch(true);
+				}
+			}
+		};
 
 		// * Load
 		if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
