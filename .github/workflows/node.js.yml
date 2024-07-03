@@ -6,10 +6,10 @@ name: Node.js CI
 on:
   push:
     branches: 
-      - github-testing
+      - "github-testing"
   pull_request:
     branches: 
-      - github-testing
+      - "github-testing"
     
 
 jobs:
