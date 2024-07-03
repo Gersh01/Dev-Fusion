@@ -159,6 +159,7 @@ const router = createBrowserRouter(
 								initial: true,
 								projectId: "000000000000000000000000",
 							}),
+							privateProfile: false,
 						};
 					}}
 					element={<ProfilePage />}

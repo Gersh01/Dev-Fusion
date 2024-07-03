@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 
 const ProfileSettings = () => {
     const res = useSelector((state) => state.user.link);
+    console.log(res);
     return (
         <div className="flex justify-between gap-4">
             <img className="h-28 w-28 rounded-full" src={res}></img>

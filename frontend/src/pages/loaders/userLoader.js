@@ -5,11 +5,9 @@ const validateJwt = async () => {
 	let auth = null;
 
 	try {
-		const response = await axios.post(
-			apiDomain + "/api/jwtTest",
-			null,
-			{ withCredentials: true }
-		);
+		const response = await axios.post(apiDomain + "/api/jwtTest", null, {
+			withCredentials: true,
+		});
 		if (response) {
 			auth = response.data;
 			return auth;
@@ -24,27 +22,20 @@ const validateJwt = async () => {
 };
 
 const getUserFromJwt = async () => {
-	console.log("Debug: Getting user from JWT");
-
-	const response = await axios.post(
-		apiDomain + "/api/jwtTest",
-		null,
-		{ withCredentials: true }
-	);
+	const response = await axios.post(apiDomain + "/api/jwtTest", null, {
+		withCredentials: true,
+	});
 
 	return response.data;
 };
 
-
 const getUsersProfile = async (id) => {
-	const payload = {userId:id}
-	console.log(payload)
-	const response = await axios.get(`${apiDomain}/api/users/${id}`,
-		payload,
-		{withCredentials:true})
-	
-	return response.data
+	const response = await axios.get(`${apiDomain}/api/users/${id}`, {
+		withCredentials: true,
+	});
 
-}
+	console.log(response.data);
+	return response.data;
+};
 
 export { validateJwt, getUserFromJwt, getUsersProfile };

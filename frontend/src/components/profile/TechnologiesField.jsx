@@ -12,7 +12,7 @@ import { updateUserTechnology } from "../../pages/loaders/updateUser";
 import { updateTechnologies } from "../../store/slices/userSlice";
 import SelectionSearchField from "../reusable/SelectionSearchField";
 
-const TechnologiesField = ({ title, type, privateView }) => {
+const TechnologiesField = ({ title, type, privateView, technologies }) => {
     const user = useSelector((state) => state.user);
     const [mode, setMode] = useState(type);
     const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const TechnologiesField = ({ title, type, privateView }) => {
         if (mode === false) {
             return (
                 <Fragment>
-                    {user.technologies?.map((value) => (
+                    {technologies?.map((value) => (
                         <Bubble
                             removable
                             text={value}
@@ -38,7 +38,7 @@ const TechnologiesField = ({ title, type, privateView }) => {
         } else {
             return (
                 <Fragment>
-                    {user.technologies?.map((value) => (
+                    {technologies?.map((value) => (
                         <Bubble text={value} key={value} />
                     ))}
                 </Fragment>
