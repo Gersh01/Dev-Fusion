@@ -15,7 +15,7 @@ const ProfilePage = () => {
     let id = "66816e44edbab2c4d116387d";
     const tech = res.technologies;
     const navigate = useNavigate();
-    const [projects, setProjects] = useState(useLoaderData().projects);
+    const [loadProjects, setLoadProjects] = useState(useLoaderData().projects);
     const [usersProfile, setUsersProfile] = useState(useLoaderData().user);
     const [endOfSearch, setEndOfSearch] = useState(false);
     const [myProfile, SetMyProfile] = useState(true);
@@ -43,12 +43,12 @@ const ProfilePage = () => {
         };
     });
 
-    if (projects === null) {
+    if (loadProjects === null) {
         return null;
     }
 
-    // const renderedProjectTiles = projects.map((project) => {
-    //     console.log(projects);
+    // const renderedProjectTiles = loadProjects.map((project) => {
+    //
     //     return <DiscoverProjectTile key={project._id} project={project} />;
     // });
 
@@ -66,7 +66,7 @@ const ProfilePage = () => {
             projectId: projects[projects.length - 1]._id,
         });
 
-        setProjects([...projects, ...newProjects]);
+        setLoadProjects([...projects, ...newProjects]);
 
         if (newProjects.length === 0) {
             setEndOfSearch(true);
@@ -154,11 +154,10 @@ const ProfilePage = () => {
                 className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12"
                 ref={projectsContainerRef}
             >
-                {console.log(projects)}
                 {/* {projects.length !== 0 ? renderedProjectTiles : null} */}
             </div>
             <div className="flex flex-col grow-0 poppins justify-center">
-                {projects.length === 0 ? displayError() : null}
+                {loadProjects.length === 0 ? displayError() : null}
             </div>
             {endOfSearch && (
                 <div className="self-center px-8 py-1 mb-12 rounded-full bg-gray-50 dark:bg-gray-900">
