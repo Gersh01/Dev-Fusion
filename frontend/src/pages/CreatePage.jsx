@@ -9,6 +9,8 @@ import CreateCommunicationsPanel from "../components/create/CreateCommunications
 import { apiDomain } from "../utils/utility";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { santizeProject } from "../utils/sanitation";
+import { validateProject } from "../utils/validations";
 
 const CreatePage = () => {
 	const user = useSelector((state) => state.user);
@@ -21,6 +23,7 @@ const CreatePage = () => {
 		{ name: "Project Manager", count: 1, description: "" },
 	]);
 	const [comms, setComms] = useState([]);
+	const [errors, setErrors] = useState({});
 
 	// * Called when publishing a project
 	const onPublish = () => {
@@ -54,9 +57,24 @@ const CreatePage = () => {
 			communications: commsToSend,
 		};
 
-		console.log(newProject);
+		// * Sanitize input (Remove redundant white space...)
+		santizeProject(newProject);
 
-		createProject(newProject);
+		const validationErrors = validateProject(newProject);
+		let hasValidationErrors = false;
+		// * Validate input
+		setErrors(validationErrors);
+
+		for (const errorType in validationErrors) {
+			if (validationErrors[errorType].length !== 0) {
+				hasValidationErrors = true;
+				break;
+			}
+		}
+
+		if (hasValidationErrors === false) {
+			createProject(newProject);
+		}
 	};
 
 	// * Make API call to create the project
@@ -84,8 +102,11 @@ const CreatePage = () => {
 					onChange={(e) => {
 						setProjectTitle(e.target.value);
 					}}
+					errors={errors.title}
+					onFocus={() => {
+						setErrors({ ...errors, title: [] });
+					}}
 				/>
-				{/* TODO: Look into different format for date input */}
 				<div className="grid gap-4 grid-cols-2">
 					{/* Start Date */}
 					<Input
@@ -94,6 +115,10 @@ const CreatePage = () => {
 						type="date"
 						value={startDate}
 						onChange={(e) => setStartDate(e.target.value)}
+						errors={errors.startDate}
+						onFocus={() => {
+							setErrors({ ...errors, startDate: [] });
+						}}
 					/>
 					{/* Deadline */}
 					<Input
@@ -102,6 +127,10 @@ const CreatePage = () => {
 						type="date"
 						value={endDate}
 						onChange={(e) => setEndDate(e.target.value)}
+						errors={errors.endDate}
+						onFocus={() => {
+							setErrors({ ...errors, endDate: [] });
+						}}
 					/>
 				</div>
 				{/* Description */}
@@ -112,13 +141,38 @@ const CreatePage = () => {
 					onChange={(e) => {
 						setDescription(e.target.value);
 					}}
+					errors={errors.description}
+					onFocus={() => {
+						setErrors({ ...errors, description: [] });
+					}}
 				/>
 				{/* Technologies */}
-				<CreateTechnologiesPanel techs={techs} setTechs={setTechs} />
+				<CreateTechnologiesPanel
+					techs={techs}
+					setTechs={setTechs}
+					errors={errors.technologies}
+					onFocus={() => {
+						setErrors({ ...errors, technologies: [] });
+					}}
+				/>
 				{/* Roles */}
-				<CreateRolesPanel roles={roles} setRoles={setRoles} />
+				<CreateRolesPanel
+					roles={roles}
+					setRoles={setRoles}
+					errors={errors.roles}
+					onFocus={() => {
+						setErrors({ ...errors, roles: [] });
+					}}
+				/>
 				{/* Communications */}
-				<CreateCommunicationsPanel comms={comms} setComms={setComms} />
+				<CreateCommunicationsPanel
+					comms={comms}
+					setComms={setComms}
+					errors={errors.communications}
+					onFocus={() => {
+						setErrors({ ...errors, communications: [] });
+					}}
+				/>
 				{/* Publish */}
 				<Button large onClick={onPublish}>
 					Publish

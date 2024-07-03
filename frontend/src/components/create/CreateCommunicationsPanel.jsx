@@ -2,7 +2,7 @@ import { getCommunication } from "../../utils/utility";
 import SelectionSearchField from "../reusable/SelectionSearchField";
 import Bubble from "../reusable/Bubble";
 
-const CreateCommunicationsPanel = ({ comms, setComms }) => {
+const CreateCommunicationsPanel = ({ comms, setComms, errors, onFocus }) => {
 	const onRemove = (commNameToRemove) => {
 		const updatedBubbles = comms.filter((bubble) => {
 			return bubble.name !== commNameToRemove;
@@ -57,19 +57,33 @@ const CreateCommunicationsPanel = ({ comms, setComms }) => {
 		);
 	});
 
+	const renderedErrors = errors?.map((error) => {
+		return (
+			<li className="crimson-pro text-lg text-red-500" key={error}>
+				{error}
+			</li>
+		);
+	});
+
 	return (
-		<div
-			className="flex flex-col p-2 gap-2 bg-gray-200 dark:bg-gray-900 rounded-md
+		<div className="flex flex-col">
+			<div
+				className="flex flex-col p-2 gap-2 bg-gray-200 dark:bg-gray-900 rounded-md
 			text-black dark:text-white poppins min-w-0 min-h-0"
-		>
-			<div className="flex justify-between items-center gap-1.5 text-lg flex-wrap">
-				<p className="text-sm font-medium">Communications</p>
-				<SelectionSearchField
-					selectionFunc={getCommunication}
-					onAdd={addNewComm}
-				/>
+			>
+				<div className="flex justify-between items-center gap-1.5 text-lg flex-wrap">
+					<p className="text-sm font-medium">Communications</p>
+					<SelectionSearchField
+						selectionFunc={getCommunication}
+						onAdd={addNewComm}
+						onFocus={onFocus}
+					/>
+				</div>
+				<div className={`flex gap-2 flex-wrap`}>
+					{renderedCommsBubbles}
+				</div>
 			</div>
-			<div className={`flex gap-2 flex-wrap`}>{renderedCommsBubbles}</div>
+			<ul className="px-2 list-inside list-none">{renderedErrors}</ul>
 		</div>
 	);
 };
