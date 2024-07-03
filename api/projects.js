@@ -40,7 +40,8 @@ async function search(client, req, res, type) {
       user = await db.collection("Users").findOne({ username: req.username })
     }
     // const user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
-    
+    // console.log("MY USER")
+    // console.log(user)
     
     let project;
     let numOfMatches;
@@ -81,16 +82,18 @@ async function search(client, req, res, type) {
     } else if (type == "joined") {
       pipeline.push({
         $match: {
-          teamMembers: {
-            $elemMatch: { $regex: `${user.username}:` }
+          'teamMembers.username': {
+            $regex: 'Testing',
+            $options: 'i'
           }
         }
       })
     } else if (type == "owned-joined") {
       pipeline.push({
         $match: {
-          teamMembers: {
-            $elemMatch: { $regex: `${user.username}:` }
+          'teamMembers.username': {
+            $regex: 'Testing',
+            $options: 'i'
           }
         }
       })
@@ -103,6 +106,7 @@ async function search(client, req, res, type) {
 
 
     // console.log("GRABBING ONLY OPENS")
+    // console.log(pipeline)
     // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
     
     // filter results that has contains query

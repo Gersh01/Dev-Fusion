@@ -6,7 +6,14 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const { log } = require("console");
 require("dotenv").config();
-const multer = require("multer");
+
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+	cloud_name: "dev-fusion",
+	api_key: "123456789012345",
+	api_secret: "abcdeghijklmnopqrstuvwxyz1234567890"
+});
 
 const PORT = process.env.PORT || 5000;
 
@@ -15,7 +22,7 @@ const app = express();
 app.set("port", PORT);
 
 const corsOptions ={
-    origin: ["http://localhost:5173", 
+	origin: ["http://localhost:5173", 
 		"http://www.dev-fusion.com/", 
 		"https://www.dev-fusion.com/", 
 		"https://dev-fusion-production-65209ae3025b.herokuapp.com/"],
@@ -79,28 +86,10 @@ app.listen(PORT, () => {
 	console.log("Server listening on port " + PORT);
 });
 
-app.use(express.static(path.join(__dirname, "frontend")));
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+const image = "https://images.unsplash.com/photo-1712237309240-aa707ccb516f?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 
-const storage = multer.diskStorage({
-	destination: function (req, file, cb) {
-		cb(null, ".uploads/");
-	},
-	filename: function (req, file, cb) {
-		cb(null, file.originalname);
-	},
-});
-
-const upload = multer({ storage: storage });
-
-app.post("/api/upload", upload.single("profile-file"), function (req, res, next) {
-
-	console.log(JSON.stringify(req.file))
-
-	let response = ""
-	response+= "File uploaded successfully <br>"
-
-	response+= "<img src='/uploads/" + req.file.filename + "' />"
-	return res.send(response);
+cloudinary.uploader.upload(image)
+.then(result=> {
+	console.log(result)
 })
