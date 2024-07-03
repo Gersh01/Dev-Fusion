@@ -134,6 +134,7 @@ const router = createBrowserRouter(
                         return {
                             user: null,
                             projects: getProfileProjects({
+                                userId: "",
                                 searchBy: "title",
                                 sortBy: "recent",
                                 query: "",
