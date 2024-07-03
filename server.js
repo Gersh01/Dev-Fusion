@@ -10,7 +10,7 @@ require("dotenv").config();
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
-	cloud_name: "dev-fusion",
+	cloud_name: "duo5v3ro1",
 	api_key: "123456789012345",
 	api_secret: "abcdeghijklmnopqrstuvwxyz1234567890"
 });
@@ -87,9 +87,13 @@ app.listen(PORT, () => {
 });
 
 
+app.post("/api/upload", (req, res) => {
+
+
+
 const image = "https://images.unsplash.com/photo-1712237309240-aa707ccb516f?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 
 cloudinary.uploader.upload(image)
 .then(result=> {
-	console.log(result)
+	console.log(result.secure_url);
 })
