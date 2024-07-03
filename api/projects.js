@@ -27,7 +27,14 @@ async function search(client, req, res, type) {
     let user;
     
     if (type == "owned-joined") {
-      user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
+
+      if (userId == "") {
+        user = await db.collection("Users").findOne({ username: req.username })
+
+      } else {
+
+        user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
+      }
 
     } else {
       user = await db.collection("Users").findOne({ username: req.username })
