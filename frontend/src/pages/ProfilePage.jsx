@@ -1,6 +1,6 @@
 import Divider from "../components/reusable/Divider";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { Await, useLoaderData, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getProjects } from "./loaders/projectLoader";
 import logo from "../assets/DFLogoFinal.png";
@@ -15,21 +15,17 @@ const ProfilePage = () => {
     let id = "66816e44edbab2c4d116387d";
     const tech = res.technologies;
     const navigate = useNavigate();
-    const [loadProjects, setLoadProjects] = useState(useLoaderData());
 
-    // const [usersProfile, setUsersProfile] = useState(useLoaderData().user);
+    const [loadProjects, setLoadProjects] = useState(useLoaderData().projects);
+    const object = useLoaderData();
+    const [usersProfile, setUsersProfile] = useState(useLoaderData().user);
     const [endOfSearch, setEndOfSearch] = useState(false);
     const [myProfile, SetMyProfile] = useState(true);
 
     const projectsContainerRef = useRef();
 
-    // if (res.id !== profileId) {
-    //     SetMyProfile(false);
-    // }
-
     useEffect(() => {
         // * Adding scroll listener to window
-        console.log(loadProjects);
         window.addEventListener("scroll", handleScroll);
 
         // * Load
@@ -38,19 +34,18 @@ const ProfilePage = () => {
                 retrieveMoreProjects();
             }
         }
-
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
     });
 
-    if (loadProjects) {
+    if (!loadProjects) {
         return null;
     }
 
-    const renderedProjectTiles = loadProjects.map((project) => {
-        return <DiscoverProjectTile key={project._id} project={project} />;
-    });
+    // const renderedProjectTiles = loadProjects.map((project) => {
+    //     return <DiscoverProjectTile key={project._id} project={project} />;
+    // });
 
     // * Lazy loading more projects
     const retrieveMoreProjects = async () => {
@@ -66,7 +61,7 @@ const ProfilePage = () => {
             projectId: loadProjects[loadProjects.length - 1]._id,
         });
 
-        setLoadProjects([...projects, ...newProjects]);
+        setLoadProjects([...loadProjects, ...newProjects]);
 
         if (newProjects.length === 0) {
             setEndOfSearch(true);
@@ -150,12 +145,17 @@ const ProfilePage = () => {
                 </div>
             </div>
             <p className="text-3xl poppins font-semibold">Projects</p>
+
             <div
                 className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12"
                 ref={projectsContainerRef}
             >
-                {projects.length !== 0 ? renderedProjectTiles : null}
+                {console.log(loadProjects)}
+                {console.log(usersProfile)}
+                {console.log(object)}
+                {/* {loadProjects.length !== 0 ? renderedProjectTiles : null} */}
             </div>
+
             <div className="flex flex-col grow-0 poppins justify-center">
                 {loadProjects.length === 0 ? displayError() : null}
             </div>

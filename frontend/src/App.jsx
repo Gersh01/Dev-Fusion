@@ -122,42 +122,41 @@ const router = createBrowserRouter(
                 />
                 <Route
                     path="/projects/:id"
-                    element={<ViewProjectPage />}
                     loader={({ params }) => {
                         return getProjectById(params.id);
                     }}
+                    element={<ViewProjectPage />}
                 />
                 <Route
                     path="/profile"
-                    element={<ProfilePage />}
-                    loader={() => {
-                        return getProfileProjects({
-                            userId: "",
-                            searchBy: "title",
-                            sortBy: "recent",
-                            query: "",
-                            count: 4,
-                            initial: true,
-                            projectId: "000000000000000000000000",
-                        });
+                    loader={async () => {
+                        // return getProfileProjects({
+                        //     userId: "",
+                        //     searchBy: "title",
+                        //     sortBy: "recent",
+                        //     query: "",
+                        //     count: 4,
+                        //     initial: true,
+                        //     projectId: "000000000000000000000000",
+                        // });
 
-                        // return {
-                        //     user: null,
-                        //     projects: getProfileProjects({
-                        //         userId: "",
-                        //         searchBy: "title",
-                        //         sortBy: "recent",
-                        //         query: "",
-                        //         count: 4,
-                        //         initial: true,
-                        //         projectId: "000000000000000000000000",
-                        //     }),
-                        // };
+                        return {
+                            projects: getProfileProjects({
+                                userId: "",
+                                searchBy: "title",
+                                sortBy: "recent",
+                                query: "",
+                                count: 4,
+                                initial: true,
+                                projectId: "000000000000000000000000",
+                            }),
+                            user: null,
+                        };
                     }}
+                    element={<ProfilePage />}
                 />
                 <Route
                     path="/profile/:id"
-                    element={<ProfilePage />}
                     loader={({ params }) => {
                         return {
                             user: getUsersProfile(params.id),
@@ -172,6 +171,7 @@ const router = createBrowserRouter(
                             }),
                         };
                     }}
+                    element={<ProfilePage />}
                 />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/create" element={<CreatePage />} />

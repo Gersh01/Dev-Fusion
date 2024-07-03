@@ -55,7 +55,6 @@ const getProfileProjects = async (queryConfig)=>{
 		apiDomain + "/api/owned-joined", 
 		queryConfig, {withCredentials:true}
 	)
-
 	return response.data;
 }
 
