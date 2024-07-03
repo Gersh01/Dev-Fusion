@@ -27,7 +27,7 @@ async function search(client, req, res, type) {
     let user;
     
     if (type == "owned-joined") {
-
+      console.log("Debugging: Entering owned-joined")
       if (userId == "") {
         user = await db.collection("Users").findOne({ username: req.username })
 
@@ -35,6 +35,7 @@ async function search(client, req, res, type) {
 
         user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
       }
+      console.log("User we are returning",user)
 
     } else {
       user = await db.collection("Users").findOne({ username: req.username })
@@ -102,8 +103,8 @@ async function search(client, req, res, type) {
     }
 
 
-    // console.log("GRABBING ONLY OPENS")
-    // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+    console.log("GRABBING ONLY OPENS")
+    console.log(await db.collection("Projects").aggregate(pipeline).toArray())
     
     // filter results that has contains query
     if (searchBy == "title") {
@@ -134,9 +135,9 @@ async function search(client, req, res, type) {
 
     }
 
-    // console.log("entering with this pipeline", pipeline)
-    // console.log("GRABBING ONLY MATCHING QUERY NOW")
-    // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+    console.log("entering with this pipeline", pipeline)
+    console.log("GRABBING ONLY MATCHING QUERY NOW")
+    console.log(await db.collection("Projects").aggregate(pipeline).toArray())
 
     // !initial == cursor is being sent over, remove/cut off data that has already been seen
     // initial, then do nothing, can potentially show everything, no need to cut off certain data since all have been unseen
@@ -225,9 +226,9 @@ async function search(client, req, res, type) {
       }
     }
 
-    // console.log("HERE IS THE PIPELINE, ", pipeline)
-    // console.log("IF CURSOR WAS GIVEN, ONLY LOOKING AT EVERYTHING AFTER CURSOR")
-    // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+    console.log("HERE IS THE PIPELINE, ", pipeline)
+    console.log("IF CURSOR WAS GIVEN, ONLY LOOKING AT EVERYTHING AFTER CURSOR")
+    console.log(await db.collection("Projects").aggregate(pipeline).toArray())
 
 
     // sort data
@@ -259,20 +260,20 @@ async function search(client, req, res, type) {
       )
     }
 
-    // console.log("LOOKING AT THE SORTED DATA BY SORT BY")
-    // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+    console.log("LOOKING AT THE SORTED DATA BY SORT BY")
+    console.log(await db.collection("Projects").aggregate(pipeline).toArray())
 
     // display first X data
     pipeline.push({
       $limit: count
     })
 
-    // console.log("GOT MY SEARCH RESULTS");
-    // console.log("SHOWING ONLY THE FIRST " + count)
-    // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
+    console.log("GOT MY SEARCH RESULTS");
+    console.log("SHOWING ONLY THE FIRST " + count)
+    console.log(await db.collection("Projects").aggregate(pipeline).toArray())
 
     results = await db.collection("Projects").aggregate(pipeline).toArray()
-
+    console.log(results)
     return res.status(200).json(results)
 
   } catch(e) {

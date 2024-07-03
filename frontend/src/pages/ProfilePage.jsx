@@ -27,12 +27,10 @@ const ProfilePage = () => {
     // }
 
     useEffect(() => {
-        // if (res.id !== id) {
-        //     SetMyProfile(false);
-        // }
         // * Adding scroll listener to window
+
         window.addEventListener("scroll", handleScroll);
-        console.log("Debug: Adding Event listner");
+
         // * Load
         if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
             if (!endOfSearch) {
@@ -45,7 +43,7 @@ const ProfilePage = () => {
         };
     });
 
-    if (!projects) {
+    if (projects === null) {
         return null;
     }
 
@@ -156,6 +154,7 @@ const ProfilePage = () => {
                 className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12"
                 ref={projectsContainerRef}
             >
+                {console.log(projects)}
                 {/* {projects.length !== 0 ? renderedProjectTiles : null} */}
             </div>
             <div className="flex flex-col grow-0 poppins justify-center">
