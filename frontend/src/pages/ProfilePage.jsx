@@ -50,19 +50,38 @@ const ProfilePage = () => {
         if (loadProjects.length === 0) {
             return;
         }
-        const newProjects = await getProjects({
-            searchBy: "title",
-            sortBy: "recent",
-            query: "",
-            count: 4,
-            initial: false,
-            projectId: loadProjects[loadProjects.length - 1]._id,
-        });
+        //retrieves signed in users projects
+        if (!usersProfile) {
+            const newProjects = await getProjects({
+                searchBy: "title",
+                sortBy: "recent",
+                query: "",
+                count: 4,
+                initial: false,
+                projectId: loadProjects[loadProjects.length - 1]._id,
+            });
 
-        setLoadProjects([...loadProjects, ...newProjects]);
+            setLoadProjects([...loadProjects, ...newProjects]);
 
-        if (newProjects.length === 0) {
-            setEndOfSearch(true);
+            if (newProjects.length === 0) {
+                setEndOfSearch(true);
+            }
+            //retrieves a different users projects
+        } else {
+            const newProjects = await getProfileProjects({
+                userId: params.id,
+                searchBy: "title",
+                sortBy: "recent",
+                query: "",
+                count: 4,
+                initial: true,
+                projectId: loadProjects[loadProjects.length - 1]._id,
+            });
+            setLoadProjects([...loadProjects, ...newProjects]);
+
+            if (newProjects.length === 0) {
+                setEndOfSearch(true);
+            }
         }
     };
 
