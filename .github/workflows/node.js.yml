@@ -5,9 +5,12 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "github-testing" ]
+    branches: 
+      - github-testing
   pull_request:
-    branches: [ "github-testing" ]
+    branches: 
+      - github-testing
+    
 
 jobs:
   build:
