@@ -66,6 +66,13 @@ const validateProject = (project) => {
 		errors.startDate.push("Start date must be valid");
 	} else if (+new Date(projectStartDate) <= +new Date()) {
 		errors.startDate.push("Start date cannot be in the past");
+	} else if (
+		+new Date(projectStartDate) - +new Date() >=
+		1000 * 60 * 60 * 24 * 365 * 2
+	) {
+		errors.startDate.push(
+			"Start date cannot be more than 2 years from now"
+		);
 	}
 
 	// Validate end date
@@ -73,8 +80,12 @@ const validateProject = (project) => {
 		errors.endDate.push("End date must be valid");
 	} else if (+new Date(deadline) <= +new Date(projectStartDate)) {
 		errors.endDate.push("End date cannot be before start date");
+	} else if (
+		+new Date(deadline) - +new Date(projectStartDate) >=
+		1000 * 60 * 60 * 24 * 365 * 2
+	) {
+		errors.endDate.push("Project duration cannot be longer than 2 years");
 	}
-
 	return errors;
 };
 

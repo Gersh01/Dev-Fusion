@@ -11,6 +11,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { santizeProject } from "../utils/sanitation";
 import { validateProject } from "../utils/validations";
+import Modal from "../components/reusable/Modal";
+import { useNavigate } from "react-router-dom";
 
 const CreatePage = () => {
 	const user = useSelector((state) => state.user);
@@ -24,6 +26,10 @@ const CreatePage = () => {
 	]);
 	const [comms, setComms] = useState([]);
 	const [errors, setErrors] = useState({});
+
+	const [showModal, setShowModal] = useState(false);
+
+	const navigate = useNavigate();
 
 	// * Called when publishing a project
 	const onPublish = () => {
@@ -73,6 +79,7 @@ const CreatePage = () => {
 		}
 
 		if (hasValidationErrors === false) {
+			setShowModal(true);
 			createProject(newProject);
 		}
 	};
@@ -178,6 +185,34 @@ const CreatePage = () => {
 					Publish
 				</Button>
 			</div>
+			<Modal show={showModal}>
+				<div className="bg-gray-200 dark:bg-gray-700 flex flex-col p-4 pt-12 gap-12 rounded-lg">
+					<p className="text-center text-2xl font-semibold">
+						Project Successfully Created
+					</p>
+					<div className="flex flex-col gap-4">
+						<Button
+							large
+							onClick={() => {
+								setShowModal(false);
+								navigate("/profile");
+							}}
+						>
+							Go to Profile
+						</Button>
+						<Button
+							large
+							mode="secondary"
+							onClick={() => {
+								setShowModal(false);
+								navigate("/discover");
+							}}
+						>
+							Go to Discover
+						</Button>
+					</div>
+				</div>
+			</Modal>
 		</Fragment>
 	);
 };

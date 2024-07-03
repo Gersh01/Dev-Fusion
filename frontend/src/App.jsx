@@ -179,7 +179,7 @@ function App() {
 	const displayMode = useSelector((state) => state.system.displayMode);
 
 	return (
-		<div className={`${displayMode} text-black dark:text-white`}>
+		<div id="app" className={`${displayMode} text-black dark:text-white`}>
 			<RouterProvider router={router} />
 		</div>
 	);
