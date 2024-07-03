@@ -59,6 +59,7 @@ exports.setApp = function (app, client) {
         var bio = '';
         var technologies = [];
         var error = '';
+        var link = '';
         var login = req.body.login;
         var password = req.body.password;
         var rememberMe = req.body.rememberMe;
@@ -79,7 +80,7 @@ exports.setApp = function (app, client) {
             resultsEmailUnverified = await db.collection('UnverifiedUsers').find({ email: login }).toArray();
         } catch (e) {
             error = e.toString;
-            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, error: error };
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, link: link, error: error };
             res.status(500).json(ret);
         }
 
@@ -93,6 +94,7 @@ exports.setApp = function (app, client) {
                 username = resultsUsername[0].username;
                 bio = resultsUsername[0].bio;
                 technologies = resultsUsername[0].technologies;
+                link = resultsUsername[0].link;
                 const payload = { username, rememberMe };
                 if (rememberMe) {
                     token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
@@ -104,11 +106,11 @@ exports.setApp = function (app, client) {
                     httpOnly: true,
                     path: '/'
                 });
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, token: token, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(401).json(ret);
             }
         } else if (resultsEmail.length > 0) { //Login matched a verified user's email
@@ -121,6 +123,7 @@ exports.setApp = function (app, client) {
                 username = resultsEmail[0].username;
                 bio = resultsEmail[0].bio;
                 technologies = resultsEmail[0].technologies;
+                link = resultsUsername[0].link;
                 const payload = { username, rememberMe };
                 var token;
                 if (rememberMe) {
@@ -133,11 +136,11 @@ exports.setApp = function (app, client) {
                     httpOnly: true,
                     path: '/'
                 });
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, token: token, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(401).json(ret);
             }
         } else if (resultsUsernameUnverified.length > 0) { //Login matched an unverified user's username
@@ -150,12 +153,13 @@ exports.setApp = function (app, client) {
                 username = resultsUsernameUnverified[0].username;
                 bio = resultsUsernameUnverified[0].bio;
                 technologies = resultsUsernameUnverified[0].technologies;
+                link = resultsUsername[0].link;
                 error = "User is not verified";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(401).json(ret);
             } else {
                 error = "password is wrong";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(401).json(ret);
             }
 
@@ -169,17 +173,18 @@ exports.setApp = function (app, client) {
                 username = resultsEmailUnverified[0].username;
                 bio = resultsEmailUnverified[0].bio;
                 technologies = resultsEmailUnverified[0].technologies;
+                link = resultsUsername[0].link;
                 error = "User is not verified";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(401).json(ret);
             } else {
                 error = "password is wrong";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(401).json(ret);
             }
         } else { //Login did not match any user
             error = "Login did not match any user";
-            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
             res.status(404).json(ret);
         }
 
@@ -299,6 +304,7 @@ exports.setApp = function (app, client) {
         var password = '';
         var bio = '';
         var technologies = [];
+        var link = '';
         var error = '';
 
         var db;
@@ -329,7 +335,7 @@ exports.setApp = function (app, client) {
             var insertResult;
             var deleteResult;
             const newUser = {
-                firstName: firstName, lastName: lastName, password: password, username: username, email: email, bio: bio, technologies: technologies
+                firstName: firstName, lastName: lastName, password: password, username: username, email: email, bio: bio, technologies: technologies, link: link
             };
             try {
                 insertResult = await db.collection('Users').insertOne(newUser);
@@ -355,6 +361,7 @@ exports.setApp = function (app, client) {
     app.get('/api/users', cookieJwtAuth, async (req, res, next) => {
         console.log("Debug: Cookie Auth in getting users")
         const { userId } = req.body;
+        var link = '';
         var firstName = '';
         var lastName = '';
         var email = '';
@@ -386,7 +393,7 @@ exports.setApp = function (app, client) {
             username = result[0].username;
             bio = result[0].bio;
             technologies = result[0].technologies;
-            var ret = { firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            var ret = { firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
             return res.status(200).json(ret);
         } else {
             error = 'user not found'
@@ -405,6 +412,7 @@ exports.setApp = function (app, client) {
         var lastName = req.body.lastName;
         var bio = req.body.bio;
         var technologies = req.body.technologies;
+        var link = req.body.link;
 
 
         if (userId.length != 24) return res.status(400).json({ error: "userId must be 24 characters" });
@@ -429,10 +437,11 @@ exports.setApp = function (app, client) {
         if (lastName == undefined || lastName == null) lastName = resultFind.lastName;
         if (bio == undefined || bio == null) bio = resultFind.bio;
         if (technologies == undefined || technologies == null) technologies = resultFind.technologies;
+        if (link == undefined || link == null) link = resultFind.technologies;
 
         var resultPut;
         var query = { _id: nid };
-        var newValues = { $set: { firstName: firstName, lastName: lastName, bio: bio, technologies: technologies } };
+        var newValues = { $set: { firstName: firstName, lastName: lastName, bio: bio, technologies: technologies, link: link } };
 
         try {
             db = client.db('DevFusion');
@@ -479,6 +488,7 @@ exports.setApp = function (app, client) {
         var username = '';
         var bio = '';
         var technologies = [];
+        var link = '';
         var error = '';
 
         var db;
@@ -504,7 +514,7 @@ exports.setApp = function (app, client) {
             username = result[0].username;
             bio = result[0].bio;
             technologies = result[0].technologies;
-            var ret = { firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            var ret = { firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
             return res.status(200).json(ret);
         } else {
             error = 'user not found'
@@ -661,6 +671,7 @@ exports.setApp = function (app, client) {
         var email = '';
         var bio = '';
         var technologies = [];
+        var link = '';
         var error = '';
 
         const username = req.username;
@@ -685,7 +696,8 @@ exports.setApp = function (app, client) {
             email = result[0].email;
             bio = result[0].bio;
             technologies = result[0].technologies;
-            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, error: error };
+            link = result[0].link;
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
             res.status(200).json(ret);
         } else {
             error = "username does not exist";
