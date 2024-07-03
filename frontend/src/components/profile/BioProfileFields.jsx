@@ -11,6 +11,7 @@ import { updateBio } from "../../store/slices/userSlice";
 const BioProfileFields = ({ type, title, info, privateView }) => {
     let user = useSelector((state) => state.user);
     const [mode, setMode] = useState(type);
+
     const [bio, setBio] = useState(info);
     const dispatch = useDispatch();
 
@@ -46,7 +47,7 @@ const BioProfileFields = ({ type, title, info, privateView }) => {
                 role="textbox"
                 disabled={mode}
                 onChange={(e) => setBio(e.target.value)}
-                defaultValue={user.bio}
+                defaultValue={bio}
             ></textarea>
         </div>
     );

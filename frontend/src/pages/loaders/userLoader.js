@@ -38,11 +38,11 @@ const getUserFromJwt = async () => {
 
 const getUsersProfile = async (id) => {
 	const payload = {userId:id}
-	console.log(payload)
+	console.log("Debug: Getting profiles with ID: "+id)
 	const response = await axios.get(`${apiDomain}/api/users/${id}`,
-		payload,
 		{withCredentials:true})
 	
+		console.log(response.data)
 	return response.data
 
 }
