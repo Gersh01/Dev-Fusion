@@ -35,4 +35,20 @@ const getUserFromJwt = async () => {
 	return response.data;
 };
 
-export { validateJwt, getUserFromJwt };
+
+const getUsersProfile = async (id) => {
+	const payload = {userId:id}
+	console.log(payload)
+	// const response = await axios.get(`${apiDomain}/api/users/${id}`,
+	try{
+		const response = await axios.get(apiDomain +"/api/users",
+			payload, { withCredentials: true })
+			return response.data
+	} catch(err){
+		console.log(err.message)
+	}
+		
+
+}
+
+export { validateJwt, getUserFromJwt, getUsersProfile };
