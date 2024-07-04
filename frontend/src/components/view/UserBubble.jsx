@@ -1,11 +1,19 @@
-const UserBubble = ({ text }) => {
+import { useNavigate } from "react-router-dom";
+
+const UserBubble = ({ userId, username }) => {
+	const navigate = useNavigate();
+
+	const onClick = () => {
+		navigate(`/profile/${userId}`);
+	};
+
 	return (
-		<p
-			className={`h-6 rounded-md poppins px-1 text-white text-nowrap flex 
-			items-center rounded-l-md bg-gray-500 crimson-pro text-lg`}
+		<button
+			className={`h-6 poppins px-1 text-white text-nowrap crimson-pro text-lg underline`}
+			onClick={onClick}
 		>
-			{"@" + text}
-		</p>
+			{"@" + username}
+		</button>
 	);
 };
 
