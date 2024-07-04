@@ -17,7 +17,7 @@ export const updateUser = async (id, newInfo) => {
 };
 
 export const updateUserTechnology = async (id, tech) => {
-	const payload = { technologies: tech, userId: id };
+	const payload = { userId: id,technologies: tech  };
 	try {
 		await Axios.put(apiDomain + "/api/users", payload, {
 			withCredentials: true,
@@ -42,7 +42,7 @@ export const updateUserName = async (id, first, last) =>{
 export const updateProfilePicture = async (id, link)=>{
 	const payload = {userId:id, link:link};
 	try{
-		const response=await Axios.put(apiDomain+"/api/users",payload,{withCredentials:true})
+		await Axios.put(apiDomain+"/api/users",payload,{withCredentials:true})
 	}catch(err){
 		console.log(`Error: ${err.message}`)
 	}

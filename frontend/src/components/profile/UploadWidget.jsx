@@ -1,7 +1,10 @@
 import { useEffect, useRef } from "react";
 import { updateProfilePicture } from "../../pages/loaders/updateUser";
 import Button from "../reusable/Button";
+import { useDispatch } from "react-redux";
+
 const UploadWidget = ({ id }) => {
+    const dispatch = useDispatch();
     const cloudinaryRef = useRef();
     const widgetRef = useRef();
 
@@ -20,6 +23,7 @@ const UploadWidget = ({ id }) => {
             function (error, result) {
                 if (result.info.url) {
                     updateProfilePicture(id, result.info.url);
+                    //dispatch(updateProfilePicture(result.info.url));
                     window.location.reload();
                 }
             }
