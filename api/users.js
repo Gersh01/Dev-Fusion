@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 5000;
 // const appName = "http://www.dev-fusion.com";
 const appName = "http://localhost" + PORT
 // const frontend = "http://www.dev-fusion.com";
+const defaultProfilePicture = "https://res.cloudinary.com/dlj2rlloi/image/upload/v1720043202/ef7zmzl5hokpnb3zd6en.png";
 
 const ObjectId = require('mongodb').ObjectId;
 
@@ -335,7 +336,7 @@ exports.setApp = function (app, client) {
             var insertResult;
             var deleteResult;
             const newUser = {
-                firstName: firstName, lastName: lastName, password: password, username: username, email: email, bio: bio, technologies: technologies, link: link
+                firstName: firstName, lastName: lastName, password: password, username: username, email: email, bio: bio, technologies: technologies, link: defaultProfilePicture
             };
             try {
                 insertResult = await db.collection('Users').insertOne(newUser);
