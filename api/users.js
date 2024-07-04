@@ -359,7 +359,6 @@ exports.setApp = function (app, client) {
 
     //get user api
     app.get('/api/users', cookieJwtAuth, async (req, res, next) => {
-        console.log("Debug: Cookie Auth in getting users")
         const { userId } = req.body;
         var link = '';
         var firstName = '';
@@ -405,7 +404,6 @@ exports.setApp = function (app, client) {
 
     //update user api
     app.put('/api/users', cookieJwtAuth, async (req, res, next) => {
-        console.log("Debug: Cookie Auth in updating users")
         var error = '';
         var userId = req.body.userId;
         var firstName = req.body.firstName;
@@ -437,7 +435,7 @@ exports.setApp = function (app, client) {
         if (lastName == undefined || lastName == null) lastName = resultFind.lastName;
         if (bio == undefined || bio == null) bio = resultFind.bio;
         if (technologies == undefined || technologies == null) technologies = resultFind.technologies;
-        if (link == undefined || link == null) link = resultFind.technologies;
+        if (link == undefined || link == null) link = resultFind.link;
 
         var resultPut;
         var query = { _id: nid };
