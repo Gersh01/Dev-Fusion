@@ -10,6 +10,7 @@ import { setUser } from "../store/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { setVerificationEmail } from "../store/slices/systemSlice";
 import { apiDomain } from "../utils/utility";
+import { validateLogin } from "../utils/validations";
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -18,7 +19,8 @@ const LoginPage = () => {
     const [rememberMe, setRememberMe] = useState(false);
     const [passwordInput, setPasswordInput] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [userInput, setUserInput] = useState([]);
+    const [errors, setErrors] = useState({});
+    const [userInput, setUserInput] = useState("");
 
     const goToRegister = () => {
         navigate("/signup");
@@ -30,8 +32,21 @@ const LoginPage = () => {
     //POST for Login API
     //uses the err.response.data.error to distinguish between error codes
     const doLogin = async (e) => {
+        const loginAttempt = { username: userInput, password: passwordInput };
+        const validationErrors = validateLogin(loginAttempt);
+
+        setErrors(validationErrors);
+        let hasValidationErrors = false;
+
+        for (const errorType in validationErrors) {
+            if (validationErrors[errorType].length !== 0) {
+                hasValidationErrors = true;
+                break;
+            }
+        }
+
         setErrorMessage("");
-        if (userInput !== "" && passwordInput !== "") {
+        if (hasValidationErrors === false) {
             e.preventDefault();
             const newLogin = {
                 login: userInput,
@@ -63,8 +78,6 @@ const LoginPage = () => {
                     setErrorMessage("Username/Password is incorrect");
                 }
             }
-        } else {
-            setErrorMessage("One or more fields is missing valid data");
         }
     };
 
@@ -78,6 +91,10 @@ const LoginPage = () => {
                     icon={<MdAccountCircle />}
                     placeholder="Example@email.com"
                     onChange={(e) => setUserInput(e.target.value)}
+                    errors={errors.username}
+                    onFocus={() => {
+                        setErrors({ ...errors, username: [] });
+                    }}
                 />
                 <Input
                     titleText="Password"
@@ -85,6 +102,10 @@ const LoginPage = () => {
                     icon={<MdLockOpen />}
                     password
                     onChange={(e) => setPasswordInput(e.target.value)}
+                    errors={errors.password}
+                    onFocus={() => {
+                        setErrors({ ...errors, password: [] });
+                    }}
                 />
                 <div className="flex justify-between">
                     <div className="flex gap-1 items-center poppins">
@@ -107,7 +128,9 @@ const LoginPage = () => {
                     </button>
                 </div>
                 <div className="h-5 flex justify-ceneter text-black dark:text-white text-md poppins">
-                    <span>{errorMessage}</span>
+                    <span className="crimson-pro text-lg text-red-500">
+                        {errorMessage}
+                    </span>
                 </div>
             </div>
 

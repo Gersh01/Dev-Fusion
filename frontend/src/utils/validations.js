@@ -89,4 +89,127 @@ const validateProject = (project) => {
 	return errors;
 };
 
-export { validateProject };
+const validateLogin =(login)=>{
+	const errors ={
+		username: [],
+		password: [],
+		returnError: []
+	}
+
+	const userInput = login.username;
+	const passwordInput = login.password;
+
+	if(userInput===""){
+		errors.username.push("Username cannot be empty")
+	}
+
+	if(passwordInput===""){
+		errors.password.push("Password must not be empty")
+	}
+
+	return errors;
+}
+
+const validateRegister =(register)=>{
+	const validEmail = new RegExp(
+        "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
+    );
+    const validPassword = new RegExp(
+        "(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&])(?=.{8,24}$)"
+    );
+
+	const errors ={
+		firstName:[],
+		lastName:[],
+		email:[],
+		username: [],
+		password: [],
+		returnError: []
+	}
+	const username = register.username;
+	const password = register.password;
+	const firstName = register.firstName;
+	const lastName = register.lastName;
+	const email = register.email;
+
+
+	if(firstName===""){
+		errors.firstName.push("Cannot be empty")
+	}
+
+	if(lastName===""){
+		errors.lastName.push("Cannot be empty")
+	}
+
+	if(username===""){
+		errors.username.push("Username cannot be empty")
+	}
+	else if(username.length>24){
+		errors.username.push("Username cannot be more than 24 characters")
+	}
+	
+	if(email===""){
+		errors.email.push("Email cannot be empty")
+	}
+	else if(validEmail.test(email)===false){
+		errors.email.push("Email must follow example@email.com format")
+	}
+
+	if(password===""){
+		errors.password.push("Password cannot be empty")
+	}
+	else if(validPassword.test(password)===false){
+		errors.password.push("Password does not follow the correct format")
+	}
+
+	return errors;
+}
+
+const validResetPasswordEmail=(resetEmail)=>{
+	const validEmail = new RegExp(
+        "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
+    );
+
+	const errors ={
+		email:[]
+	}
+
+	const email = resetEmail.email;
+
+	if(email===""){
+		errors.email.push("Email cannot be empty")
+	} else if(validEmail.test(email)===false){
+		errors.email.push("Email must follow example@email.com format")
+	}
+	return errors
+}
+
+const validResetPassword = (resetPassword)=>{
+	const validPassword = new RegExp(
+        "(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&])(?=.{8,24}$)"
+    );
+
+	const errors={
+		password:[],
+		confirmPassword:[]
+	}
+
+	const password = resetPassword.password;
+	const confirmPassword= resetPassword.confirm;
+
+	if(password===""){
+		errors.password.push("Password cannot be empty")
+	} else if(validPassword.test(password)===false){
+		errors.password.push("Password does not follow the correct format")
+	}
+
+	if(password!==confirmPassword){
+		errors.confirmPassword.push("Confirm Password does not match")
+	} else if(confirmPassword===""){
+		errors.confirmPassword.push("Confirm Password cannot be empty")
+	}
+	return errors
+
+}
+
+export { validateProject, validateLogin, validateRegister, validResetPasswordEmail,validResetPassword };
