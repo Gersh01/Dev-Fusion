@@ -98,49 +98,37 @@ const ProfilePage = () => {
 		return <DiscoverProjectTile key={project._id} project={project} />;
 	});
 
-	const displayBio = () => {
-		if (!usersProfile) {
-			return (
-				<BioProfileFields
-					title="Bio"
-					info={res.bio}
-					type={true}
-					privateView={true}
-				/>
-			);
-		} else {
-			return (
-				<BioProfileFields
-					title="Bio"
-					info={usersProfile.bio}
-					type={true}
-					privateView={false}
-				/>
-			);
-		}
-	};
+	const renderedBioField = !usersProfile ? (
+		<BioProfileFields
+			title="Bio"
+			info={res.bio}
+			type={true}
+			privateView={true}
+		/>
+	) : (
+		<BioProfileFields
+			title="Bio"
+			info={usersProfile.bio}
+			type={true}
+			privateView={false}
+		/>
+	);
 
-	const displayTech = () => {
-		if (!usersProfile) {
-			return (
-				<TechnologiesField
-					technologies={tech}
-					title="Technologies"
-					type={true}
-					privateView={true}
-				/>
-			);
-		} else {
-			return (
-				<TechnologiesField
-					technologies={usersProfile.technologies}
-					title="Technologies"
-					type={true}
-					privateView={false}
-				/>
-			);
-		}
-	};
+	const renderedTechField = !usersProfile ? (
+		<TechnologiesField
+			technologies={tech}
+			title="Technologies"
+			type={true}
+			privateView={true}
+		/>
+	) : (
+		<TechnologiesField
+			technologies={usersProfile.technologies}
+			title="Technologies"
+			type={true}
+			privateView={false}
+		/>
+	);
 
 	const displayError = () => {
 		return (
@@ -201,11 +189,11 @@ const ProfilePage = () => {
 			<div className="flex flex-wrap gap-8 py-4">
 				{/* Bio Field*/}
 				<div className="flex flex-col w-full h-80 p-4 rounded-2xl dark:bg-gray-900 bg-gray-50 lg:w-3/5 text-xl poppins">
-					{displayBio()}
+					{renderedBioField}
 				</div>
 				{/*Technologies fields*/}
 				<div className="flex flex-col p-4 rounded-2xl h-80 dark:bg-gray-900 bg-gray-50 w-full lg:w-1/5 lg:grow poppins text-xl">
-					{displayTech()}
+					{renderedTechField}
 				</div>
 			</div>
 			<p className="text-3xl poppins font-semibold">Projects</p>
