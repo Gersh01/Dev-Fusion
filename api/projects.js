@@ -347,9 +347,11 @@ exports.setApp = function (app, client) {
       
       try {
 
+          let username = req.username;
+
           db = client.db("DevFusion");
     
-          let user = await db.collection("Users").findOne( {username: req.username})
+          let user = await db.collection("Users").findOne( {username: username})
 
           
           let isOpen = true;
@@ -391,8 +393,10 @@ exports.setApp = function (app, client) {
           };
 
 
-          db.collection("Projects").insertOne(project);
-          return res.sendStatus(200);
+          let ret = await db.collection("Projects").insertOne(project);
+
+
+          return res.status(200).json({"projectId": ret.insertedId.toString()});
 
         } catch (e) {
             error = e.toString();
