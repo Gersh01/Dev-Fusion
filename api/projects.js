@@ -25,9 +25,10 @@ async function search(client, req, res, type) {
     
     // req.username
     let user;
-    
+
+    console.log("Debugging: Entering search")
     if (type == "owned-joined") {
-      // console.log("Debugging: Entering owned-joined")
+      console.log("Debugging: Entering owned-joined")
       if (userId == "") {
         user = await db.collection("Users").findOne({ username: req.username })
 
@@ -90,20 +91,22 @@ async function search(client, req, res, type) {
         }
       })
     } else if (type == "owned-joined") {
-      pipeline.push({
-        $match: {
-          'teamMembers.username': {
-            $regex: `${user.username}`,
-            $options: 'i'
-          }
+        pipeline.push({
+          $match: {
+            $or: [
+              {ownerID: new ObjectId(user._id.toString())},
+
+              {
+                'teamMembers.username': {
+                  $regex: `${user.username}`,
+                  $options: 'i'
+                }
+              }
+
+            ]
         }
       })
-
-      pipeline.push({
-        $match: {ownerID: user._id }
-      })
-
-    }
+  }
 
 
     // console.log("GRABBING ONLY OPENS")
@@ -370,7 +373,13 @@ exports.setApp = function (app, client) {
           let technologies = req.body.technologies;
     
           let communications = req.body.communications;
-          let teamMembers = [];
+          let teamMembers = [
+            {
+              username: user.username,
+              role: "Project Manager"
+
+            }
+          ];
     
           project = {
               isOpen: isOpen,
