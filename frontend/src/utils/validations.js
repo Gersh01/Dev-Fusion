@@ -134,11 +134,16 @@ const validateRegister =(register)=>{
 
 
 	if(firstName===""){
-		errors.firstName.push("Cannot be empty")
+		errors.firstName.push("Cannot be empty"
+		)
+	} else if(firstName.length>18){
+		errors.firstName.push("Name is too long")
 	}
 
 	if(lastName===""){
 		errors.lastName.push("Cannot be empty")
+	}else if( lastName.length> 18){
+		errors.lastName.push("Name is too long")
 	}
 
 	if(username===""){
