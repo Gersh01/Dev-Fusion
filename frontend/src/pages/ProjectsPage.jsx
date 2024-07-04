@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import Divider from "../components/reusable/Divider";
 import ProjectTypeSelector from "../components/projects/ProjectTypeSelector";
 import OwnedProjectTile from "../components/projects/OwnedProjectTile";
@@ -16,34 +16,8 @@ const ProjectsPage = () => {
 
 	const projectsContainerRef = useRef();
 
-	useEffect(() => {
-		// * Adding scroll listener to window
-		window.addEventListener("scroll", handleScroll);
-
-		// * Load
-		if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
-			if (!endOfSearch) {
-				retrieveMoreProjects();
-			}
-		}
-
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-		};
-	});
-
-	// * Only lazy load when reaching end of projects
-	const handleScroll = () => {
-		const bottom =
-			window.innerHeight + window.scrollY >= document.body.scrollHeight;
-
-		if (bottom) {
-			retrieveMoreProjects();
-		}
-	};
-
 	// * Lazy loading more projects
-	const retrieveMoreProjects = async () => {
+	const retrieveMoreProjects = useCallback(async () => {
 		if (projects.length === 0) {
 			return;
 		}
@@ -74,11 +48,33 @@ const ProjectsPage = () => {
 		if (newProjects.length === 0) {
 			setEndOfSearch(true);
 		}
-	};
+	}, [location.pathname, projects]);
 
-	if (!projects) {
-		return null;
-	}
+	// * Only lazy load when reaching end of projects
+	const handleScroll = useCallback(() => {
+		const bottom =
+			window.innerHeight + window.scrollY >= document.body.scrollHeight;
+
+		if (bottom) {
+			retrieveMoreProjects();
+		}
+	}, [retrieveMoreProjects]);
+
+	useEffect(() => {
+		// * Adding scroll listener to window
+		window.addEventListener("scroll", handleScroll);
+
+		// * Load
+		if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
+			if (!endOfSearch) {
+				retrieveMoreProjects();
+			}
+		}
+
+		return () => {
+			window.removeEventListener("scroll", handleScroll);
+		};
+	}, [endOfSearch, handleScroll, retrieveMoreProjects]);
 
 	const renderedProjectsTiles = projects.map((project) => {
 		if (location.pathname === "/my-projects") {
