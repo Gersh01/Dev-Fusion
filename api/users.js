@@ -468,6 +468,7 @@ exports.setApp = function (app, client) {
             username = result[0].username;
             bio = result[0].bio;
             technologies = result[0].technologies;
+            link = result[0].link;
             var ret = { userId: userId, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
             return res.status(200).json(ret);
         } else {
