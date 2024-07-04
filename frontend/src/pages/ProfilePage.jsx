@@ -13,8 +13,6 @@ const ProfilePage = () => {
 	const tech = res.technologies;
 	const navigate = useNavigate();
 
-	console.log("USER", res);
-
 	const loaderData = useLoaderData();
 	const [projects, setProjects] = useState(loaderData.projects);
 	const [usersProfile, setUsersProfile] = useState(loaderData.user);
@@ -43,7 +41,7 @@ const ProfilePage = () => {
 		} else {
 			//retrieves a different users projects
 			newProjects = await getProfileProjects({
-				userId: usersProfile.id,
+				userId: usersProfile.userId,
 				searchBy: "title",
 				sortBy: "recent",
 				query: "",
