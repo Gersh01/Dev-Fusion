@@ -16,12 +16,16 @@ const ApplicationCardTile = ({ applicant, projectId }) => {
 
     const acceptApplication = (userId, role) => {
         const payload = { projectId: projectId, userId: userId, role: role };
-        applicationAccept(payload);
+        if (applicationAccept?.(payload) === 200) {
+            window.location.reload();
+        }
     };
 
     const denyApplication = (userId, role) => {
         const payload = { projectId: projectId, userId: userId, role: role };
-        applicationDeny(payload);
+        if (applicationDeny?.(payload) === 200) {
+            window.location.reload();
+        }
     };
 
     const topContent = (
