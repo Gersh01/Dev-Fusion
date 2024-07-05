@@ -20,10 +20,7 @@ const CreateRolesSelectionPanel = ({ projectRoles }) => {
     });
 
     useEffect(() => {
-        console.log("Debug: sending a role " + role);
         dispacth(updateRole(role));
-
-        console.log("Debug: retrieving dispatched data " + test);
     }, [role]);
 
     return (

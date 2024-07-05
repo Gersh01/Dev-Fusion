@@ -38,7 +38,6 @@ const ViewProjectPage = () => {
         roles,
         teamMembers,
     } = projectData;
-    console.log(projectData);
     const numDaysTilStart = Math.floor(
         (new Date(projectStartDate) - new Date()) / 1000 / 60 / 60 / 24 + 1
     );
@@ -67,6 +66,7 @@ const ViewProjectPage = () => {
     });
 
     const renderedRolesRequirementBubbles = roles?.map((role) => {
+        let roleCount = 0;
         // TODO - Mock members (to be removed)
         // const members = [
         // 	{
@@ -87,20 +87,20 @@ const ViewProjectPage = () => {
 
         teamMembers.forEach((member) => {
             if (member.role === role.role) {
+                roleCount += 1;
                 members.push({
                     userId: member.userId,
                     username: member.username,
                 });
             }
         });
-
         return (
             <RolesBubble
                 key={role.role}
                 role={role.role}
                 description={role.description}
                 count={role.count}
-                currentCount={0}
+                currentCount={roleCount}
                 members={members}
             />
         );
