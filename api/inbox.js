@@ -178,14 +178,18 @@ exports.setApp = function (app, client) {
 
         var db;
         var results;
+        var resultFindProject;
         try {
             db = client.db('DevFusion');
             results = await db.collection('Inbox').find({ projectID: nid }).toArray();
+            resultFindProject = await db.collection('Projects').findOne({ _id: nid });
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
             return res.status(500).json(ret);
         }
+
+        if(resultFindProject == null || resultFindProject == undefined) return res.status(400).json({error: "Project not found"});
 
 
         if(results.length > 0){
@@ -194,7 +198,7 @@ exports.setApp = function (app, client) {
                 console.log(x.username);
                 appliedUsers.push( {userId: x.userID, username: x.username, role: x.role, description: x.description} );
             });
-            var ret = { appliedUsers, error: error};
+            var ret = { projectTitle: resultFindProject.title, appliedUsers, error: error};
             return res.status(200).json(ret);
         }else{
             error = "No applied user";
