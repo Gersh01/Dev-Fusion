@@ -201,9 +201,9 @@ exports.setApp = function (app, client) {
             var ret = { projectTitle: resultFindProject.title, appliedUsers, error: error};
             return res.status(200).json(ret);
         }else{
-            error = "No applied user";
-            var ret = { error: error };
-            return res.status(404).json(ret);
+            var appliedUsers = [];
+            var ret = { projectTitle: resultFindProject.title, appliedUsers, error: error};
+            return res.status(200).json(ret);
         }
     });
 
