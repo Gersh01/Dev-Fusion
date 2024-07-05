@@ -115,7 +115,7 @@ exports.setApp = function (app, client) {
                     resultFind.teamMembers.forEach((x, i) => {
                         if(x.userId == userId) return res.status(401).json({error: "User already has a role"});
                     });
-                    var newTeamMember = {"role": role, "userId": userId, "username": resultFind.username};
+                    var newTeamMember = {"role": role, "userId": userId, "username": resultFindUser.username};
                     resultPut = await db.collection('Projects').updateOne({ _id: projectNid }, { $push: {teamMembers : newTeamMember} });
                     resultDelete = await db.collection('Inbox').deleteMany({projectID: projectNid, userID: userNid});
                     return res.status(200).json({error:""});
