@@ -192,7 +192,7 @@ exports.setApp = function (app, client) {
             var appliedUsers = [];
             results.forEach((x, i) => {
                 console.log(x.username);
-                appliedUsers.push( {userId: x.userID, username: x.username, role: x.role} );
+                appliedUsers.push( {userId: x.userID, username: x.username, role: x.role, description: description} );
             });
             var ret = { appliedUsers, error: error};
             return res.status(200).json(ret);
