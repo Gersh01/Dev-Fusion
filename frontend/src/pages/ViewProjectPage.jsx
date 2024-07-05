@@ -13,7 +13,7 @@ import RolesBubble from "../components/view/RolesBubble";
 import Modal from "../components/reusable/Modal";
 import CreateRolesSelectionPanel from "../components/create/CreateRolesSelectionPanel";
 import { useSelector } from "react-redux";
-import { applyForRole } from "./loaders/sendApplication";
+import { applicationApply } from "./loaders/applicationLoader";
 
 const ViewProjectPage = () => {
     const projectData = useLoaderData();
@@ -23,6 +23,7 @@ const ViewProjectPage = () => {
     const roleSelected = useSelector((state) => state.application.role);
     const userId = useSelector((state) => state.user.id);
     const [sent, setSent] = useState(false);
+    const [appError, SetAppError] = useState(false);
 
     if (projectData === null) {
         return null;
@@ -130,13 +131,15 @@ const ViewProjectPage = () => {
             description: applicationDescription,
         };
         if (!sent) {
-            const response = applyForRole(payload);
-            if (response) {
+            if (applicationApply?.(payload) === 201) {
+                SetAppError(false);
                 setSent(true);
                 setTimeout(() => {
                     setSent(false);
                     toggleModal();
                 }, 10000);
+            } else {
+                SetAppError(true);
             }
         }
     };
@@ -227,6 +230,11 @@ const ViewProjectPage = () => {
                             ></textarea>
                         </div>
                         {sent ? <p>Application has been sent</p> : null}
+                        {appError ? (
+                            <p className="crimson-pro text-red-600">
+                                Error when trying to apply
+                            </p>
+                        ) : null}
                         <div className="flex gap-2 justify-end">
                             {sent ? (
                                 <Button mode={"danger"} onClick={toggleModal}>

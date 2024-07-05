@@ -20,6 +20,9 @@ const CreateRolesSelectionPanel = ({ projectRoles }) => {
     });
 
     useEffect(() => {
+        if (!role) {
+            setRole(roleList[0].role);
+        }
         dispacth(updateRole(role));
     }, [role]);
 

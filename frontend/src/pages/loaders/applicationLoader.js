@@ -19,16 +19,21 @@ const getApplications = async (projectId) =>{
     return applications;
 }
 
-const applicationApply = async (application) =>{
-    try{
-        const response = await axios.post(apiDomain+"/api/inbox/apply",application,{withCredentials:true})
-        if(response){
-            console.log("The user was able to apply for a position");
+const applicationApply = async (payload) => {
+    try {
+        const response = await axios.post(
+            "http://localhost:5000/api/inbox/apply",
+            payload,
+            { withCredentials: true }
+        );
+        if (response.status==201) {
+            console.log("Returning the response")
+            return response;
         }
-    }catch(err){
-        console.log(`Error: ${err.message}`)
+    } catch (err) {
+        console.log(`Error: ${err.message}`);
     }
-}
+};
 
 
 const applicationAccept = async (application)=>{
