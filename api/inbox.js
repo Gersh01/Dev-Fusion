@@ -61,6 +61,9 @@ exports.setApp = function (app, client) {
             if(resultsFindInbox.length > 0) return res.status(403).json({ error:"User already applied to this project" });
             resultFindProjects = await db.collection('Projects').findOne({ _id: projectNid });
             if(resultFindProjects == null || resultFindProjects == undefined) return res.status(404).json({error: "project with given projectId not found"});
+            resultFindProjects.teamMembers.forEach((x, i) => {
+                if(x.username == resultFindUser.username) return res.status(401).json({error:"User is already a member of this project"});
+            });
             var roleFound = false;
             resultFindProjects.roles.forEach((x, i) => {
                 if(x.role == role) roleFound = true;
