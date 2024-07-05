@@ -9,18 +9,16 @@ const CreateRolesSelectionPanel = ({ projectRoles }) => {
     const [roleList, setRoleList] = useState(projectRoles);
     const [role, setRole] = useState("");
     const dispacth = useDispatch();
-
     const renderedRoleOptions = roleList.map((role) => {
-        let value = role.role;
         return (
-            <option key={value} value={value}>
-                {value}
+            <option key={role} value={role}>
+                {role}
             </option>
         );
     });
 
     useEffect(() => {
-        if (!role) {
+        if (!role && roleList.length > 0) {
             setRole(roleList[0].role);
         }
         dispacth(updateRole(role));
@@ -29,16 +27,22 @@ const CreateRolesSelectionPanel = ({ projectRoles }) => {
     return (
         <div className="flex gap-2">
             {/* <div className="flex min-w-[100px] gap-2"> */}
-            <p>Select your role:</p>
+            <p>Apply for:</p>
             <select
-                className="w-40 bg-gray-200 dark:bg-gray-800 rounded-md px-1 focus:outline-none
+                className="flex-auto flex bg-gray-200 dark:bg-gray-800 rounded-md px-1 focus:outline-none
 				gap-2 items-center"
                 value={role}
                 onChange={(e) => {
                     setRole(e.target.value);
                 }}
             >
-                {renderedRoleOptions}
+                {roleList.length > 0 ? (
+                    renderedRoleOptions
+                ) : (
+                    <option key={"none"} value={"none"}>
+                        No roles available...
+                    </option>
+                )}
             </select>
             {/* </div> */}
         </div>

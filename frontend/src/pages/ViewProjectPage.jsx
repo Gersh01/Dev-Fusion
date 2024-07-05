@@ -24,6 +24,7 @@ const ViewProjectPage = () => {
     const userId = useSelector((state) => state.user.id);
     const [sent, setSent] = useState(false);
     const [appError, SetAppError] = useState(false);
+    let rolesAvailable = [];
 
     if (projectData === null) {
         return null;
@@ -95,6 +96,12 @@ const ViewProjectPage = () => {
                 });
             }
         });
+        console.log(
+            `${role.role}-roles count:${role.count} (role.count) vs ${roleCount} (roleCount)`
+        );
+        if (roleCount < role.count) {
+            rolesAvailable.push(role.role);
+        }
         return (
             <RolesBubble
                 key={role.role}
@@ -216,7 +223,7 @@ const ViewProjectPage = () => {
                     </p>
                     <div className="flex flex-col gap-4">
                         <CreateRolesSelectionPanel
-                            projectRoles={projectData.roles}
+                            projectRoles={rolesAvailable}
                         ></CreateRolesSelectionPanel>
                         <div className="flex gap-1 flex-col">
                             <p>Description</p>
