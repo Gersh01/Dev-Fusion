@@ -8,6 +8,7 @@ import {
 } from "../../pages/loaders/applicationLoader";
 
 const ApplicationCardTile = ({ applicant, projectId }) => {
+    console.log(applicant);
     const username = applicant.username;
     const id = applicant.userId;
     const description = applicant.description;
@@ -60,6 +61,7 @@ const ApplicationCardTile = ({ applicant, projectId }) => {
 
     return (
         <ApplicationCardPanel
+            key={id}
             topContent={topContent}
             bottomContent={bottomContent}
         ></ApplicationCardPanel>

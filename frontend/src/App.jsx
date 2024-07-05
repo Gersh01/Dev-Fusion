@@ -172,9 +172,7 @@ const router = createBrowserRouter(
                     path="/applications/:projectId"
                     loader={async ({ params }) => {
                         return {
-                            // applications: await getApplications(
-                            //     params.projectId
-                            // ),
+                            project: await getApplications(params.projectId),
                             projectId: params.projectId,
                         };
                     }}

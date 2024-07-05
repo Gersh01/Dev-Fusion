@@ -4,20 +4,19 @@ import { apiDomain } from '../../utils/utility'
 
 const getApplications = async (projectId) =>{
     let applications = null;
-    const payload = {projectId:projectId}
     try{
-    const response = await axios.get(apiDomain+"/api/inbox", payload, {
+    const response = await axios.get(`${apiDomain}/api/inbox/${projectId}`, {
 		withCredentials: true,
 	})
       if(response){
-        applications = response;
+        applications = response.data
       }
-      
+      console.log(response.data)
     } catch(err){
         console.log(err.response)
         console.log(`Error: ${err.message}`)
     }
-    return response;
+    return applications;
 }
 
 const applicationApply = async (application) =>{
