@@ -61,9 +61,11 @@ exports.setApp = function (app, client) {
             if(resultsFindInbox.length > 0) return res.status(403).json({ error:"User already applied to this project" });
             resultFindProjects = await db.collection('Projects').findOne({ _id: projectNid });
             if(resultFindProjects == null || resultFindProjects == undefined) return res.status(404).json({error: "project with given projectId not found"});
+            var isUserApart = false;
             resultFindProjects.teamMembers.forEach((x, i) => {
-                if(x.username == resultFindUser.username) return res.status(401).json({error:"User is already a member of this project"});
+                if(x.username == resultFindUser.username) isUserApart = true;
             });
+            if(isUserApart) return res.status(401).json({error:"User is already a member of this project"});
             var roleFound = false;
             resultFindProjects.roles.forEach((x, i) => {
                 if(x.role == role) roleFound = true;
@@ -76,6 +78,7 @@ exports.setApp = function (app, client) {
             var ret = {error : ""};
             return res.status(201).json(ret);
         } catch (e) {
+            console.log("2");
             error = e.toString;
             var ret = { error: error };
             return res.status(500).json(ret);
