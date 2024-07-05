@@ -114,4 +114,11 @@ const getCommunication = (comm) => {
 	return communications.filter((el) => el.toLowerCase().includes(comm.toLowerCase()));
 };
 
-export { getBubbleColor, getTechnology, getRole, getCommunication, apiDomain };
+const getRoles = (search, rolesList)=>{
+    if(roles.length<1){
+        return["Searching..."];
+    }
+    return rolesList.filter((el)=> el.toLowerCase().includes(search.toLowerCase()))
+}
+
+export { getBubbleColor, getTechnology, getRole, getCommunication, apiDomain, getRoles };

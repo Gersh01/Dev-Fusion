@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import {
     MdArrowLeft,
     MdPerson,
@@ -10,16 +10,24 @@ import Button from "../components/reusable/Button";
 import Bubble from "../components/reusable/Bubble";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import RolesBubble from "../components/view/RolesBubble";
+import Modal from "../components/reusable/Modal";
+import CreateRolesSelectionPanel from "../components/create/CreateRolesSelectionPanel";
+import { useSelector } from "react-redux";
+import { applyForRole } from "./loaders/sendApplication";
 
 const ViewProjectPage = () => {
     const projectData = useLoaderData();
     const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
+    const [applicationDescription, setApplicationDescription] = useState("");
+    const roleSelected = useSelector((state) => state.application.role);
+    const userId = useSelector((state) => state.user.id);
+    const [sent, setSent] = useState(false);
 
     if (projectData === null) {
         return null;
     }
     const numTotalPositions = 9;
-
     const {
         title,
         projectStartDate,
@@ -30,7 +38,7 @@ const ViewProjectPage = () => {
         roles,
         teamMembers,
     } = projectData;
-
+    console.log(projectData);
     const numDaysTilStart = Math.floor(
         (new Date(projectStartDate) - new Date()) / 1000 / 60 / 60 / 24 + 1
     );
@@ -110,6 +118,29 @@ const ViewProjectPage = () => {
         );
     });
 
+    const toggleModal = () => {
+        setShowModal(!showModal);
+    };
+
+    const sendApp = () => {
+        const payload = {
+            projectId: projectData._id,
+            userId: userId,
+            role: roleSelected,
+            description: applicationDescription,
+        };
+        if (!sent) {
+            const response = applyForRole(payload);
+            if (response) {
+                setSent(true);
+                setTimeout(() => {
+                    setSent(false);
+                    toggleModal();
+                }, 10000);
+            }
+        }
+    };
+
     return (
         <Fragment>
             <button
@@ -128,6 +159,9 @@ const ViewProjectPage = () => {
                 <Button mode="secondary">Manage Team</Button>
                 <Button mode="secondary">Edit</Button>
                 <Button mode="danger">Delete</Button>
+                <Button mode="safe" onClick={toggleModal}>
+                    Apply
+                </Button>
                 <button
                     onClick={() => navigate(`/applications/${projectData._id}`)}
                 >
@@ -172,6 +206,49 @@ const ViewProjectPage = () => {
                     {renderedCommunicationsBubbles}
                 </div>
             </div>
+            <Modal show={showModal}>
+                <div className="bg-gray-200 dark:bg-gray-700 flex flex-col p-4 gap-6 rounded-lg">
+                    <p className="text-center text-xl font-semibold">
+                        Application
+                    </p>
+                    <div className="flex flex-col gap-4">
+                        <CreateRolesSelectionPanel
+                            projectRoles={projectData.roles}
+                        ></CreateRolesSelectionPanel>
+                        <div className="flex gap-1 flex-col">
+                            <p>Description</p>
+                            <textarea
+                                role="textbox"
+                                className="bg-gray-900 w-[300px] h-[150px] p-2 overflow-y-scroll focus:outline-none scroll-bar rounded-md"
+                                placeholder="Why would you like to join this project?"
+                                onChange={(e) =>
+                                    setApplicationDescription(e.target.value)
+                                }
+                            ></textarea>
+                        </div>
+                        {sent ? <p>Application has been sent</p> : null}
+                        <div className="flex gap-2 justify-end">
+                            {sent ? (
+                                <Button mode={"danger"} onClick={toggleModal}>
+                                    Close
+                                </Button>
+                            ) : (
+                                <Fragment>
+                                    <Button mode={"safe"} onClick={sendApp}>
+                                        Apply
+                                    </Button>
+                                    <Button
+                                        mode={"danger"}
+                                        onClick={toggleModal}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </Fragment>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </Modal>
         </Fragment>
     );
 };
