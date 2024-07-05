@@ -1,6 +1,7 @@
 require('express');
 require('mongodb');
 require("dotenv").config();
+const md5 = require('./md5');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
@@ -50,6 +51,11 @@ const cookieJwtAuth = (req, res, next) => {
 //APIs
 exports.setApp = function (app, client) {
 
+    app.post('/api/test/:a', async (req, res, next) => {
+        var a = req.params.a;
+        res.send(md5(a));
+    });
+
     //login api
     app.post('/api/login', async (req, res, next) => {
         var id = -1;
@@ -62,7 +68,7 @@ exports.setApp = function (app, client) {
         var error = '';
         var link = '';
         var login = req.body.login;
-        var password = req.body.password;
+        var password = md5(req.body.password);
         var rememberMe = req.body.rememberMe;
         var db;
 
@@ -221,7 +227,7 @@ exports.setApp = function (app, client) {
                 const payload = { email };
                 const emailToken = jwt.sign(payload, process.env.EMAIL_SECRET, { expiresIn: "1d" });
                 const newUser = {
-                    firstName: firstName, lastName: lastName, password: password, username: username, email: email, timeCreated: timeCreated, bio: "",
+                    firstName: firstName, lastName: lastName, password: md5(password), username: username, email: email, timeCreated: timeCreated, bio: "",
                     technologies: [], emailToken: emailToken
                 };
                 const result = db.collection('UnverifiedUsers').insertOne(newUser);
@@ -431,6 +437,8 @@ exports.setApp = function (app, client) {
             httpOnly: true
         });
 
+        return res.status(200).json({error:""});
+
     });
 
     //get user api
@@ -528,7 +536,7 @@ exports.setApp = function (app, client) {
     });
 
     app.post('/api/forgot_password/reset', async (req, res, next) => {
-        const newPassword = req.body.newPassword;
+        const newPassword = md5(req.body.newPassword);
         var db;
         try {
             db = client.db('DevFusion');
