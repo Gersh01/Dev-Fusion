@@ -55,7 +55,7 @@ exports.setApp = function (app, client) {
         var resultFindProjects;
         try {
             db = client.db('DevFusion');
-            resultFindUser = await db.collection('Inbox').findOne({ _id: userNid });
+            resultFindUser = await db.collection('Users').findOne({ _id: userNid });
             if(resultFindUser == null || resultFindUser == undefined) return res.status(404).json({ error:"User not found" });
             resultsFindInbox = await db.collection('Inbox').find({ projectID: projectNid, userID: userNid}).toArray();
             if(resultsFindInbox.length > 0) return res.status(403).json({ error:"User already applied to this project" });
