@@ -437,6 +437,8 @@ exports.setApp = function (app, client) {
             httpOnly: true
         });
 
+        return res.status(200).json({error:""});
+
     });
 
     //get user api
