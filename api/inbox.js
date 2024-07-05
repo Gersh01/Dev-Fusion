@@ -84,10 +84,10 @@ exports.setApp = function (app, client) {
     app.post('/api/inbox/accept_member', cookieJwtAuth, async (req, res, next) => {
         const projectId = req.body.projectId || "";
         const userId = req.body.userId || "";
-        // const role = req.body.role || "";
+        const role = req.body.role || "";
         if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
         if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
-        // if(role == "") return res.status(400).json({error: "role is empty"});
+        if(role == "") return res.status(400).json({error: "role is empty"});
 
         
         var error = "";
