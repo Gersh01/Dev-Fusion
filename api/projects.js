@@ -376,8 +376,8 @@ exports.setApp = function (app, client) {
           let teamMembers = [
             {
               username: user.username,
-              role: "Project Manager"
-
+              role: "Project Manager",
+              userId: user._id
             }
           ];
     
