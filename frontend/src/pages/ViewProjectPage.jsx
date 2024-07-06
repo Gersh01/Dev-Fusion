@@ -102,6 +102,10 @@ const ViewProjectPage = () => {
 		);
 	});
 
+	const editProject = () => {
+		navigate(`/projects/edit/${projectData._id}`);
+	};
+
 	return (
 		<Fragment>
 			<button
@@ -118,7 +122,9 @@ const ViewProjectPage = () => {
 			<div className="flex gap-2 flex-wrap">
 				<Button mode="safe">Begin</Button>
 				<Button mode="secondary">Manage Team</Button>
-				<Button mode="secondary">Edit</Button>
+				<Button mode="secondary" onClick={editProject}>
+					Edit
+				</Button>
 				<Button mode="danger">Delete</Button>
 				<Button
 					mode="safe"
