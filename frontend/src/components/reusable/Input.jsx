@@ -32,10 +32,11 @@ const Input = ({
 			>
 				<div className="flex items-center gap-1.5 text-lg">
 					{icon}
-					<p className="text-sm font-medium">{titleText}</p>
+					<p data-testid="title-text" className="text-sm font-medium">{titleText}</p>
 				</div>
 				<div className="flex gap-2 items-center">
 					<input
+						data-testid="input"
 						className="grow poppins bg-transparent focus:outline-none text-base min-w-0 font-normal"
 						type={inputVisibility ? "password" : "text"}
 						placeholder={placeholder}
