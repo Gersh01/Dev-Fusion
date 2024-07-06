@@ -86,8 +86,8 @@ const getBubbleColor = (text) => {
 	return bubbleBgColors[hash % bubbleBgColors.length];
 };
 
-// const apiDomain = "http://www.dev-fusion.com";
-const apiDomain = "http://localhost:5000";
+const apiDomain = "http://www.dev-fusion.com";
+// const apiDomain = "http://localhost:5000";
 
 //Searches through list of tech and returns results based on partial match
 const getTechnology = (tech) => {

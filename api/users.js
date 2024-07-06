@@ -5,10 +5,13 @@ const md5 = require('./md5');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-const PORT = process.env.PORT || 5000;
-// const appName = "http://www.dev-fusion.com";
-const appName = "http://localhost" + PORT
-// const frontend = "http://www.dev-fusion.com";
+//COMMENT OUT THOSE 2 LINES ON PRODUCTION
+// const PORT = process.env.PORT || 5000;
+// const appName = "http://localhost" + PORT;
+
+//COMMENT OUT THE FOLLOWING LINE ON BUILD(localhost)
+const appName = "http://www.dev-fusion.com";
+
 const defaultProfilePicture = "https://res.cloudinary.com/dlj2rlloi/image/upload/v1720043202/ef7zmzl5hokpnb3zd6en.png";
 
 const ObjectId = require('mongodb').ObjectId;
@@ -130,7 +133,7 @@ exports.setApp = function (app, client) {
                 username = resultsEmail[0].username;
                 bio = resultsEmail[0].bio;
                 technologies = resultsEmail[0].technologies;
-                link = resultsUsername[0].link;
+                link = resultsEmail[0].link;
                 const payload = { username, rememberMe };
                 var token;
                 if (rememberMe) {
@@ -160,7 +163,7 @@ exports.setApp = function (app, client) {
                 username = resultsUsernameUnverified[0].username;
                 bio = resultsUsernameUnverified[0].bio;
                 technologies = resultsUsernameUnverified[0].technologies;
-                link = resultsUsername[0].link;
+                link = resultsUsernameUnverified[0].link;
                 error = "User is not verified";
                 var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(401).json(ret);
@@ -180,7 +183,7 @@ exports.setApp = function (app, client) {
                 username = resultsEmailUnverified[0].username;
                 bio = resultsEmailUnverified[0].bio;
                 technologies = resultsEmailUnverified[0].technologies;
-                link = resultsUsername[0].link;
+                link = resultsEmailUnverified[0].link;
                 error = "User is not verified";
                 var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(401).json(ret);

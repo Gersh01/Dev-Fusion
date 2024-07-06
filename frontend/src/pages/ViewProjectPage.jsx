@@ -3,7 +3,6 @@ import {
     MdArrowLeft,
     MdPerson,
     MdOutlineAccessTimeFilled,
-    MdMailOutline,
 } from "react-icons/md";
 import Divider from "../components/reusable/Divider";
 import Button from "../components/reusable/Button";
@@ -13,18 +12,18 @@ import RolesBubble from "../components/view/RolesBubble";
 import Modal from "../components/reusable/Modal";
 import ApplicationModalView from "../components/application/ApplicationModalView";
 import { useSelector } from "react-redux";
+import UserViews from "../components/view/UserViews";
+import { getApplications } from "./loaders/applicationLoader";
 
 const ViewProjectPage = () => {
     const projectData = useLoaderData();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
-    const [applicationDescription, setApplicationDescription] = useState("");
     const roleSelected = useSelector((state) => state.application.role);
     const userId = useSelector((state) => state.user.id);
     const [sent, setSent] = useState(false);
-    const [appError, SetAppError] = useState(false);
     let rolesAvailable = [];
-    console.log(projectData);
+
     if (projectData === null) {
         return null;
     }
@@ -96,7 +95,40 @@ const ViewProjectPage = () => {
         );
     });
 
+    const userStatus = () => {
+        let mode = "newUser";
+        console.log(projectData.ownerID);
+        if (userId === projectData.ownerID) {
+            console.log("The user is the owner");
+            mode = "owner";
+        } else {
+            teamMembers.map((member) => {
+                if (member.userId === userId) {
+                    if (member.role === "Project Manager") {
+                        mode = "manager";
+                    } else {
+                        mode = "member";
+                    }
+                }
+            });
+        }
+        return mode;
+    };
+
+    const userView = () => {
+        const appAmount = getApplications?.(projectData._id);
+        const mode = userStatus();
+        return (
+            <UserViews
+                mode={mode}
+                projectData={projectData}
+                amount={appAmount.length}
+            ></UserViews>
+        );
+    };
+
     const renderedCommunicationsBubbles = communications?.map((comm) => {
+        const mode = userStatus();
         return (
             <Bubble
                 key={comm.name}
@@ -104,13 +136,10 @@ const ViewProjectPage = () => {
                 input={comm.link.length === 0 ? "None" : comm.link}
                 writable
                 readOnly
+                member={mode}
             />
         );
     });
-
-    const editProject = () => {
-        navigate(`/projects/edit/${projectData._id}`);
-    };
 
     return (
         <Fragment>
@@ -125,32 +154,7 @@ const ViewProjectPage = () => {
             </button>
             {/* <Divider /> */}
             <p className="text-3xl font-semibold">{title}</p>
-            <div className="flex gap-2 flex-wrap">
-                <Button mode="safe">Begin</Button>
-                <Button
-                    mode="secondary"
-                    onClick={() => navigate(`/manage-team/${projectData._id}`)}
-                >
-                    Manage Team
-                </Button>
-                <Button mode="secondary" onClick={editProject}>
-                    Edit
-                </Button>
-                <Button mode="danger">Delete</Button>
-                <Button
-                    mode="safe"
-                    onClick={() => {
-                        setShowModal(true);
-                    }}
-                >
-                    Apply
-                </Button>
-                <button
-                    onClick={() => navigate(`/applications/${projectData._id}`)}
-                >
-                    <MdMailOutline className="size-8" />
-                </button>
-            </div>
+            <div className="flex flex-wrap justify-between">{userView()}</div>
             {/* TIME */}
             <div className="flex justify-between flex-wrap">
                 <div className="flex gap-1 items-center">
