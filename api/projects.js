@@ -575,7 +575,7 @@ exports.setApp = function (app, client) {
         let technologies = req.body.technologies;
         let title = req.body.title;
         let description = req.body.description;
-        let communication = req.body.communication;
+        let communications = req.body.communications;
 
 
         let project = {
@@ -591,7 +591,7 @@ exports.setApp = function (app, client) {
             technologies: technologies,
             title: title,
             description: description,
-            communications: communication
+            communications: communications
         };
 
 
