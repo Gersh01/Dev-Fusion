@@ -5,14 +5,18 @@ import { MdPerson, MdOutlineAccessTimeFilled } from "react-icons/md";
 const OwnedProjectTile = ({ project }) => {
 	const title = project.title;
 	const description = project.description;
-	// TODO - Calculate total people needed
-	const numTotalPositions = 7;
-	// TODO - Calculate number of people still needed
+	const currentCount = project.teamMembers.length;
 	const numDaysTilStart = Math.floor(
-		(project.startDate - new Date()) / 1000 / 60 / 60 / 24 + 1
+		(new Date(project.projectStartDate) - new Date()) /
+			1000 /
+			60 /
+			60 /
+			24 +
+			1
 	);
+
 	const numDaysTilEnd = Math.floor(
-		(project.endDate - new Date()) / 1000 / 60 / 60 / 24 + 1
+		(new Date(project.deadline) - new Date()) / 1000 / 60 / 60 / 24 + 1
 	);
 
 	let dateMessage = "";
@@ -42,7 +46,7 @@ const OwnedProjectTile = ({ project }) => {
 			{/* ROW 2 */}
 			<div className="flex justify-between flex-wrap">
 				<div className="flex gap-1 items-center">
-					<p className="poppins text-white">{numTotalPositions}</p>
+					<p className="poppins text-white">{currentCount}</p>
 					<MdPerson className="text-xl text-white" />
 				</div>
 				<div className="flex gap-1 items-center">
@@ -69,6 +73,7 @@ const OwnedProjectTile = ({ project }) => {
 		<ProjectTilePanel
 			topContent={topContent}
 			bottomContent={bottomContent}
+			projectId={project._id}
 		></ProjectTilePanel>
 	);
 };

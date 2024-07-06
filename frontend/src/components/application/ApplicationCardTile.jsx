@@ -56,9 +56,7 @@ const ApplicationCardTile = ({ applicant, projectId }) => {
 
 	const bottomContent = (
 		<Fragment>
-			<div className="h-[150px] overflow-y-scroll scroll-bar">
-				{description}
-			</div>
+			<div className="h-36 overflow-y-auto scroll-bar">{description}</div>
 		</Fragment>
 	);
 
