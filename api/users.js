@@ -5,10 +5,9 @@ const md5 = require('./md5');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-const PORT = process.env.PORT || 5000;
-// const appName = "http://www.dev-fusion.com";
-const appName = "http://localhost" + PORT
-// const frontend = "http://www.dev-fusion.com";
+// const PORT = process.env.PORT || 5000;
+// const appName = "http://localhost" + PORT;
+const appName = "http://www.dev-fusion.com";
 const defaultProfilePicture = "https://res.cloudinary.com/dlj2rlloi/image/upload/v1720043202/ef7zmzl5hokpnb3zd6en.png";
 
 const ObjectId = require('mongodb').ObjectId;
