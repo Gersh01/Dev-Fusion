@@ -1,4 +1,4 @@
-import ApplicationCardPanel from "./ApplicationCardPanel";
+import MemberCardPanel from "../reusable/MemberCardPanel";
 import UserBubble from "../view/UserBubble";
 import { Fragment } from "react";
 import Button from "../reusable/Button";
@@ -64,11 +64,11 @@ const ApplicationCardTile = ({ applicant, projectId }) => {
     );
 
     return (
-        <ApplicationCardPanel
+        <MemberCardPanel
             key={id}
             topContent={topContent}
             bottomContent={bottomContent}
-        ></ApplicationCardPanel>
+        ></MemberCardPanel>
     );
 };
 

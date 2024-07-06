@@ -51,10 +51,24 @@ const getProfileProjects = async (queryConfig) => {
 	return response.data;
 };
 
+const updateTeamMembers = async(payload)=>{
+	console.log(payload)
+	try{
+		const response = await axios.put(apiDomain+"/api/project/team_members", payload,{withCredentials:true})
+		if(response){
+			return response
+		}
+	}catch(err){
+		console.log(`Error: ${err.message}`)
+	}
+}
+
+
 export {
 	getProjects,
 	getProjectById,
 	getOwnedProjects,
 	getJoinedProjects,
 	getProfileProjects,
+	updateTeamMembers,
 };

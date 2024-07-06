@@ -1,4 +1,4 @@
-const ApplicationCardPanel = ({ topContent, bottomContent }) => {
+const MemberCardPanel = ({ topContent, bottomContent }) => {
     return (
         <div
             className="flex flex-col text-black dark:text-white 
@@ -30,4 +30,4 @@ const ApplicationCardPanel = ({ topContent, bottomContent }) => {
     );
 };
 
-export default ApplicationCardPanel;
+export default MemberCardPanel;

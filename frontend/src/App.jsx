@@ -38,7 +38,7 @@ import VerifiedUsersWelcomePage from "./pages/VerifiedUsersWelcomePage";
 import UrlNotFoundPage from "./pages/UrlNotFoundPage";
 import ProjectsApplicationsPage from "./pages/ProjectsApplicationsPage";
 import { getApplications } from "./pages/loaders/applicationLoader";
-
+import ProjectManageMembersPage from "./pages/ProjectManageMembersPage";
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
@@ -164,6 +164,13 @@ const router = createBrowserRouter(
                         };
                     }}
                     element={<ProfilePage />}
+                />
+                <Route
+                    path="/manage-team/:id"
+                    element={<ProjectManageMembersPage />}
+                    loader={async ({ params }) => {
+                        return await getProjectById(params.id);
+                    }}
                 />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/create" element={<CreatePage />} />

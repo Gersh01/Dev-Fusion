@@ -25,7 +25,7 @@ const ViewProjectPage = () => {
     const [sent, setSent] = useState(false);
     const [appError, SetAppError] = useState(false);
     let rolesAvailable = [];
-
+    console.log(projectData);
     if (projectData === null) {
         return null;
     }
@@ -96,9 +96,7 @@ const ViewProjectPage = () => {
                 });
             }
         });
-        console.log(
-            `${role.role}-roles count:${role.count} (role.count) vs ${roleCount} (roleCount)`
-        );
+
         if (roleCount < role.count) {
             rolesAvailable.push(role.role);
         }
@@ -166,7 +164,12 @@ const ViewProjectPage = () => {
             <p className="text-3xl font-semibold">{title}</p>
             <div className="flex gap-2 flex-wrap">
                 <Button mode="safe">Begin</Button>
-                <Button mode="secondary">Manage Team</Button>
+                <Button
+                    mode="secondary"
+                    onClick={() => navigate(`/manage-team/${projectData._id}`)}
+                >
+                    Manage Team
+                </Button>
                 <Button mode="secondary">Edit</Button>
                 <Button mode="danger">Delete</Button>
                 <Button mode="safe" onClick={toggleModal}>

@@ -6,6 +6,7 @@ const applicationSlice = createSlice({
 	initialState: {
 		applicationsList: [],
 		role: "",
+		memberRole: "",
 	},
 	reducers: {
 		updateRole: (state, action) => {
@@ -13,9 +14,12 @@ const applicationSlice = createSlice({
 		},
 		updateApplications:(state, action)=>{
 			return{...state, applicationsList:action[payload]}
+		},
+		updateMemberRole:(state,action)=>{
+			state.memberRole = action.payload;
 		}
 	},
 });
 
-export const { updateRole } = applicationSlice.actions;
+export const { updateRole,updateMemberRole } = applicationSlice.actions;
 export default applicationSlice.reducer;
