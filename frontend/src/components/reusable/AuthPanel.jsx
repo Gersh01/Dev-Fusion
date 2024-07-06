@@ -17,6 +17,7 @@ const AuthPanel = ({ children, width, minHeight, transparent }) => {
 
   return (
     <div
+      data-testid="auth-panel"
       className={`py-24 ${widthStyle} sm:${minHeightStyle} ${panelColorStyle} 
 			px-4 sm:px-7 rounded-3xl flex flex-col justify-center gap-12`}
     >
