@@ -25,15 +25,25 @@ async function search(client, req, res, type) {
     
     // req.username
     let user;
-    
+
+    console.log("Debugging: Entering search")
     if (type == "owned-joined") {
-      user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
+      console.log("Debugging: Entering owned-joined")
+      if (userId == "") {
+        user = await db.collection("Users").findOne({ username: req.username })
+
+      } else {
+
+        user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
+      }
+      console.log("User we are returning",user)
 
     } else {
       user = await db.collection("Users").findOne({ username: req.username })
     }
     // const user = await db.collection("Users").findOne({ _id: new ObjectId(userId) })
-    
+    // console.log("MY USER")
+    // console.log(user)
     
     let project;
     let numOfMatches;
@@ -74,25 +84,29 @@ async function search(client, req, res, type) {
     } else if (type == "joined") {
       pipeline.push({
         $match: {
-          teamMembers: {
-            $elemMatch: { $regex: `${user.username}:` }
+          'teamMembers.username': {
+            $regex: `${user.username}`,
+            $options: 'i'
           }
         }
       })
     } else if (type == "owned-joined") {
-      pipeline.push({
-        $match: {
-          teamMembers: {
-            $elemMatch: { $regex: `${user.username}:` }
-          }
+        pipeline.push({
+          $match: {
+            $or: [
+              {ownerID: new ObjectId(user._id.toString())},
+
+              {
+                'teamMembers.username': {
+                  $regex: `${user.username}`,
+                  $options: 'i'
+                }
+              }
+
+            ]
         }
       })
-
-      pipeline.push({
-        $match: {ownerID: user._id }
-      })
-
-    }
+  }
 
 
     // console.log("GRABBING ONLY OPENS")
@@ -116,7 +130,7 @@ async function search(client, req, res, type) {
     } else if (searchBy == "roles") {
 
       pipeline.push({
-        $match: { roles: {$regex: `.*${query}.*`, $options: 'i'}}
+        $match: { "roles.role": {$regex: `.*${query}.*`, $options: 'i'}}
       })
 
     } else if (searchBy == "description") {
@@ -265,7 +279,7 @@ async function search(client, req, res, type) {
     // console.log(await db.collection("Projects").aggregate(pipeline).toArray())
 
     results = await db.collection("Projects").aggregate(pipeline).toArray()
-
+    // console.log(results)
     return res.status(200).json(results)
 
   } catch(e) {
@@ -336,9 +350,11 @@ exports.setApp = function (app, client) {
       
       try {
 
+          let username = req.username;
+
           db = client.db("DevFusion");
     
-          let user = await db.collection("Users").findOne( {username: req.username})
+          let user = await db.collection("Users").findOne( {username: username})
 
           
           let isOpen = true;
@@ -357,7 +373,13 @@ exports.setApp = function (app, client) {
           let technologies = req.body.technologies;
     
           let communications = req.body.communications;
-          let teamMembers = [];
+          let teamMembers = [
+            {
+              username: user.username,
+              role: "Project Manager",
+              userId: user._id
+            }
+          ];
     
           project = {
               isOpen: isOpen,
@@ -380,8 +402,10 @@ exports.setApp = function (app, client) {
           };
 
 
-          db.collection("Projects").insertOne(project);
-          return res.sendStatus(200);
+          let ret = await db.collection("Projects").insertOne(project);
+
+
+          return res.status(200).json({"projectId": ret.insertedId.toString()});
 
         } catch (e) {
             error = e.toString();
@@ -419,7 +443,6 @@ exports.setApp = function (app, client) {
   
       try {
           db = client.db('DevFusion');
-          console.log(newValues);
           resultPut = await db.collection('Projects').updateOne(query, newValues);
           return res.status(200).json({error:error});
       } catch (e) {
@@ -429,48 +452,6 @@ exports.setApp = function (app, client) {
       }
   
     });
-
-    /*
-    //edit communications API
-    app.put('/api/project/communication', cookieJwtAuth, async (req, res, next) => {
-      var projectId = req.body.projectId;
-      var communication = req.body.communication;
-      if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
-      if(communication == null) return res.status(400).json({error: "Communication cannot be null"});
-  
-  
-      const nid = new ObjectId(projectId);
-  
-      var db;
-      var resultFind;
-  
-      try{
-          db = client.db('DevFusion');
-          resultFind = await db.collection('Projects').findOne({_id: nid});
-          if(resultFind == null || resultFind == undefined) return res.status(404).json({error: "Project not found"});
-      } catch (e) {
-          error = e.toString;
-          var ret = { error: error };
-          return res.status(500).json(ret);
-      }
-  
-      var resultPut;
-      var query = { _id: nid };
-      newValues = { $set: { communications: communication } };
-  
-      try {
-          db = client.db('DevFusion');
-          console.log(newValues);
-          resultPut = await db.collection('Projects').updateOne(query, newValues);
-          return res.status(200).json({error:error});
-      } catch (e) {
-          error = e.toString;
-          var ret = { error: error };
-          return res.status(500).json(ret);
-      }
-  
-    });
-    */
     
     app.post('/api/discover', cookieJwtAuth, async (req, res, next) => {
         // const searchBy = req.query.searchBy;
@@ -505,7 +486,6 @@ exports.setApp = function (app, client) {
 
     })
 
-
     app.post('/api/owned-projects', cookieJwtAuth, async (req, res, next) => {
 
       return search(client, req, res, "owned");
@@ -520,7 +500,6 @@ exports.setApp = function (app, client) {
 
       return search(client, req, res, "owned-joined");
     })
-
 
     app.put('/api/edit-project', cookieJwtAuth, async (req, res, next) => {
 
@@ -551,7 +530,7 @@ exports.setApp = function (app, client) {
         let technologies = req.body.technologies;
         let title = req.body.title;
         let description = req.body.description;
-        let communication = req.body.communication;
+        let communications = req.body.communications;
 
 
         let project = {
@@ -567,7 +546,7 @@ exports.setApp = function (app, client) {
             technologies: technologies,
             title: title,
             description: description,
-            communications: communication
+            communications: communications
         };
 
 

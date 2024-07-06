@@ -19,10 +19,13 @@ const userSlice = createSlice({
 		},
 		updateUsersLastName:(state,action)=>{
 			return{...state, lastName:action.payload}
+		},
+		updateProfilePicture:(state,action)=>{
+			return{...state, link:action.payload}
 		}
 	},
 });
 
-export const { setUser, updateBio, updateTechnologies, updateUsersFirstName, updateUsersLastName } = userSlice.actions;
+export const { setUser, updateBio, updateTechnologies, updateUsersFirstName, updateUsersLastName, updateProfilePicture } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -1,128 +1,152 @@
-import { MdOutlineAdd, MdRemove, MdRemoveCircleOutline } from "react-icons/md";
+import {
+    MdOutlineAdd,
+    MdRemove,
+    MdRemoveCircleOutline,
+    MdLaunch,
+} from "react-icons/md";
 import { Fragment } from "react";
 import { getBubbleColor } from "../../utils/utility";
 
 const Bubble = ({
-	text, // * Title
-	countable, // * Make bubble increment or decrement in count
-	count, // * Control current count
-	onCountChange, // * Event listener when count is changed
-	writable, // * Make bubble writable
-	useTextArea, // * Use textarea for writing instead of input
-	useContainer, // * Shows a div showing content
-	children, // * Control current content contained within div content
-	input, // * Control input or textarea data
-	onTextAreaChange, // * Event listener when input or textarea is changed
-	readOnly, // * Make input or textarea read only
-	placeholder, // * Placeholder text for textarea or input
-	removable, // * Make bubble remoable
-	onRemove, // * Event listener when remove icon is clicked
+    text, // * Title
+    countable, // * Make bubble increment or decrement in count
+    count, // * Control current count
+    onCountChange, // * Event listener when count is changed
+    writable, // * Make bubble writable
+    useTextArea, // * Use textarea for writing instead of input
+    useContainer, // * Shows a div showing content
+    children, // * Control current content contained within div content
+    input, // * Control input or textarea data
+    onTextAreaChange, // * Event listener when input or textarea is changed
+    readOnly, // * Make input or textarea read only
+    placeholder, // * Placeholder text for textarea or input
+    removable, // * Make bubble remoable
+    onRemove, // * Event listener when remove icon is clicked
+    member, // * Allows only Owners, PMs, and Members to see the links
 }) => {
-	const incrementCount = () => {
-		onCountChange(text, count + 1);
-	};
+    const incrementCount = () => {
+        onCountChange(text, count + 1);
+    };
 
-	const decrementCount = () => {
-		if (count > 1) {
-			onCountChange(text, count - 1);
-		}
-		if (count - 1 === 0) {
-			onRemove(text);
-		}
-	};
+    const decrementCount = () => {
+        if (count > 1) {
+            onCountChange(text, count - 1);
+        }
+        if (count - 1 === 0) {
+            onRemove(text);
+        }
+    };
 
-	const onType = (e) => {
-		onTextAreaChange(text, e.target.value);
-	};
+    const onType = (e) => {
+        onTextAreaChange(text, e.target.value);
+    };
 
-	const bubbleColor = getBubbleColor(text);
+    const redirectCommsLink = () => {
+        if (input !== "None") {
+            window.open(input);
+        }
+    };
 
-	return (
-		<div
-			className={`flex flex-col gap-2 p-1 rounded-md min-w-0 ${bubbleColor}`}
-		>
-			<div className="flex justify-between gap-2">
-				{/* Count display Field */}
-				<div className="flex items-center gap-2">
-					{countable && (
-						<p
-							className="w-6 bg-gray-200 dark:bg-gray-700 font-bold
+    const bubbleColor = getBubbleColor(text);
+
+    return (
+        <div
+            className={`flex flex-col gap-2 p-1 rounded-md min-w-0 ${bubbleColor}`}
+        >
+            <div className="flex justify-between gap-2">
+                {/* Count display Field */}
+                <div className="flex items-center gap-2">
+                    {countable && (
+                        <p
+                            className="w-6 bg-gray-200 dark:bg-gray-700 font-bold
 						flex justify-center items-center rounded-md"
-						>
-							{count}
-						</p>
-					)}
-					{/* Text Field */}
-					<p className="poppins text-base text-white font-semibold">
-						{text}
-					</p>
-				</div>
-				{/* Add, Minus, Remove Buttons  */}
-				{(countable || removable) && (
-					<div className="flex gap-1">
-						{/* Add, Minus Button */}
-						{countable && (
-							<Fragment>
-								<button
-									className="bg-gray-200 dark:bg-gray-700 w-6 rounded-md
+                        >
+                            {count}
+                        </p>
+                    )}
+                    {/* Text Field */}
+                    <p className="poppins flex text-base text-white font-semibold">
+                        {text}
+                    </p>
+                </div>
+                {input !== "None" &&
+                    input &&
+                    member !== "newUser" &&
+                    member !== null &&
+                    !removable && (
+                        <MdLaunch
+                            className="text-xl"
+                            onClick={redirectCommsLink}
+                        />
+                    )}
+
+                {/* Add, Minus, Remove Buttons  */}
+                {(countable || removable) && (
+                    <div className="flex gap-1">
+                        {/* Add, Minus Button */}
+                        {countable && (
+                            <Fragment>
+                                <button
+                                    className="bg-gray-200 dark:bg-gray-700 w-6 rounded-md
 									flex justify-center items-center"
-									onClick={incrementCount}
-								>
-									<MdOutlineAdd className="text-xl" />
-								</button>
-								<button
-									className="bg-gray-200 dark:bg-gray-700 w-6 rounded-md
+                                    onClick={incrementCount}
+                                >
+                                    <MdOutlineAdd className="text-xl" />
+                                </button>
+                                <button
+                                    className="bg-gray-200 dark:bg-gray-700 w-6 rounded-md
 									flex justify-center items-center"
-									onClick={decrementCount}
-								>
-									<MdRemove className="text-xl" />
-								</button>
-							</Fragment>
-						)}
-						{/* Remove Field */}
-						{removable && (
-							<button
-								className="rounded-sm w-6 bg-transparent
+                                    onClick={decrementCount}
+                                >
+                                    <MdRemove className="text-xl" />
+                                </button>
+                            </Fragment>
+                        )}
+                        {/* Remove Field */}
+                        {removable && (
+                            <button
+                                className="rounded-sm w-6 bg-transparent
 								flex justify-center items-center"
-								onClick={() => {
-									onRemove(text);
-								}}
-							>
-								<MdRemoveCircleOutline className="text-xl" />
-							</button>
-						)}
-					</div>
-				)}
-			</div>
-			{/* Div Container */}
-			{useContainer && (
-				<div className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md flex gap-2">
-					{children}
-				</div>
-			)}
-			{/* Text Field */}
-			{writable &&
-				(useTextArea ? (
-					<textarea
-						className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md 
+                                onClick={() => {
+                                    onRemove(text);
+                                }}
+                            >
+                                <MdRemoveCircleOutline className="text-xl" />
+                            </button>
+                        )}
+                    </div>
+                )}
+            </div>
+            {/* Div Container */}
+            {useContainer && (
+                <div className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md flex gap-2">
+                    {children}
+                </div>
+            )}
+            {/* Text Field */}
+            {writable &&
+                member !== "newUser" &&
+                (useTextArea ? (
+                    <textarea
+                        className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md 
 							focus:outline-none h-24 scroll-bar min-w-0"
-						value={input}
-						disabled={readOnly}
-						onChange={onType}
-						placeholder={placeholder}
-					/>
-				) : (
-					<input
-						className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md 
+                        value={input}
+                        disabled={readOnly}
+                        onChange={onType}
+                        placeholder={placeholder}
+                    />
+                ) : (
+                    <input
+                        className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md 
 							focus:outline-none min-w-0"
-						value={input}
-						disabled={readOnly}
-						onChange={onType}
-						placeholder={placeholder}
-					/>
-				))}
-		</div>
-	);
+                        value={input}
+                        disabled={readOnly}
+                        onChange={onType}
+                        placeholder={placeholder}
+                    />
+                ))}
+        </div>
+    );
 };
 
 export default Bubble;
