@@ -11,10 +11,20 @@ const ProjectsPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	const [projects, setProjects] = useState(useLoaderData());
+	const retrievedProjects = useLoaderData();
+
+	const [projects, setProjects] = useState([]);
 	const [endOfSearch, setEndOfSearch] = useState(false);
 
 	const projectsContainerRef = useRef();
+
+	useEffect(() => {
+		setEndOfSearch(false);
+	}, [location.pathname]);
+
+	useEffect(() => {
+		setProjects(retrievedProjects);
+	}, [retrievedProjects]);
 
 	// * Lazy loading more projects
 	const retrieveMoreProjects = useCallback(async () => {
@@ -45,6 +55,7 @@ const ProjectsPage = () => {
 
 		setProjects([...projects, ...newProjects]);
 
+		console.log(newProjects.length);
 		if (newProjects.length === 0) {
 			setEndOfSearch(true);
 		}
@@ -65,7 +76,10 @@ const ProjectsPage = () => {
 		window.addEventListener("scroll", handleScroll);
 
 		// * Load
-		if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
+		if (
+			projectsContainerRef.current.clientHeight - 500 <
+			window.innerHeight
+		) {
 			if (!endOfSearch) {
 				retrieveMoreProjects();
 			}
@@ -78,9 +92,9 @@ const ProjectsPage = () => {
 
 	const renderedProjectsTiles = projects.map((project) => {
 		if (location.pathname === "/my-projects") {
-			return <OwnedProjectTile key={project.id} project={project} />;
+			return <OwnedProjectTile key={project._id} project={project} />;
 		} else if (location.pathname === "/joined-projects") {
-			return <JoinedProjectTile key={project.id} project={project} />;
+			return <JoinedProjectTile key={project._id} project={project} />;
 		}
 	});
 
@@ -122,7 +136,7 @@ const ProjectsPage = () => {
 			<Divider />
 			<ProjectTypeSelector />
 			<div
-				className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8"
+				className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12"
 				ref={projectsContainerRef}
 			>
 				{renderedProjectsTiles}
@@ -132,6 +146,11 @@ const ProjectsPage = () => {
 					<div className="flex flex-col gap-4 items-center">
 						{emptyProjectsMessage}
 					</div>
+				</div>
+			)}
+			{endOfSearch && (
+				<div className="self-center px-8 py-1 mb-12 rounded-full bg-gray-200 dark:bg-gray-700">
+					End of Search
 				</div>
 			)}
 		</Fragment>

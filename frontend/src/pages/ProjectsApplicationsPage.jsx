@@ -16,7 +16,7 @@ const ProjectsApplicationsPage = () => {
 	const renderedApplication = applications.map((applicant) => {
 		return (
 			<ApplicationCardTile
-				key={applicant._id}
+				key={applicant.userId}
 				applicant={applicant}
 				projectId={projectId}
 			></ApplicationCardTile>
@@ -46,13 +46,9 @@ const ProjectsApplicationsPage = () => {
 				<MdArrowLeft className="text-2xl" />
 				<p className="text-xl font-semibold">Back</p>
 			</button>
-			<div
-				className="flex justify-between items-end flex-wrap gap-y-2 
-				text-black dark:text-white poppins text-4xl font-bold gap-x-6"
-			>
-				<p>Applications</p>
-			</div>
-			<p className="text-3xl">{projectTitle}</p>
+			<p className="text-2xl font-semibold">
+				{projectTitle} - Applications
+			</p>
 			<Divider></Divider>
 			<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12">
 				{renderedApplication}

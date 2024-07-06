@@ -242,7 +242,7 @@ const EditProjectPage = () => {
 			<Modal show={showModal}>
 				<div className="bg-gray-200 dark:bg-gray-700 flex flex-col p-4 pt-12 gap-12 rounded-lg">
 					<p className="text-center text-2xl font-semibold">
-						Project Successfully Created
+						Project Successfully Edited
 					</p>
 					<div className="flex flex-col gap-4">
 						<Button
