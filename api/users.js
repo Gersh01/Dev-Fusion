@@ -130,7 +130,7 @@ exports.setApp = function (app, client) {
                 username = resultsEmail[0].username;
                 bio = resultsEmail[0].bio;
                 technologies = resultsEmail[0].technologies;
-                link = resultsUsername[0].link;
+                link = resultsEmail[0].link;
                 const payload = { username, rememberMe };
                 var token;
                 if (rememberMe) {
@@ -160,7 +160,7 @@ exports.setApp = function (app, client) {
                 username = resultsUsernameUnverified[0].username;
                 bio = resultsUsernameUnverified[0].bio;
                 technologies = resultsUsernameUnverified[0].technologies;
-                link = resultsUsername[0].link;
+                link = resultsUsernameUnverified[0].link;
                 error = "User is not verified";
                 var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(401).json(ret);
@@ -180,7 +180,7 @@ exports.setApp = function (app, client) {
                 username = resultsEmailUnverified[0].username;
                 bio = resultsEmailUnverified[0].bio;
                 technologies = resultsEmailUnverified[0].technologies;
-                link = resultsUsername[0].link;
+                link = resultsEmailUnverified[0].link;
                 error = "User is not verified";
                 var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
                 res.status(401).json(ret);
