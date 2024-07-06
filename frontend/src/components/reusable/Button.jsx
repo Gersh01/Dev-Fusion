@@ -21,7 +21,7 @@ const Button = ({ children, large, mode, ...rest }) => {
 	);
 
 	return (
-		<button className={buttonStyles} {...rest}>
+		<button data-testid="button" className={buttonStyles} {...rest}>
 			{children}
 		</button>
 	);

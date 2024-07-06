@@ -48,7 +48,7 @@ const NavBar = () => {
 
     return (
         <div className="sticky top-0 w-full h-14 bg-gray-100 dark:bg-gray-800 z-30">
-            <div className="w-full h-full sm:w-[500px] mx-auto flex justify-evenly">
+            <div data-testid="nav-list" className="w-full h-full sm:w-[500px] mx-auto flex justify-evenly">
                 {navButtons}
             </div>
         </div>
