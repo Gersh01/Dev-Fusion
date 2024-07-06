@@ -443,7 +443,6 @@ exports.setApp = function (app, client) {
   
       try {
           db = client.db('DevFusion');
-          console.log(newValues);
           resultPut = await db.collection('Projects').updateOne(query, newValues);
           return res.status(200).json({error:error});
       } catch (e) {
@@ -453,48 +452,6 @@ exports.setApp = function (app, client) {
       }
   
     });
-
-    /*
-    //edit communications API
-    app.put('/api/project/communication', cookieJwtAuth, async (req, res, next) => {
-      var projectId = req.body.projectId;
-      var communication = req.body.communication;
-      if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
-      if(communication == null) return res.status(400).json({error: "Communication cannot be null"});
-  
-  
-      const nid = new ObjectId(projectId);
-  
-      var db;
-      var resultFind;
-  
-      try{
-          db = client.db('DevFusion');
-          resultFind = await db.collection('Projects').findOne({_id: nid});
-          if(resultFind == null || resultFind == undefined) return res.status(404).json({error: "Project not found"});
-      } catch (e) {
-          error = e.toString;
-          var ret = { error: error };
-          return res.status(500).json(ret);
-      }
-  
-      var resultPut;
-      var query = { _id: nid };
-      newValues = { $set: { communications: communication } };
-  
-      try {
-          db = client.db('DevFusion');
-          console.log(newValues);
-          resultPut = await db.collection('Projects').updateOne(query, newValues);
-          return res.status(200).json({error:error});
-      } catch (e) {
-          error = e.toString;
-          var ret = { error: error };
-          return res.status(500).json(ret);
-      }
-  
-    });
-    */
     
     app.post('/api/discover', cookieJwtAuth, async (req, res, next) => {
         // const searchBy = req.query.searchBy;
@@ -529,7 +486,6 @@ exports.setApp = function (app, client) {
 
     })
 
-
     app.post('/api/owned-projects', cookieJwtAuth, async (req, res, next) => {
 
       return search(client, req, res, "owned");
@@ -544,7 +500,6 @@ exports.setApp = function (app, client) {
 
       return search(client, req, res, "owned-joined");
     })
-
 
     app.put('/api/edit-project', cookieJwtAuth, async (req, res, next) => {
 
