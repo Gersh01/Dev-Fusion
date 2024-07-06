@@ -2,7 +2,7 @@ import { getRole } from "../../utils/utility";
 import SelectionSearchField from "../reusable/SelectionSearchField";
 import Bubble from "../reusable/Bubble";
 
-const CreateRolesPanel = ({ roles, setRoles, errors, onFocus }) => {
+const CreateRolesPanel = ({ roles, setRoles }) => {
 	const onRemove = (roleNameToRemove) => {
 		// * Project Manager cannot be removed
 		if (roleNameToRemove === "Project Manager") {
@@ -83,33 +83,19 @@ const CreateRolesPanel = ({ roles, setRoles, errors, onFocus }) => {
 		);
 	});
 
-	const renderedErrors = errors?.map((error) => {
-		return (
-			<li className="crimson-pro text-lg text-red-500" key={error}>
-				{error}
-			</li>
-		);
-	});
-
 	return (
-		<div className="flex flex-col">
-			<div
-				className="flex flex-col p-2 gap-2 bg-gray-200 dark:bg-gray-900 rounded-md
+		<div
+			className="flex flex-col p-2 gap-2 bg-gray-200 dark:bg-gray-900 rounded-md
 			text-black dark:text-white poppins min-w-0 min-h-0"
-			>
-				<div className="flex justify-between items-center gap-1.5 text-lg flex-wrap">
-					<p className="text-sm font-medium">Roles</p>
-					<SelectionSearchField
-						selectionFunc={getRole}
-						onAdd={addNewRole}
-						onFocus={onFocus}
-					/>
-				</div>
-				<div className={`flex flex-col gap-2`}>
-					{renderedRolesBubbles}
-				</div>
+		>
+			<div className="flex justify-between items-center gap-1.5 text-lg flex-wrap">
+				<p className="text-sm font-medium">Roles</p>
+				<SelectionSearchField
+					selectionFunc={getRole}
+					onAdd={addNewRole}
+				/>
 			</div>
-			<ul className="px-2 list-inside list-none">{renderedErrors}</ul>
+			<div className={`flex flex-col gap-2`}>{renderedRolesBubbles}</div>
 		</div>
 	);
 };

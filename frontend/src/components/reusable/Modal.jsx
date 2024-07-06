@@ -17,12 +17,12 @@ const Modal = ({ show, children }) => {
 
 	return createPortal(
 		<div
-			className={`fixed inset-0 ${display} flex justify-center p-4 overflow-auto`}
+			className={`fixed inset-0 ${display} flex justify-center p-4 overflow-auto z-40`}
 		>
 			{/* Background */}
 			<div className="fixed inset-0 bg-black opacity-60"></div>
 			{/* Content */}
-			<div className="flex justify-center items-center z-50">
+			<div className="flex justify-center items-center z-50 min-w-0">
 				{children}
 			</div>
 		</div>,
