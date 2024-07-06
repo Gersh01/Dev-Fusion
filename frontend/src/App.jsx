@@ -26,12 +26,20 @@ import {
 } from "./pages/loaders/projectLoader";
 import ViewProjectPage from "./pages/ViewProjectPage";
 import AboutUsPage from "./pages/AboutUsPage";
-import { getUserFromJwt, validateJwt } from "./pages/loaders/userLoader";
+import {
+    getUserFromJwt,
+    validateJwt,
+    getUsersProfile,
+} from "./pages/loaders/userLoader";
 import ContentErrorPage from "./pages/ContentErrorPage";
 import ResetAuthPage from "./pages/ResetAuthPage";
 import CreatePage from "./pages/CreatePage";
 import VerifiedUsersWelcomePage from "./pages/VerifiedUsersWelcomePage";
-import UrlNotFound from "./pages/UrlNotFound";
+import UrlNotFoundPage from "./pages/UrlNotFoundPage";
+import ProjectsApplicationsPage from "./pages/ProjectsApplicationsPage";
+import { getApplications } from "./pages/loaders/applicationLoader";
+import ProjectManageMembersPage from "./pages/ProjectManageMembersPage";
+import EditProjectPage from "./pages/EditProjectPage";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -40,8 +48,8 @@ const router = createBrowserRouter(
             <Route
                 path="/"
                 element={<AuthPage />}
-                loader={() => {
-                    return validateJwt();
+                loader={async () => {
+                    return await validateJwt();
                 }}
             >
                 <Route path="/" element={<LanderPage />} />
@@ -57,6 +65,7 @@ const router = createBrowserRouter(
                 />
             </Route>
             <Route path="/" element={<ResetAuthPage />}>
+                <Route path="/*" element={<UrlNotFoundPage />} />
                 <Route
                     path="/reset-password-email"
                     element={<ResetPasswordEmailPage />}
@@ -75,8 +84,8 @@ const router = createBrowserRouter(
                 <Route
                     path="/discover"
                     element={<DisocverPage />}
-                    loader={() => {
-                        return getProjects({
+                    loader={async () => {
+                        return await getProjects({
                             searchBy: "title",
                             sortBy: "relevance",
                             query: "",
@@ -88,8 +97,8 @@ const router = createBrowserRouter(
                 />
                 <Route
                     path="/my-projects"
-                    loader={() => {
-                        return getOwnedProjects({
+                    loader={async () => {
+                        return await getOwnedProjects({
                             searchBy: "title",
                             sortBy: "recent",
                             query: "",
@@ -102,8 +111,8 @@ const router = createBrowserRouter(
                 />
                 <Route
                     path="/joined-projects"
-                    loader={() => {
-                        return getJoinedProjects({
+                    loader={async () => {
+                        return await getJoinedProjects({
                             searchBy: "title",
                             sortBy: "recent",
                             query: "",
@@ -116,30 +125,77 @@ const router = createBrowserRouter(
                 />
                 <Route
                     path="/projects/:id"
+                    loader={async ({ params }) => {
+                        return await getProjectById(params.id);
+                    }}
                     element={<ViewProjectPage />}
-                    loader={({ params }) => {
-                        return getProjectById(params.id);
+                />
+                <Route
+                    path="/profile"
+                    loader={async () => {
+                        return {
+                            projects: await getProfileProjects({
+                                userId: "",
+                                searchBy: "title",
+                                sortBy: "recent",
+                                query: "",
+                                count: 4,
+                                initial: true,
+                                projectId: "000000000000000000000000",
+                            }),
+                            user: null,
+                        };
+                    }}
+                    element={<ProfilePage />}
+                />
+                <Route
+                    path="/profile/:id"
+                    loader={async ({ params }) => {
+                        return {
+                            user: await getUsersProfile(params.id),
+                            projects: await getProfileProjects({
+                                userId: params.id,
+                                searchBy: "title",
+                                sortBy: "recent",
+                                query: "",
+                                count: 4,
+                                initial: true,
+                                projectId: "000000000000000000000000",
+                            }),
+                            privateProfile: false,
+                        };
+                    }}
+                    element={<ProfilePage />}
+                />
+                <Route
+                    path="/manage-team/:id"
+                    element={<ProjectManageMembersPage />}
+                    loader={async ({ params }) => {
+                        return await getProjectById(params.id);
                     }}
                 />
                 <Route
-                    path="/my-profile"
-                    element={<ProfilePage />}
-                    loader={() => {
-                        return getProfileProjects({
-                            searchBy: "title",
-                            sortBy: "recent",
-                            query: "",
-                            count: 4,
-                            initial: true,
-                            projectId: "000000000000000000000000",
-                        });
+                    path="/projects/edit/:id"
+                    loader={async ({ params }) => {
+                        return await getProjectById(params.id);
                     }}
+                    element={<EditProjectPage />}
                 />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/create" element={<CreatePage />} />
+                <Route
+                    // path="/applications"
+                    path="/applications/:projectId"
+                    loader={async ({ params }) => {
+                        return {
+                            project: await getApplications(params.projectId),
+                            projectId: params.projectId,
+                        };
+                    }}
+                    element={<ProjectsApplicationsPage />}
+                />
                 <Route path="/about" element={<AboutUsPage />} />
             </Route>
-            <Route path="/*" element={<UrlNotFound />} />
         </Route>
     )
 );
@@ -148,7 +204,7 @@ function App() {
     const displayMode = useSelector((state) => state.system.displayMode);
 
     return (
-        <div className={`${displayMode} text-black dark:text-white`}>
+        <div id="app" className={`${displayMode} text-black dark:text-white`}>
             <RouterProvider router={router} />
         </div>
     );

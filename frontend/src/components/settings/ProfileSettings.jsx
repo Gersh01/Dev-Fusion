@@ -1,19 +1,43 @@
-import logo from "../../assets/DFLogoFinal.png";
-import Button from "../reusable/Button";
-
+import { useSelector } from "react-redux";
+import CloudinaryUploadWidget from "../profile/CloudinaryUploadWidget";
+import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen/index";
+import { useState } from "react";
+import UploadWidget from "../profile/UploadWidget";
 const ProfileSettings = () => {
-  return (
-    <div className="flex justify-between gap-4">
-      <img className="max-h-28 max-w-28 rounded-full" src={logo}></img>
-      <div className="self-end">
-        <input
-          onChange={(e) => console.log(e.target.value)}
-          type="file"
-          accept="image/png, image/jpeg"
-        />
-      </div>
-    </div>
-  );
+    const res = useSelector((state) => state.user);
+
+    // const [publicId, setPublicId] = useState("");
+    // const [cloudName] = useState("dlj2rlloi");
+    // const [uploadPreset] = useState("ml_default");
+
+    // const [uwConfig] = useState({
+    //     cloudName,
+    //     uploadPreset,
+    //     cropping: true,
+    //     folder: "DevFusion",
+    //     maxImageFileSize: 2000000,
+    // });
+    // const cld = new Cloudinary({
+    //     cloud: {
+    //         cloudName,
+    //     },
+    // });
+
+    // const myImage = cld.image(publicId);
+
+    return (
+        <div className="flex justify-between gap-4">
+            <img className="h-28 w-28 rounded-full" src={res.link}></img>
+            <div className="self-end">
+                {/* <CloudinaryUploadWidget
+                    uwConfig={uwConfig}
+                    setPublicId={setPublicId}
+                /> */}
+                <UploadWidget id={res.id} />
+            </div>
+        </div>
+    );
 };
 
 export default ProfileSettings;

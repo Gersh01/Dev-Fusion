@@ -2,8 +2,6 @@ import axios from "axios";
 import { apiDomain } from "../../utils/utility";
 
 const getProjects = async (queryConfig) => {
-	console.log("Debug: FETCHING PROJECTS");
-
 	const response = await axios.post(
 		apiDomain + "/api/discover",
 		queryConfig,
@@ -14,8 +12,6 @@ const getProjects = async (queryConfig) => {
 };
 
 const getOwnedProjects = async (queryConfig) => {
-	console.log("Debug: FETCHING OWNED PROJECTS");
-
 	const response = await axios.post(
 		apiDomain + "/api/owned-projects",
 		queryConfig,
@@ -26,8 +22,6 @@ const getOwnedProjects = async (queryConfig) => {
 };
 
 const getJoinedProjects = async (queryConfig) => {
-	console.log("Debug: FETCHING OWNED PROJECTS");
-
 	const response = await axios.post(
 		apiDomain + "/api/joined-projects",
 		queryConfig,
@@ -38,8 +32,6 @@ const getJoinedProjects = async (queryConfig) => {
 };
 
 const getProjectById = async (projectId) => {
-	console.log("Debug: FETCHING PROJECTS WITH ID: " + projectId);
-
 	const response = await axios.get(
 		`${apiDomain}/api/project/${projectId}`,
 		{},
@@ -49,14 +41,34 @@ const getProjectById = async (projectId) => {
 	return response.data;
 };
 
-
-const getProfileProjects = async (queryConfig)=>{
+const getProfileProjects = async (queryConfig) => {
 	const response = await axios.post(
-		apiDomain + "/api/owned-joined", 
-		queryConfig, {withCredentials:true}
-	)
-
+		apiDomain + "/api/owned-joined",
+		queryConfig,
+		{ withCredentials: true }
+	);
+	console.log(response.data);
 	return response.data;
+};
+
+const updateTeamMembers = async(payload)=>{
+	console.log(payload)
+	try{
+		const response = await axios.put(apiDomain+"/api/project/team_members", payload,{withCredentials:true})
+		if(response){
+			return response
+		}
+	}catch(err){
+		console.log(`Error: ${err.message}`)
+	}
 }
 
-export { getProjects, getProjectById, getOwnedProjects, getJoinedProjects, getProfileProjects };
+
+export {
+	getProjects,
+	getProjectById,
+	getOwnedProjects,
+	getJoinedProjects,
+	getProfileProjects,
+	updateTeamMembers,
+};

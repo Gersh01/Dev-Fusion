@@ -12,39 +12,34 @@ import { updateUserTechnology } from "../../pages/loaders/updateUser";
 import { updateTechnologies } from "../../store/slices/userSlice";
 import SelectionSearchField from "../reusable/SelectionSearchField";
 
-const TechnologiesField = ({ title, type }) => {
+const TechnologiesField = ({ title, type, privateView, technologies }) => {
 	const user = useSelector((state) => state.user);
 	const [mode, setMode] = useState(type);
 	const dispatch = useDispatch();
 
 	const editStyles = !mode
-		? "bg-gray-50 dark:bg-gray-900 p-2 rounded-md"
+		? "bg-gray-50 dark:bg-gray-700 p-2 rounded-md"
 		: "";
 
-	const bubbleMode = () => {
-		if (mode === false) {
-			return (
-				<Fragment>
-					{user.technologies?.map((value) => (
-						<Bubble
-							removable
-							text={value}
-							key={value}
-							onRemove={removeTech}
-						/>
-					))}
-				</Fragment>
-			);
-		} else {
-			return (
-				<Fragment>
-					{user.technologies?.map((value) => (
-						<Bubble text={value} key={value} />
-					))}
-				</Fragment>
-			);
-		}
-	};
+	const renderedBubbles =
+		mode === false ? (
+			<Fragment>
+				{technologies?.map((value) => (
+					<Bubble
+						removable
+						text={value}
+						key={value}
+						onRemove={removeTech}
+					/>
+				))}
+			</Fragment>
+		) : (
+			<Fragment>
+				{technologies?.map((value) => (
+					<Bubble text={value} key={value} />
+				))}
+			</Fragment>
+		);
 
 	//deletes the technology the user clicks on
 	const removeTech = (text) => {
@@ -71,18 +66,20 @@ const TechnologiesField = ({ title, type }) => {
 		<div className="flex flex-col gap-2 overflow-hidden">
 			<div className="flex justify-between">
 				<p className="text-2xl font-semibold">{title}</p>
-				<button
-					className=""
-					onClick={() => {
-						setMode(!mode);
-					}}
-				>
-					{mode ? (
-						<MdOutlineModeEdit className="text-2xl" />
-					) : (
-						<MdOutlineKeyboardDoubleArrowUp className="text-2xl" />
-					)}
-				</button>
+				{privateView && (
+					<button
+						className=""
+						onClick={() => {
+							setMode(!mode);
+						}}
+					>
+						{mode ? (
+							<MdOutlineModeEdit className="text-2xl" />
+						) : (
+							<MdOutlineKeyboardDoubleArrowUp className="text-2xl" />
+						)}
+					</button>
+				)}
 			</div>
 			{mode ? null : (
 				<SelectionSearchField
@@ -91,9 +88,9 @@ const TechnologiesField = ({ title, type }) => {
 				/>
 			)}
 			<div
-				className={`grow flex gap-2 min-h-12 flex-wrap overflow-y-auto ${editStyles} scroll-bar`}
+				className={`grow flex gap-2 flex-wrap overflow-y-auto ${editStyles} scroll-bar`}
 			>
-				{bubbleMode()}
+				{renderedBubbles}
 			</div>
 		</div>
 	);

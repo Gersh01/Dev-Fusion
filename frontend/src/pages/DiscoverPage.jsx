@@ -2,7 +2,7 @@ import { useLoaderData } from "react-router-dom";
 import DiscoverProjectTile from "../components/discover/DiscoverProjectTile";
 import Divider from "../components/reusable/Divider";
 import SearchField from "../components/reusable/SearchField";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { getProjects } from "./loaders/projectLoader";
 import SortBySelector from "../components/reusable/SortBySelector";
 
@@ -14,47 +14,8 @@ const DisocverPage = () => {
 	const [projects, setProjects] = useState(useLoaderData());
 	const [endOfSearch, setEndOfSearch] = useState(false);
 
-	const projectsContainerRef = useRef();
-
-	useEffect(() => {
-		// * Adding scroll listener to window
-		window.addEventListener("scroll", handleScroll);
-
-		// * Load
-		if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
-			if (!endOfSearch) {
-				retrieveMoreProjects();
-			}
-		}
-
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-		};
-	});
-
-	if (!projects) {
-		return null;
-	}
-
-	const renderedProjectTiles = projects.map((project) => {
-		return <DiscoverProjectTile key={project._id} project={project} />;
-	});
-
-	const onSearch = async () => {
-		setProjects(
-			await getProjects({
-				searchBy: searchBy,
-				sortBy: sortBy,
-				query: query,
-				count: 4,
-				initial: true,
-				projectId: "000000000000000000000000",
-			})
-		);
-	};
-
 	// * Lazy loading more projects
-	const retrieveMoreProjects = async () => {
+	const retrieveMoreProjects = useCallback(async () => {
 		if (projects.length === 0) {
 			return;
 		}
@@ -72,16 +33,50 @@ const DisocverPage = () => {
 		if (newProjects.length === 0) {
 			setEndOfSearch(true);
 		}
-	};
+	}, [projects, query, searchBy, sortBy]);
 
 	// * Only lazy load when reaching end of projects
-	const handleScroll = () => {
+	const handleScroll = useCallback(() => {
 		const bottom =
 			window.innerHeight + window.scrollY >= document.body.scrollHeight;
 
 		if (bottom) {
 			retrieveMoreProjects();
 		}
+	}, [retrieveMoreProjects]);
+
+	const projectsContainerRef = useRef();
+	useEffect(() => {
+		// * Adding scroll listener to window
+		window.addEventListener("scroll", handleScroll);
+
+		// * Load
+		if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
+			if (!endOfSearch) {
+				retrieveMoreProjects();
+			}
+		}
+		// console.log(projects);
+		return () => {
+			window.removeEventListener("scroll", handleScroll);
+		};
+	}, [endOfSearch, handleScroll, projects, retrieveMoreProjects]);
+
+	const renderedProjectTiles = projects.map((project) => {
+		return <DiscoverProjectTile key={project._id} project={project} />;
+	});
+
+	const onSearch = async () => {
+		setProjects(
+			await getProjects({
+				searchBy: searchBy,
+				sortBy: sortBy,
+				query: query,
+				count: 4,
+				initial: true,
+				projectId: "000000000000000000000000",
+			})
+		);
 	};
 
 	return (

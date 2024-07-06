@@ -34,44 +34,12 @@ const cookieJwtAuth = (req, res, next) => {
 
 exports.setApp = function (app, client) {
 
-    //api for getting all members who applied
-    app.get('/api/inbox', cookieJwtAuth, async (req, res, next) => {
-        const projectId = req.body.projectId || "";
-        if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
-        const nid = new ObjectId(projectId);
-        var error = "";
-
-        var db;
-        var results;
-        try {
-            db = client.db('DevFusion');
-            results = await db.collection('Inbox').find({ projectID: nid }).toArray();
-        } catch (e) {
-            error = e.toString;
-            var ret = { error: error };
-            return res.status(500).json(ret);
-        }
-
-
-        if(results.length > 0){
-            var appliedUsers = [];
-            results.forEach((x, i) => {
-                appliedUsers.push( {userId: x.userID, role: x.role} );
-            });
-            var ret = { appliedUsers, error: error};
-            return res.status(200).json(ret);
-        }else{
-            error = "No applied user";
-            var ret = { error: error };
-            return res.status(404).json(ret);
-        }
-    });
-
     //api for creating new application
     app.post('/api/inbox/apply', cookieJwtAuth, async (req, res, next) => {
         const projectId = req.body.projectId || "";
         const userId = req.body.userId || "";
         const role = req.body.role || "";
+        const description = req.body.description || "";
         if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
         if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
         if(role == "") return res.status(400).json({error: "role is empty"});
@@ -82,26 +50,35 @@ exports.setApp = function (app, client) {
         
         var db;
         var resultsFindInbox;
+        var resultFindUser;
         var resultInsert;
         var resultFindProjects;
         try {
             db = client.db('DevFusion');
+            resultFindUser = await db.collection('Users').findOne({ _id: userNid });
+            if(resultFindUser == null || resultFindUser == undefined) return res.status(404).json({ error:"User not found" });
             resultsFindInbox = await db.collection('Inbox').find({ projectID: projectNid, userID: userNid}).toArray();
             if(resultsFindInbox.length > 0) return res.status(403).json({ error:"User already applied to this project" });
             resultFindProjects = await db.collection('Projects').findOne({ _id: projectNid });
             if(resultFindProjects == null || resultFindProjects == undefined) return res.status(404).json({error: "project with given projectId not found"});
+            var isUserApart = false;
+            resultFindProjects.teamMembers.forEach((x, i) => {
+                if(x.username == resultFindUser.username) isUserApart = true;
+            });
+            if(isUserApart) return res.status(401).json({error:"User is already a member of this project"});
             var roleFound = false;
             resultFindProjects.roles.forEach((x, i) => {
                 if(x.role == role) roleFound = true;
             });
             if(!roleFound) return res.status(404).json({error: "given role not found in the project the given projectId"});
             const newInbox = {
-                projectID: projectNid, userID: userNid , role: role
+                projectID: projectNid, userID: userNid , role: role, username: resultFindUser.username, description: description
             };
             resultInsert = await db.collection('Inbox').insertOne(newInbox);
             var ret = {error : ""};
             return res.status(201).json(ret);
         } catch (e) {
+            console.log("2");
             error = e.toString;
             var ret = { error: error };
             return res.status(500).json(ret);
@@ -113,10 +90,10 @@ exports.setApp = function (app, client) {
     app.post('/api/inbox/accept_member', cookieJwtAuth, async (req, res, next) => {
         const projectId = req.body.projectId || "";
         const userId = req.body.userId || "";
-        // const role = req.body.role || "";
+        const role = req.body.role || "";
         if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
         if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
-        // if(role == "") return res.status(400).json({error: "role is empty"});
+        if(role == "") return res.status(400).json({error: "role is empty"});
 
         
         var error = "";
@@ -144,7 +121,7 @@ exports.setApp = function (app, client) {
                     resultFind.teamMembers.forEach((x, i) => {
                         if(x.userId == userId) return res.status(401).json({error: "User already has a role"});
                     });
-                    var newTeamMember = {"role": role, "userId": userId, "username": resultFind.username};
+                    var newTeamMember = {"role": role, "userId": userId, "username": resultFindUser.username};
                     resultPut = await db.collection('Projects').updateOne({ _id: projectNid }, { $push: {teamMembers : newTeamMember} });
                     resultDelete = await db.collection('Inbox').deleteMany({projectID: projectNid, userID: userNid});
                     return res.status(200).json({error:""});
@@ -196,6 +173,44 @@ exports.setApp = function (app, client) {
             return res.status(500).json(ret);
         }
 
+    });
+
+    //api for getting all members who applied
+    app.get('/api/inbox/:projectId', cookieJwtAuth, async (req, res, next) => {
+        const projectId = req.params.projectId;
+        if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
+        const nid = new ObjectId(projectId);
+        var error = "";
+
+        var db;
+        var results;
+        var resultFindProject;
+        try {
+            db = client.db('DevFusion');
+            results = await db.collection('Inbox').find({ projectID: nid }).toArray();
+            resultFindProject = await db.collection('Projects').findOne({ _id: nid });
+        } catch (e) {
+            error = e.toString;
+            var ret = { error: error };
+            return res.status(500).json(ret);
+        }
+
+        if(resultFindProject == null || resultFindProject == undefined) return res.status(400).json({error: "Project not found"});
+
+
+        if(results.length > 0){
+            var appliedUsers = [];
+            results.forEach((x, i) => {
+                console.log(x.username);
+                appliedUsers.push( {userId: x.userID, username: x.username, role: x.role, description: x.description} );
+            });
+            var ret = { projectTitle: resultFindProject.title, appliedUsers, error: error};
+            return res.status(200).json(ret);
+        }else{
+            var appliedUsers = [];
+            var ret = { projectTitle: resultFindProject.title, appliedUsers, error: error};
+            return res.status(200).json(ret);
+        }
     });
 
 }

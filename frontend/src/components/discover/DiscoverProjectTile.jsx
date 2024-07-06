@@ -8,10 +8,7 @@ const DiscoverProjectTile = ({ project }) => {
 	const title = project.title;
 	const description = project.description;
 	const technologies = project.technologies;
-	// TODO - Calculate total people needed
-	const numTotalPositions = 7;
-	// TODO - Calculate number of people still needed
-	const numPositionsNeeded = 2;
+	const currentCount = project.teamMembers.length;
 	const numDaysTilStart = Math.floor(
 		(new Date(project.projectStartDate) - new Date()) /
 			1000 /
@@ -20,6 +17,19 @@ const DiscoverProjectTile = ({ project }) => {
 			24 +
 			1
 	);
+
+	let positionLeft = 0;
+	project.roles.forEach((role) => {
+		let totalCount = role.count;
+		project.teamMembers.forEach((member) => {
+			if (member.role === role.role) {
+				totalCount--;
+			}
+		});
+		if (totalCount > 0) {
+			positionLeft += totalCount;
+		}
+	});
 
 	const renderedTechnologyBubbles = technologies.map((technology) => {
 		return <Bubble key={technology} text={technology} />;
@@ -33,16 +43,14 @@ const DiscoverProjectTile = ({ project }) => {
 					{title}
 				</p>
 				<div className="bg-gray-200 dark:bg-gray-700 py-0.5 px-1.5 rounded-lg poppins truncate font-medium">
-					{numPositionsNeeded}{" "}
-					{numPositionsNeeded === 1
-						? "Position Left"
-						: "Positions Left"}
+					{positionLeft}{" "}
+					{positionLeft === 1 ? "Position Left" : "Positions Left"}
 				</div>
 			</div>
 			{/* ROW 2 */}
 			<div className="flex justify-between flex-wrap">
 				<div className="flex gap-1 items-center">
-					<p className="poppins text-white">{numTotalPositions}</p>
+					<p className="poppins text-white">{currentCount}</p>
 					<MdPerson className="text-xl text-white" />
 				</div>
 				<div className="flex gap-1 items-center">
