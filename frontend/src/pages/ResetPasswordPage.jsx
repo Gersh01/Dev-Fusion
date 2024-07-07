@@ -30,7 +30,7 @@ const ResetPasswordPage = () => {
     const message = () => {
         if (feedback === "success") {
             return (
-                <p className="text-center leauge-spartan text-2xl font-semibold">
+                <p className="text-center leauge-spartan text-lg font-semibold">
                     The password has been successfully changed
                 </p>
             );
@@ -155,7 +155,7 @@ const ResetPasswordPage = () => {
                 <hr></hr>
                 <button
                     className="text-black dark:text-white text-sm font-medium poppins"
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate("/")}
                 >
                     Go back
                 </button>
