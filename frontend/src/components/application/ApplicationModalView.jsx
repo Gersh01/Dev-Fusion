@@ -1,9 +1,10 @@
 import { Fragment, useEffect, useState } from "react";
 import Divider from "../reusable/Divider";
 import TextArea from "../reusable/TextArea";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { applicationApply } from "../../pages/loaders/applicationLoader";
 import Button from "../reusable/Button";
+import { showApplicationModal } from "../../store/slices/applicationSlice";
 
 const ApplicationModalView = ({ project, roles, setShowModal, show }) => {
     const [applicationDescription, setApplicationDescription] = useState("");
@@ -12,8 +13,8 @@ const ApplicationModalView = ({ project, roles, setShowModal, show }) => {
     const [appError, setAppError] = useState(false);
     const [role, setRole] = useState(roles.length === 0 ? "" : roles[0]);
     const [errorMessage, setErrorMessage] = useState("");
+    const dispatch = useDispatch();
 
-    console.log(roles);
     useEffect(() => {
         setApplicationDescription("");
         setSent(false);
@@ -47,7 +48,7 @@ const ApplicationModalView = ({ project, roles, setShowModal, show }) => {
     const onCloseModal = () => {
         // setRole("");
 
-        setShowModal(false);
+        dispatch(showApplicationModal(false));
     };
 
     const renderedRoleOptions = roles.map((role) => {

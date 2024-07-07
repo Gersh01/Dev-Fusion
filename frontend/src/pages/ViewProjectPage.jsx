@@ -18,7 +18,7 @@ import { getApplications } from "./loaders/applicationLoader";
 const ViewProjectPage = () => {
     const projectData = useLoaderData();
     const navigate = useNavigate();
-    const [showModal, setShowModal] = useState(false);
+    const showModal = useSelector((state) => state.application.showModal);
     const roleSelected = useSelector((state) => state.application.role);
     const userId = useSelector((state) => state.user.id);
     const [sent, setSent] = useState(false);
@@ -97,9 +97,7 @@ const ViewProjectPage = () => {
 
     const userStatus = () => {
         let mode = "newUser";
-        console.log(projectData.ownerID);
         if (userId === projectData.ownerID) {
-            console.log("The user is the owner");
             mode = "owner";
         } else {
             teamMembers.map((member) => {
@@ -197,7 +195,7 @@ const ViewProjectPage = () => {
             <Modal show={showModal}>
                 <ApplicationModalView
                     project={projectData}
-                    setShowModal={setShowModal}
+                    setShowModal={showModal}
                     roles={rolesAvailable}
                     show={showModal}
                 />
