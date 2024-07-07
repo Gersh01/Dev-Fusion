@@ -2,13 +2,21 @@ import { MdMailOutline } from "react-icons/md";
 import Button from "../reusable/Button";
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { showApplicationModal } from "../../store/slices/applicationSlice";
 
 const UserViews = ({ mode, projectData, appAmount }) => {
+    const dispatch = useDispatch();
     console.log("Debug: The mode being set: " + mode);
     const navigate = useNavigate();
 
     const editProject = () => {
         navigate(`/projects/edit/${projectData._id}`);
+    };
+
+    const toggleModal = () => {
+        console.log("Setting modal to show");
+        dispatch(showApplicationModal(true));
     };
 
     return (
@@ -39,12 +47,7 @@ const UserViews = ({ mode, projectData, appAmount }) => {
                     <Button mode="danger">Leave</Button>
                 ) : null}
                 {mode === "newUser" ? (
-                    <Button
-                        mode="safe"
-                        onClick={() => {
-                            setShowModal(true);
-                        }}
-                    >
+                    <Button mode="safe" onClick={toggleModal}>
                         Apply
                     </Button>
                 ) : null}

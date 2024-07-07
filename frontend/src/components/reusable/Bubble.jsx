@@ -58,6 +58,7 @@ const Bubble = ({
                 <div className="flex items-center gap-2">
                     {countable && (
                         <p
+                            data-testid="count"
                             className="w-6 bg-gray-200 dark:bg-gray-700 font-bold
 						flex justify-center items-center rounded-md"
                         >
@@ -65,7 +66,7 @@ const Bubble = ({
                         </p>
                     )}
                     {/* Text Field */}
-                    <p className="poppins flex text-base text-white font-semibold">
+                    <p data-testid="text-field" className="poppins flex text-base text-white font-semibold">
                         {text}
                     </p>
                 </div>
@@ -78,7 +79,8 @@ const Bubble = ({
                             className="text-xl"
                             onClick={redirectCommsLink}
                         />
-                    )}
+                    )
+                }
 
                 {/* Add, Minus, Remove Buttons  */}
                 {(countable || removable) && (
@@ -87,6 +89,7 @@ const Bubble = ({
                         {countable && (
                             <Fragment>
                                 <button
+                                    data-testid="countable-button"
                                     className="bg-gray-200 dark:bg-gray-700 w-6 rounded-md
 									flex justify-center items-center"
                                     onClick={incrementCount}
@@ -105,6 +108,7 @@ const Bubble = ({
                         {/* Remove Field */}
                         {removable && (
                             <button
+                                data-testid="remove-button"
                                 className="rounded-sm w-6 bg-transparent
 								flex justify-center items-center"
                                 onClick={() => {
@@ -119,7 +123,7 @@ const Bubble = ({
             </div>
             {/* Div Container */}
             {useContainer && (
-                <div className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md flex gap-2">
+                <div data-testid="children-field" className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md flex gap-2">
                     {children}
                 </div>
             )}
