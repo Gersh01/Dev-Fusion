@@ -6,6 +6,7 @@ import {
 } from "react-icons/md";
 import { Fragment } from "react";
 import { getBubbleColor } from "../../utils/utility";
+import { sanitizeLink } from "../../utils/sanitation";
 
 const Bubble = ({
 	text, // * Title
@@ -44,7 +45,9 @@ const Bubble = ({
 
 	const redirectCommsLink = () => {
 		if (input !== "None") {
-			window.open(input);
+			const newlink = sanitizeLink(input);
+
+			window.open(newlink);
 		}
 	};
 
