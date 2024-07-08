@@ -8,6 +8,7 @@ const applicationSlice = createSlice({
 		role: "",
 		memberRole: "",
 		showModal:false,
+		showDeleteModal:false,
 	},
 	reducers: {
 		updateRole: (state, action) => {
@@ -21,9 +22,12 @@ const applicationSlice = createSlice({
 		},
 		showApplicationModal:(state,action)=>{
 			state.showModal = action.payload
+		},
+		showDeleteModal:(state,action)=>{
+			state.showDeleteModal = action.payload
 		}
 	},
 });
 
-export const { updateRole,updateMemberRole,showApplicationModal } = applicationSlice.actions;
+export const { updateRole,updateMemberRole,showApplicationModal,showDeleteModal } = applicationSlice.actions;
 export default applicationSlice.reducer;

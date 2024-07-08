@@ -14,6 +14,8 @@ import ApplicationModalView from "../components/application/ApplicationModalView
 import { useSelector } from "react-redux";
 import UserViews from "../components/view/UserViews";
 import { getApplications } from "./loaders/applicationLoader";
+import DeleteProjectModal from "../components/view/DeleteProjectModal";
+import { showDeleteModal } from "../store/slices/applicationSlice";
 
 const ViewProjectPage = () => {
     const projectData = useLoaderData();
@@ -21,7 +23,12 @@ const ViewProjectPage = () => {
     const showModal = useSelector((state) => state.application.showModal);
     const roleSelected = useSelector((state) => state.application.role);
     const userId = useSelector((state) => state.user.id);
+    const username = useSelector((state) => state.user.username);
     const [sent, setSent] = useState(false);
+    const deleteShowModal = useSelector(
+        (state) => state.application.showDeleteModal
+    );
+    console.log(deleteShowModal);
     let rolesAvailable = [];
 
     if (projectData === null) {
@@ -121,6 +128,7 @@ const ViewProjectPage = () => {
                 mode={mode}
                 projectData={projectData}
                 amount={appAmount.length}
+                username={username}
             ></UserViews>
         );
     };
@@ -152,6 +160,7 @@ const ViewProjectPage = () => {
             </button>
             {/* <Divider /> */}
             <p className="text-3xl font-semibold">{title}</p>
+            {/* different views depending on the user viewing the project*/}
             <div className="flex flex-wrap justify-between">{userView()}</div>
             {/* TIME */}
             <div className="flex justify-between flex-wrap">
@@ -199,6 +208,12 @@ const ViewProjectPage = () => {
                     roles={rolesAvailable}
                     show={showModal}
                 />
+            </Modal>
+            <Modal show={deleteShowModal}>
+                <DeleteProjectModal
+                    projectId={projectData._id}
+                    show={showDeleteModal}
+                ></DeleteProjectModal>
             </Modal>
         </Fragment>
     );
