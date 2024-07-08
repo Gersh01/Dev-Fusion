@@ -28,19 +28,17 @@ const cookieJwtAuth = (req, res, next) => {
     }
 }
 
-// newToken: req.token,
-
 exports.setApp = function (app, client) {
 
-    //api for creating new application
+    //api for creating new application +
     app.post('/api/mobile/inbox/apply', cookieJwtAuth, async (req, res, next) => {
         const projectId = req.body.projectId || "";
         const userId = req.body.userId || "";
         const role = req.body.role || "";
         const description = req.body.description || "";
-        if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
-        if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
-        if(role == "") return res.status(400).json({error: "role is empty"});
+        if(userId.length != 24) return res.status(400).json({ newToken: req.token, error: "userId must be 24 characters"});
+        if(projectId.length != 24) return res.status(400).json({ newToken: req.token, error: "projectId must be 24 characters"});
+        if(role == "") return res.status(400).json({ newToken: req.token, error: "role is empty"});
 
         var error = "";
         const projectNid = new ObjectId(projectId);
