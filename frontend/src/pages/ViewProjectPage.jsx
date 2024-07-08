@@ -5,7 +5,6 @@ import {
     MdOutlineAccessTimeFilled,
 } from "react-icons/md";
 import Divider from "../components/reusable/Divider";
-import Button from "../components/reusable/Button";
 import Bubble from "../components/reusable/Bubble";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import RolesBubble from "../components/view/RolesBubble";
@@ -13,12 +12,12 @@ import Modal from "../components/reusable/Modal";
 import ApplicationModalView from "../components/application/ApplicationModalView";
 import { useSelector } from "react-redux";
 import UserViews from "../components/view/UserViews";
-import { getApplications } from "./loaders/applicationLoader";
 import DeleteProjectModal from "../components/view/DeleteProjectModal";
 import { showDeleteModal } from "../store/slices/applicationSlice";
 
 const ViewProjectPage = () => {
-    const projectData = useLoaderData();
+    const projectData = useLoaderData().projects;
+    const applications = useLoaderData().apps;
     const navigate = useNavigate();
     const showModal = useSelector((state) => state.application.showModal);
     const roleSelected = useSelector((state) => state.application.role);
@@ -33,7 +32,6 @@ const ViewProjectPage = () => {
     if (projectData === null) {
         return null;
     }
-
     useEffect(() => {}, [projectData]);
 
     const numTotalPositions = 9;
@@ -123,13 +121,14 @@ const ViewProjectPage = () => {
     };
 
     const userView = () => {
-        const appAmount = getApplications?.(projectData._id);
         const mode = userStatus();
+        let appAmount = applications.appliedUsers.length;
+
         return (
             <UserViews
                 mode={mode}
                 projectData={projectData}
-                amount={appAmount.length}
+                amount={appAmount}
                 username={username}
             ></UserViews>
         );
