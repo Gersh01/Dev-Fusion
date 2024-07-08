@@ -225,10 +225,12 @@ const validateEditProjectStartDate = (project, oldStartDate) => {
 		endDate: [],
 	};
 
-	if (+new Date(oldStartDate) > +new Date(project.projectStartDate)) {
-		errors.startDate.push(
-			"New start date cannot be before the original start date"
-		);
+	if (+new Date(project.projectStartDate) <= +new Date()) {
+		if (+new Date(oldStartDate) > +new Date(project.projectStartDate)) {
+			errors.startDate.push(
+				"New start date cannot be before the original start date"
+			);
+		}
 	}
 
 	return errors;

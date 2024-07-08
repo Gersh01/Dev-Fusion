@@ -11,9 +11,8 @@ import { userLeavingProject } from "../../pages/loaders/projectLoader";
 import axios from "axios";
 import { apiDomain } from "../../utils/utility";
 
-const UserViews = ({ mode, projectData, appAmount, username }) => {
+const UserViews = ({ mode, projectData, amount, username }) => {
     const dispatch = useDispatch();
-    console.log("Debug: The mode being set: " + mode);
     const navigate = useNavigate();
 
     const editProject = () => {
@@ -41,9 +40,6 @@ const UserViews = ({ mode, projectData, appAmount, username }) => {
         let dateYMD = `${date.getFullYear()}-${
             date.getMonth() + 1
         }-${date.getDate()}`;
-        console.log(dateYMD);
-
-        console.log(projectData);
 
         let startProject = {
             projectId: projectData._id,
@@ -57,7 +53,6 @@ const UserViews = ({ mode, projectData, appAmount, username }) => {
             isStarted: true,
         };
 
-        console.log(startProject);
         try {
             await axios.put(apiDomain + "/api/edit-project", startProject, {
                 withCredentials: true,
@@ -120,8 +115,8 @@ const UserViews = ({ mode, projectData, appAmount, username }) => {
                         >
                             <MdMailOutline className="size-8" />
                         </button>
-                        {appAmount > 0 ? (
-                            <p className="flex text-2xl">({appAmount})</p>
+                        {amount > 0 ? (
+                            <p className="flex text-2xl">({amount})</p>
                         ) : null}
                     </Fragment>
                 ) : null}

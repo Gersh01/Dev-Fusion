@@ -12,12 +12,12 @@ import Modal from "../components/reusable/Modal";
 import ApplicationModalView from "../components/application/ApplicationModalView";
 import { useSelector } from "react-redux";
 import UserViews from "../components/view/UserViews";
-import { getApplications } from "./loaders/applicationLoader";
 import DeleteProjectModal from "../components/view/DeleteProjectModal";
 import { showDeleteModal } from "../store/slices/applicationSlice";
 
 const ViewProjectPage = () => {
-	const projectData = useLoaderData();
+	const projectData = useLoaderData().projects;
+	const applications = useLoaderData().apps;
 	const navigate = useNavigate();
 	const showModal = useSelector((state) => state.application.showModal);
 	const userId = useSelector((state) => state.user.id);
@@ -26,10 +26,6 @@ const ViewProjectPage = () => {
 		(state) => state.application.showDeleteModal
 	);
 	let rolesAvailable = [];
-
-	if (projectData === null) {
-		return null;
-	}
 
 	const numTotalPositions = 9;
 	const {
@@ -122,13 +118,14 @@ const ViewProjectPage = () => {
 	};
 
 	const userView = () => {
-		const appAmount = getApplications?.(projectData._id);
 		const mode = userStatus();
+		let appAmount = applications.appliedUsers.length;
+
 		return (
 			<UserViews
 				mode={mode}
 				projectData={projectData}
-				amount={appAmount.length}
+				amount={appAmount}
 				username={username}
 			></UserViews>
 		);

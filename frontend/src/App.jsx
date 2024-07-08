@@ -126,7 +126,10 @@ const router = createBrowserRouter(
                 <Route
                     path="/projects/:id"
                     loader={async ({ params }) => {
-                        return await getProjectById(params.id);
+                        return {
+                            projects: await getProjectById(params.id),
+                            apps: await getApplications(params.id),
+                        };
                     }}
                     element={<ViewProjectPage />}
                 />
