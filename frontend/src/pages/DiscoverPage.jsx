@@ -7,123 +7,122 @@ import { getProjects } from "./loaders/projectLoader";
 import SortBySelector from "../components/reusable/SortBySelector";
 
 const DisocverPage = () => {
-	const [searchBy, setSearchBy] = useState("title");
-	const [sortBy, setSortBy] = useState("relevance");
-	const [query, setQuery] = useState("");
+    const [searchBy, setSearchBy] = useState("title");
+    const [sortBy, setSortBy] = useState("relevance");
+    const [query, setQuery] = useState("");
 
-	const initialProjects = useLoaderData();
-	const [projects, setProjects] = useState(useLoaderData());
-	const [endOfSearch, setEndOfSearch] = useState(false);
+    const initialProjects = useLoaderData();
+    const [projects, setProjects] = useState(useLoaderData());
+    const [endOfSearch, setEndOfSearch] = useState(false);
 
-	const search = useCallback(async () => {
-		setProjects(
-			await getProjects({
-				searchBy: searchBy,
-				sortBy: sortBy,
-				query: query,
-				count: 4,
-				initial: true,
-				projectId: "000000000000000000000000",
-			})
-		);
-	}, [query, searchBy, sortBy]);
+    const search = useCallback(async () => {
+        setProjects(
+            await getProjects({
+                searchBy: searchBy,
+                sortBy: sortBy,
+                query: query,
+                count: 4,
+                initial: true,
+                projectId: "000000000000000000000000",
+            })
+        );
+    }, [query, searchBy, sortBy]);
 
-	useEffect(() => {
-		setEndOfSearch(false);
-	}, [query, sortBy, search]);
+    useEffect(() => {
+        setEndOfSearch(false);
+    }, [query, sortBy, search]);
 
-	useEffect(() => {
-		setProjects(initialProjects);
-	}, [initialProjects]);
+    useEffect(() => {
+        setProjects(initialProjects);
+    }, [initialProjects]);
 
-	useEffect(() => {
-		search();
-	}, [search]);
+    useEffect(() => {
+        search();
+    }, [search]);
 
-	// * Lazy loading more projects
-	const retrieveMoreProjects = useCallback(async () => {
-		if (projects.length === 0) {
-			return;
-		}
-		const newProjects = await getProjects({
-			searchBy: searchBy,
-			sortBy: sortBy,
-			query: query,
-			count: 4,
-			initial: false,
-			projectId: projects[projects.length - 1]._id,
-		});
+    // * Lazy loading more projects
+    const retrieveMoreProjects = useCallback(async () => {
+        if (projects.length === 0) {
+            return;
+        }
+        const newProjects = await getProjects({
+            searchBy: searchBy,
+            sortBy: sortBy,
+            query: query,
+            count: 4,
+            initial: false,
+            projectId: projects[projects.length - 1]._id,
+        });
 
-		setProjects([...projects, ...newProjects]);
+        setProjects([...projects, ...newProjects]);
 
-		if (newProjects.length === 0) {
-			setEndOfSearch(true);
-		}
-	}, [projects, query, searchBy, sortBy]);
+        if (newProjects.length === 0) {
+            setEndOfSearch(true);
+        }
+    }, [projects, query, searchBy, sortBy]);
 
-	// * Only lazy load when reaching end of projects
-	const handleScroll = useCallback(() => {
-		const bottom =
-			window.innerHeight + window.scrollY >= document.body.scrollHeight;
+    const handleScroll = useCallback(() => {
+        const bottom =
+            window.innerHeight + window.scrollY >= document.body.scrollHeight;
 
-		if (bottom) {
-			retrieveMoreProjects();
-		}
-	}, [retrieveMoreProjects]);
+        if (bottom) {
+            retrieveMoreProjects();
+        }
+    }, [retrieveMoreProjects]);
 
-	const projectsContainerRef = useRef();
-	useEffect(() => {
-		// * Adding scroll listener to window
-		window.addEventListener("scroll", handleScroll);
+    const projectsContainerRef = useRef();
+    useEffect(() => {
+        // * Adding scroll listener to window
+        window.addEventListener("scroll", handleScroll);
 
-		// * Load
-		if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
-			if (!endOfSearch) {
-				retrieveMoreProjects();
-			}
-		}
-		// console.log(projects);
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-		};
-	}, [endOfSearch, handleScroll, projects, retrieveMoreProjects]);
+        // * Load
+        if (projectsContainerRef.current.clientHeight <= window.innerHeight) {
+            if (!endOfSearch) {
+                retrieveMoreProjects();
+            }
+        }
+        // console.log(projects);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, [endOfSearch, handleScroll, projects, retrieveMoreProjects]);
 
-	const renderedProjectTiles = projects.map((project) => {
-		return <DiscoverProjectTile key={project._id} project={project} />;
-	});
+    const renderedProjectTiles = projects.map((project) => {
+        return <DiscoverProjectTile key={project._id} project={project} />;
+    });
 
-	return (
-		<Fragment>
-			<div
-				className="flex justify-between items-end flex-wrap gap-y-2 
+    return (
+        <Fragment>
+            <div
+                className="flex justify-between items-end flex-wrap gap-y-2 
 				text-black dark:text-white poppins text-4xl font-bold gap-x-6"
-			>
-				<p>Discover</p>
-				<SearchField
-					searchBy={searchBy}
-					setSearchBy={setSearchBy}
-					query={query}
-					setQuery={setQuery}
-					onSearch={search}
-				/>
-			</div>
-			<div className="self-end">
-				<SortBySelector sortBy={sortBy} setSortBy={setSortBy} />
-			</div>
-			<Divider />
-			<div
-				className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12"
-				ref={projectsContainerRef}
-			>
-				{renderedProjectTiles}
-			</div>
-			{endOfSearch && (
-				<div className="self-center px-8 py-1 mb-12 rounded-full bg-gray-200 dark:bg-gray-700">
-					End of Search
-				</div>
-			)}
-		</Fragment>
-	);
+            >
+                <p>Discover</p>
+                <SearchField
+                    searchBy={searchBy}
+                    setSearchBy={setSearchBy}
+                    query={query}
+                    setQuery={setQuery}
+                    onSearch={search}
+                />
+            </div>
+            <div className="self-end">
+                <SortBySelector sortBy={sortBy} setSortBy={setSortBy} />
+            </div>
+            <Divider />
+            <div
+                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12"
+                ref={projectsContainerRef}
+            >
+                {renderedProjectTiles}
+            </div>
+            {endOfSearch && (
+                <div className="self-center px-8 py-1 mb-12 rounded-full bg-gray-200 dark:bg-gray-700">
+                    End of Search
+                </div>
+            )}
+        </Fragment>
+    );
 };
 
 export default DisocverPage;
