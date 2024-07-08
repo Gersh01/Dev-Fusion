@@ -42,14 +42,27 @@ const UserViews = ({ mode, projectData, appAmount, username }) => {
             date.getMonth() + 1
         }-${date.getDate()}`;
         console.log(dateYMD);
-        projectData.projectStartDate = new Date();
+
         console.log(projectData);
 
+        let startProject = {
+            projectId: projectData._id,
+            title: projectData.title,
+            projectStartDate: dateYMD,
+            description: projectData.description,
+            deadline: projectData.deadline,
+            roles: projectData.roles,
+            technologies: projectData.technologies,
+            communications: projectData.communications,
+            isStarted: true,
+        };
+
+        console.log(startProject);
         try {
-            await axios.put(apiDomain + "/api/edit-project", projectData, {
+            await axios.put(apiDomain + "/api/edit-project", startProject, {
                 withCredentials: true,
             });
-            console.log("Date has been updated");
+            navigate(0);
         } catch (err) {
             console.log(`Error: ${err.message}`);
         }
@@ -60,9 +73,12 @@ const UserViews = ({ mode, projectData, appAmount, username }) => {
             <div className="flex gap-2">
                 {mode === "owner" || mode === "manager" ? (
                     <Fragment>
-                        <Button mode="safe" onClick={startProjectNow}>
-                            Begin
-                        </Button>
+                        {projectData.isStarted === false && (
+                            <Button mode="safe" onClick={startProjectNow}>
+                                Begin
+                            </Button>
+                        )}
+
                         <Button
                             mode="secondary"
                             onClick={() =>

@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
     MdArrowLeft,
     MdPerson,
@@ -34,6 +34,9 @@ const ViewProjectPage = () => {
     if (projectData === null) {
         return null;
     }
+
+    useEffect(() => {}, [projectData]);
+
     const numTotalPositions = 9;
     const {
         title,
