@@ -40,7 +40,7 @@ const cookieJwtAuth = (req, res, next) => {
         else {
             newToken = jwt.sign(newPayload, process.env.SECRET_KEY, { expiresIn: "1h" });
         }
-        res.token = newToken;
+        req.token = newToken;
         next();
     } catch (e) {
         return res.status(403).json({ error: "token is not valid" });
@@ -49,11 +49,6 @@ const cookieJwtAuth = (req, res, next) => {
 
 //APIs
 exports.setApp = function (app, client) {
-
-    app.post('/api/mobile/test/:a', async (req, res, next) => {
-        var a = req.params.a;
-        res.send(md5(a));
-    });
 
     //login api +
     app.post('/api/mobile/login', async (req, res, next) => {
@@ -249,7 +244,7 @@ exports.setApp = function (app, client) {
         }
     });
 
-    //resend verification email api
+    //resend verification email api +
     app.post('/api/mobile/resend_verification_email', async (req, res, next) => {
         var db;
         var resultEmail;
@@ -283,59 +278,15 @@ exports.setApp = function (app, client) {
         } else return res.status(404).json({ error: "User not found" });
     });
 
-    //update user api
+    //update user api +
     app.put('/api/mobile/users', cookieJwtAuth, async (req, res, next) => {
         var error = '';
-        var userId = req.body.userId;
+        var username = req.username;
         var firstName = req.body.firstName;
         var lastName = req.body.lastName;
         var bio = req.body.bio;
         var technologies = req.body.technologies;
         var link = req.body.link;
-
-
-        if (userId.length != 24) return res.status(400).json({ error: "userId must be 24 characters" });
-        const nid = new ObjectId(userId);
-
-        var db;
-        var resultFind;
-
-        try {
-            db = client.db('DevFusion');
-            resultFind = await db.collection('Users').findOne({ _id: nid });
-        } catch (e) {
-            error = e.toString;
-            var ret = { error: error };
-            return res.status(500).json(ret);
-        }
-
-        if (resultFind == null || resultFind == undefined) return res.status(404).json({ error: "user with the userId does not exist" });
-        if (req.username != resultFind.username) return res.status(403).json({ error: "signed in user does not have access to the given user" });
-
-        if (firstName == undefined || firstName == null) firstName = resultFind.firstName;
-        if (lastName == undefined || lastName == null) lastName = resultFind.lastName;
-        if (bio == undefined || bio == null) bio = resultFind.bio;
-        if (technologies == undefined || technologies == null) technologies = resultFind.technologies;
-        if (link == undefined || link == null) link = resultFind.link;
-
-        var resultPut;
-        var query = { _id: nid };
-        var newValues = { $set: { firstName: firstName, lastName: lastName, bio: bio, technologies: technologies, link: link } };
-
-        try {
-            db = client.db('DevFusion');
-            resultPut = await db.collection('Users').updateOne(query, newValues);
-            return res.status(200).json({ error: error });
-        } catch (e) {
-            error = e.toString;
-            var ret = { error: error };
-            return res.status(500).json(ret);
-        }
-    });
-
-    app.post('/api/mobile/users/password', cookieJwtAuth, async (req, res, next) => {
-        const username = req.username;
-        var error = '';
 
         var db;
         var resultFind;
@@ -345,22 +296,67 @@ exports.setApp = function (app, client) {
             resultFind = await db.collection('Users').findOne({ username: username });
         } catch (e) {
             error = e.toString;
-            var ret = { error: error };
+            var ret = { newToken: req.token, error: error };
             return res.status(500).json(ret);
         }
 
-        const userId = resultFind._id;
-        const payload = { userId };
-        var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "15m" });
-        res.cookie("userIdToken", token, {
-            httpOnly: true
-        });
+        if (resultFind == null || resultFind == undefined) return res.status(404).json({ newToken: req.token, error: "user with the userId does not exist" });
+        if (req.username != resultFind.username) return res.status(403).json({ newToken: req.token, error: "signed in user does not have access to the given user" });
 
-        return res.status(200).json({error:""});
+        if (firstName == undefined || firstName == null) firstName = resultFind.firstName;
+        if (lastName == undefined || lastName == null) lastName = resultFind.lastName;
+        if (bio == undefined || bio == null) bio = resultFind.bio;
+        if (technologies == undefined || technologies == null) technologies = resultFind.technologies;
+        if (link == undefined || link == null) link = resultFind.link;
+
+        var resultPut;
+        var query = { username: username };
+        var newValues = { $set: { firstName: firstName, lastName: lastName, bio: bio, technologies: technologies, link: link } };
+
+        try {
+            db = client.db('DevFusion');
+            resultPut = await db.collection('Users').updateOne(query, newValues);
+            return res.status(200).json({ newToken: req.token, error: error });
+        } catch (e) {
+            error = e.toString;
+            var ret = { newToken: req.token, error: error };
+            return res.status(500).json(ret);
+        }
+    });
+
+    //reset password api +
+    app.post('/api/mobile/users/password', cookieJwtAuth, async (req, res, next) => {
+        const newPassword = md5(req.body.newPassword);
+        var username = req.username;
+        var db;
+        var resultFind;
+        try {
+            db = client.db('DevFusion');
+            resultFind = await db.collection('Users').findOne({ username: username });
+        } catch (e) {
+            error = e.toString;
+            var ret = { newToken: req.token, error: error };
+            return res.status(500).json(ret);
+        }
+
+        if (resultFind == null || resultFind == undefined) return res.status(404).json({ newToken: req.token, error: "User not found" });
+
+        var resultPut;
+        var query = { username: username };
+        var newValues = { $set: { password: newPassword } };
+
+        try {
+            resultPut = await db.collection('Users').updateOne(query, newValues);
+            return res.status(200).json({ newToken: req.token, error: "" });
+        } catch (e) {
+            error = e.toString;
+            var ret = { newToken: req.token, error: error };
+            return res.status(500).json(ret);
+        }
 
     });
 
-    //get user api
+    //get user api +
     app.get('/api/mobile/users/:userId', cookieJwtAuth, async (req, res, next) => {
         const userId = req.params.userId;
         var firstName = '';
@@ -375,7 +371,7 @@ exports.setApp = function (app, client) {
         var db;
         var result;
 
-        if(userId.length != 24) return res.status(400).json({error: "userId must be 24 characters"});
+        if(userId.length != 24) return res.status(400).json({newToken: req.token, error: "userId must be 24 characters"});
         const nid = new ObjectId(userId);
 
         try {
@@ -383,7 +379,7 @@ exports.setApp = function (app, client) {
             result = await db.collection('Users').find({ _id: nid }).toArray();
         } catch (e) {
             error = e.toString;
-            var ret = { error: error };
+            var ret = { newToken: req.token, error: error };
             return res.status(500).json(ret);
         }
 
@@ -396,23 +392,17 @@ exports.setApp = function (app, client) {
             bio = result[0].bio;
             technologies = result[0].technologies;
             link = result[0].link;
-            var ret = { userId: userId, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+            var ret = { userId: userId, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, newToken: req.token, error: error };
             return res.status(200).json(ret);
         } else {
-            error = 'user not found'
-            var ret = { error: error };
+            error = 'user not found';
+            var ret = { newToken: req.token, error: error };
             return res.status(404).json(ret);
         }
 
     });
-    
-    //logout api
-    app.post('/api/mobile/logout', cookieJwtAuth, async (req, res, next) => {
-        res.clearCookie("token");
-        res.status(200).json({});
-    });
 
-    //forgot_password api that sends the email
+    //forgot_password api that sends the email +
     app.post('/api/mobile/forgot_password/send', async (req, res, next) => {
         var db;
         const email = req.body.email;
@@ -454,57 +444,7 @@ exports.setApp = function (app, client) {
 
     });
 
-    app.post('/api/mobile/forgot_password/reset', async (req, res, next) => {
-        const newPassword = md5(req.body.newPassword);
-        var db;
-        try {
-            db = client.db('DevFusion');
-        } catch (e) {
-            error = e.toString;
-            var ret = { error: error };
-            return res.status(500).json(ret);
-        }
-
-        const token = req.cookies.userIdToken;
-        var payload;
-        var userId;
-        try {
-            payload = jwt.verify(token, process.env.SECRET_KEY);
-            userId = payload.userId;
-        } catch (e) {
-            res.clearCookie("userIdToken");
-            return res.status(403).json({ error: "Token is not valid" });
-        }
-
-        if (userId.length != 24) return res.status(400).json({ error: "userId must be 24 characters" });
-        const nid = new ObjectId(userId);
-        var resultFind;
-        try {
-            resultFind = await db.collection('Users').findOne({ _id: nid });
-        } catch (e) {
-            error = e.toString;
-            var ret = { error: error };
-            return res.status(500).json(ret);
-        }
-
-        if (resultFind == null || resultFind == undefined) return res.status(404).json({ error: "User not found" });
-
-        var resultPut;
-        var query = { _id: nid };
-        var newValues = { $set: { password: newPassword } };
-
-        try {
-            resultPut = await db.collection('Users').updateOne(query, newValues);
-            return res.status(200).json({ error: "" });
-        } catch (e) {
-            error = e.toString;
-            var ret = { error: error };
-            return res.status(500).json(ret);
-        }
-
-    });
-
-    //api to test jwt authentication
+    //api to test jwt authentication +
     app.post('/api/mobile/jwtTest', cookieJwtAuth, async (req, res, next) => {
         var id = -1;
         var firstName = '';
@@ -538,7 +478,7 @@ exports.setApp = function (app, client) {
             bio = result[0].bio;
             technologies = result[0].technologies;
             link = result[0].link;
-            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, newToken: req.token, error: error };
             res.status(200).json(ret);
         } else {
             error = "username does not exist";

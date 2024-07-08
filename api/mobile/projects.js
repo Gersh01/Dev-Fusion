@@ -305,7 +305,7 @@ const cookieJwtAuth = (req, res, next) => {
       else {
           newToken = jwt.sign(newPayload, process.env.SECRET_KEY, { expiresIn: "1h" });
       }
-      res.token = newToken;
+      req.token = newToken;
       next();
   } catch (e) {
       return res.status(403).json({ error: "token is not valid" });
