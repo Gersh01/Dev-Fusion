@@ -21,7 +21,7 @@ async function search(client, req, res, type) {
 
     const initial = Boolean(req.body.initial);
 
-    if (projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"})
+    if (projectId.length != 24) return res.status(400).json({newToken: req.token, error: "projectId must be 24 characters"})
     
     // req.username
     let user;
@@ -280,12 +280,12 @@ async function search(client, req, res, type) {
 
     results = await db.collection("Projects").aggregate(pipeline).toArray()
     // console.log(results)
-    return res.status(200).json(results)
+    return res.status(200).json({newToken: req.token, results})
 
   } catch(e) {
       console.log(e)
 
-      return res.status(500).json(e)
+      return res.status(500).json({newToken: req.token, e})
   }
 }
 
