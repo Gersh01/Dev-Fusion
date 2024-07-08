@@ -509,8 +509,19 @@ exports.setApp = function (app, client) {
         const projectObj = await db.collection("Projects").findOne({ _id: new ObjectId(req.body.projectId) })
 
 
-        if (user._id.toString() !== projectObj.ownerID.toString()) {
-          return res.status(400).json({newToken: req.token, "error": "This user can't edit the project since the user is not the owner"})
+        let isPM = false
+
+        for (let i = 0; i < projectObj.teamMembers.length; i++) {
+          if (projectObj.teamMembers[i].username == user.username && projectObj.teamMembers[i].role == "Project Manager") {
+            isPM = true
+            break
+          }
+        }
+
+
+        // make sure that the user is either the owner or the project manager
+        if (user._id.toString() !== projectObj.ownerID.toString() && !isPM) {
+          return res.status(400).json({"error": "This user can't edit the project since the user is not the owner or a project manager"})
         }
 
   
@@ -618,7 +629,7 @@ exports.setApp = function (app, client) {
             newTeamMembers = teamMembers.slice(0, i).concat(teamMembers.slice(i+1, teamMembers.length + 1))
             break
           }
-          
+
         }
   
         // console.log(newTeamMembers)
