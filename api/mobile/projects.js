@@ -314,7 +314,7 @@ const cookieJwtAuth = (req, res, next) => {
 
 exports.setApp = function (app, client) {
 
-    app.get('/api/mobile/project/:projectId', async (req, res, next) => {
+    app.get('/api/mobile/project/:projectId', cookieJwtAuth, async (req, res, next) => {
 
       try {
 
@@ -322,18 +322,18 @@ exports.setApp = function (app, client) {
   
         let id = req.params.projectId
 
-        if (id.length != 24) return res.status(400).json({error: "projectId must be 24 characters"})
+        if (id.length != 24) return res.status(400).json({newToken: req.token, error: "projectId must be 24 characters"})
   
         let project = await db.collection("Projects").findOne({ _id: new ObjectId(id) })
 
         if (project == null) {
-          return res.status(404).json({"error": "Project ID does not exist"})
+          return res.status(404).json({newToken: req.token, "error": "Project ID does not exist"})
         }
   
-        return res.status(200).json(project)
+        return res.status(200).json({newToken: req.token, project})
 
       } catch (e) {
-        return res.status(500).json(e)
+        return res.status(500).json({newToken: req.token, e})
       }
 
 
@@ -401,11 +401,11 @@ exports.setApp = function (app, client) {
           let ret = await db.collection("Projects").insertOne(project);
 
 
-          return res.status(200).json({"projectId": ret.insertedId.toString()});
+          return res.status(200).json({newToken: req.token, "projectId": ret.insertedId.toString()});
 
         } catch (e) {
             error = e.toString();
-            let ret = {error: error};
+            let ret = {newToken: req.token, error: error};
             return res.status(500).json(ret);
         }
     })
@@ -414,8 +414,8 @@ exports.setApp = function (app, client) {
     app.put('/api/mobile/project/team_members', cookieJwtAuth, async (req, res, next) => {
       var projectId = req.body.projectId;
       var teamMembers = req.body.teamMembers;
-      if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
-      if(teamMembers == null) return res.status(400).json({error: "teamMembers cannot be null"});
+      if(projectId.length != 24) return res.status(400).json({newToken: req.token, error: "projectId must be 24 characters"});
+      if(teamMembers == null) return res.status(400).json({newToken: req.token, error: "teamMembers cannot be null"});
   
   
       const nid = new ObjectId(projectId);
@@ -426,10 +426,10 @@ exports.setApp = function (app, client) {
       try{
           db = client.db('DevFusion');
           resultFind = await db.collection('Projects').findOne({_id: nid});
-          if(resultFind == null || resultFind == undefined) return res.status(404).json({error: "Project not found"});
+          if(resultFind == null || resultFind == undefined) return res.status(404).json({newToken: req.token, error: "Project not found"});
       } catch (e) {
           error = e.toString;
-          var ret = { error: error };
+          var ret = { newToken: req.token, error: error };
           return res.status(500).json(ret);
       }
   
@@ -440,10 +440,10 @@ exports.setApp = function (app, client) {
       try {
           db = client.db('DevFusion');
           resultPut = await db.collection('Projects').updateOne(query, newValues);
-          return res.status(200).json({error:error});
+          return res.status(200).json({newToken: req.token, error:error});
       } catch (e) {
           error = e.toString;
-          var ret = { error: error };
+          var ret = { newToken: req.token, error: error };
           return res.status(500).json(ret);
       }
   
@@ -510,7 +510,7 @@ exports.setApp = function (app, client) {
 
 
         if (user._id.toString() !== projectObj.ownerID.toString()) {
-          return res.status(400).json({"error": "This user can't edit the project since the user is not the owner"})
+          return res.status(400).json({newToken: req.token, "error": "This user can't edit the project since the user is not the owner"})
         }
 
   
@@ -553,12 +553,12 @@ exports.setApp = function (app, client) {
           }
         )
         
-        return res.sendStatus(200);
+        return res.status(200).json({newToken: req.token});
           
       } catch (e) {
           error = e.toString();
           let ret = {error: error};
-          return res.status(500).json(ret);
+          return res.status(500).json({newToken: req.token, ret});
       }
     })
 
@@ -578,22 +578,22 @@ exports.setApp = function (app, client) {
         // console.log(user._id, project.ownerID)
         // console.log("project: ", project)
         if (user._id.toString() !== project.ownerID.toString()) {
-          return res.status(400).json({"error": "This user cannot delete the project since the user is not the owner"})
+          return res.status(400).json({newToken: req.token, "error": "This user cannot delete the project since the user is not the owner"})
         }
   
         db.collection("Projects").deleteOne({_id: project._id })
   
   
   
-        return res.sendStatus(200);
+        return res.status(200).json({newToken: req.token});
 
       } catch(e) {
         
-        return res.status(500).json(e)
+        return res.status(500).json({newToken: req.token, e})
       }
     })
 
-    app.post('/api/mobile/leave/project', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/project/leave', cookieJwtAuth, async (req, res, next) => {
 
 
       try {
@@ -627,7 +627,7 @@ exports.setApp = function (app, client) {
         // console.log(newTeamMembers)
   
         if (newTeamMembers == null) {
-          return res.status(400).json({"error": "can not leave project since member was not found in the project"})
+          return res.status(400).json({newToken: req.token, "error": "can not leave project since member was not found in the project"})
         }
   
         await db.collection('Projects').updateOne(
@@ -640,10 +640,10 @@ exports.setApp = function (app, client) {
         )
   
   
-        return res.sendStatus(200)
+        return res.status(200).json({newToken: req.token})
 
       } catch (e) {
-        return res.status(500).json(e)
+        return res.status(500).json({newToken: req.token, e})
       }
 
 
