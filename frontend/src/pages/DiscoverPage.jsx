@@ -11,8 +11,34 @@ const DisocverPage = () => {
 	const [sortBy, setSortBy] = useState("relevance");
 	const [query, setQuery] = useState("");
 
+	const initialProjects = useLoaderData();
 	const [projects, setProjects] = useState(useLoaderData());
 	const [endOfSearch, setEndOfSearch] = useState(false);
+
+	const search = useCallback(async () => {
+		setProjects(
+			await getProjects({
+				searchBy: searchBy,
+				sortBy: sortBy,
+				query: query,
+				count: 4,
+				initial: true,
+				projectId: "000000000000000000000000",
+			})
+		);
+	}, [query, searchBy, sortBy]);
+
+	useEffect(() => {
+		setEndOfSearch(false);
+	}, [query, sortBy, search]);
+
+	useEffect(() => {
+		setProjects(initialProjects);
+	}, [initialProjects]);
+
+	useEffect(() => {
+		search();
+	}, [search]);
 
 	// * Lazy loading more projects
 	const retrieveMoreProjects = useCallback(async () => {
@@ -66,19 +92,6 @@ const DisocverPage = () => {
 		return <DiscoverProjectTile key={project._id} project={project} />;
 	});
 
-	const onSearch = async () => {
-		setProjects(
-			await getProjects({
-				searchBy: searchBy,
-				sortBy: sortBy,
-				query: query,
-				count: 4,
-				initial: true,
-				projectId: "000000000000000000000000",
-			})
-		);
-	};
-
 	return (
 		<Fragment>
 			<div
@@ -91,7 +104,7 @@ const DisocverPage = () => {
 					setSearchBy={setSearchBy}
 					query={query}
 					setQuery={setQuery}
-					onSearch={onSearch}
+					onSearch={search}
 				/>
 			</div>
 			<div className="self-end">
