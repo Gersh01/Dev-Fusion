@@ -2,7 +2,12 @@ import { getCommunication } from "../../utils/utility";
 import SelectionSearchField from "../reusable/SelectionSearchField";
 import Bubble from "../reusable/Bubble";
 
-const CreateCommunicationsPanel = ({ comms, setComms, errors, onFocus }) => {
+const CreateCommunicationsPanel = ({
+	comms,
+	setComms,
+	errors,
+	clearErrors,
+}) => {
 	const onRemove = (commNameToRemove) => {
 		const updatedBubbles = comms.filter((bubble) => {
 			return bubble.name !== commNameToRemove;
@@ -76,7 +81,7 @@ const CreateCommunicationsPanel = ({ comms, setComms, errors, onFocus }) => {
 					<SelectionSearchField
 						selectionFunc={getCommunication}
 						onAdd={addNewComm}
-						onFocus={onFocus}
+						onFocus={clearErrors}
 					/>
 				</div>
 				<div className={`flex gap-2 flex-wrap`}>

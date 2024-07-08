@@ -158,7 +158,7 @@ const CreatePage = () => {
 					techs={techs}
 					setTechs={setTechs}
 					errors={errors.technologies}
-					onFocus={() => {
+					clearErrors={() => {
 						setErrors({ ...errors, technologies: [] });
 					}}
 				/>
@@ -167,7 +167,7 @@ const CreatePage = () => {
 					roles={roles}
 					setRoles={setRoles}
 					errors={errors.roles}
-					onFocus={() => {
+					clearErrors={() => {
 						setErrors({ ...errors, roles: [] });
 					}}
 				/>
@@ -176,7 +176,7 @@ const CreatePage = () => {
 					comms={comms}
 					setComms={setComms}
 					errors={errors.communications}
-					onFocus={() => {
+					clearErrors={() => {
 						setErrors({ ...errors, communications: [] });
 					}}
 				/>
