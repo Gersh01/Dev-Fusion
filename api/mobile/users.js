@@ -401,7 +401,7 @@ exports.setApp = function (app, client) {
     });
 
     //forgot_password api that sends the email +
-    app.post('/api/mobile/forgot_password/send', async (req, res, next) => {
+    app.post('/api/mobile/forgot_password', async (req, res, next) => {
         var db;
         const email = req.body.email;
         var result;
