@@ -605,6 +605,7 @@ exports.setApp = function (app, client) {
         let db = client.db("DevFusion")
   
         let username = req.username
+
   
         let project = await db.collection("Projects").findOne({ _id: new ObjectId(req.body.projectId) })
   
@@ -617,14 +618,9 @@ exports.setApp = function (app, client) {
   
         for (let i = 0; i < teamMembers.length; i++) {
           
-          
-          let role = teamMembers[i]
-  
-          if (role.startsWith(`${username}:`)) {
-  
+          if (teamMembers[i].username == username) {
             newTeamMembers = teamMembers.slice(0, i).concat(teamMembers.slice(i+1, teamMembers.length + 1))
             break
-  
           }
         }
   
