@@ -1,4 +1,5 @@
-const validateProject = (project) => {
+// * Set mode to "edit" when editing a project
+const validateProject = (project, mode) => {
 	const errors = {
 		title: [],
 		description: [],
@@ -65,7 +66,9 @@ const validateProject = (project) => {
 	if (projectStartDate === "") {
 		errors.startDate.push("Start date must be valid");
 	} else if (+new Date(projectStartDate) <= +new Date()) {
-		errors.startDate.push("Start date cannot be in the past");
+		if (mode !== "edit") {
+			errors.startDate.push("Start date cannot be in the past");
+		}
 	} else if (
 		+new Date(projectStartDate) - +new Date() >=
 		1000 * 60 * 60 * 24 * 365 * 2
@@ -211,10 +214,31 @@ const validResetPassword = (resetPassword) => {
 	return errors;
 };
 
+const validateEditProjectStartDate = (project, oldStartDate) => {
+	const errors = {
+		title: [],
+		description: [],
+		roles: [],
+		technologies: [],
+		communications: [],
+		startDate: [],
+		endDate: [],
+	};
+
+	if (+new Date(oldStartDate) > +new Date(project.projectStartDate)) {
+		errors.startDate.push(
+			"New start date cannot be before the original start date"
+		);
+	}
+
+	return errors;
+};
+
 export {
 	validateProject,
 	validateLogin,
 	validateRegister,
 	validResetPasswordEmail,
 	validResetPassword,
+	validateEditProjectStartDate,
 };
