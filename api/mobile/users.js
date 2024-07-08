@@ -1,7 +1,7 @@
 require('express');
 require('mongodb');
 require("dotenv").config();
-const md5 = require('./md5');
+const md5 = require('../md5');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
@@ -25,7 +25,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const cookieJwtAuth = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.body.token;
     try {
         const payload = jwt.verify(token, process.env.SECRET_KEY);
         var username = payload.username;
@@ -40,13 +40,9 @@ const cookieJwtAuth = (req, res, next) => {
         else {
             newToken = jwt.sign(newPayload, process.env.SECRET_KEY, { expiresIn: "1h" });
         }
-        res.cookie("token", newToken, {
-            httpOnly: true,
-            path: '/'
-        });
+        res.token = newToken;
         next();
     } catch (e) {
-        res.clearCookie("token");
         return res.status(403).json({ error: "token is not valid" });
     }
 }
@@ -54,13 +50,13 @@ const cookieJwtAuth = (req, res, next) => {
 //APIs
 exports.setApp = function (app, client) {
 
-    app.post('/api/test/:a', async (req, res, next) => {
+    app.post('/api/mobile/test/:a', async (req, res, next) => {
         var a = req.params.a;
         res.send(md5(a));
     });
 
-    //login api
-    app.post('/api/login', async (req, res, next) => {
+    //login api +
+    app.post('/api/mobile/login', async (req, res, next) => {
         var id = -1;
         var firstName = '';
         var lastName = '';
@@ -70,6 +66,7 @@ exports.setApp = function (app, client) {
         var technologies = [];
         var error = '';
         var link = '';
+        var token = '';
         var login = req.body.login;
         var password = md5(req.body.password);
         var rememberMe = req.body.rememberMe;
@@ -90,7 +87,7 @@ exports.setApp = function (app, client) {
             resultsEmailUnverified = await db.collection('UnverifiedUsers').find({ email: login }).toArray();
         } catch (e) {
             error = e.toString;
-            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, link: link, error: error };
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, token: token, error: error };
             res.status(500).json(ret);
         }
 
@@ -112,15 +109,11 @@ exports.setApp = function (app, client) {
                 else {
                     token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
                 }
-                res.cookie("token", token, {
-                    httpOnly: true,
-                    path: '/'
-                });
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, token: token, error: error };
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, token: token, error: error };
                 res.status(401).json(ret);
             }
         } else if (resultsEmail.length > 0) { //Login matched a verified user's email
@@ -135,22 +128,17 @@ exports.setApp = function (app, client) {
                 technologies = resultsEmail[0].technologies;
                 link = resultsEmail[0].link;
                 const payload = { username, rememberMe };
-                var token;
                 if (rememberMe) {
                     token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1w" });
                 }
                 else {
                     token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
                 }
-                res.cookie("token", token, {
-                    httpOnly: true,
-                    path: '/'
-                });
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, token: token, error: error };
                 res.status(200).json(ret);
             } else { //Password did not match
                 error = "password is wrong";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, token: token, error: error };
                 res.status(401).json(ret);
             }
         } else if (resultsUsernameUnverified.length > 0) { //Login matched an unverified user's username
@@ -165,11 +153,11 @@ exports.setApp = function (app, client) {
                 technologies = resultsUsernameUnverified[0].technologies;
                 link = resultsUsernameUnverified[0].link;
                 error = "User is not verified";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, token: token, error: error };
                 res.status(401).json(ret);
             } else {
                 error = "password is wrong";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, token: token, error: error };
                 res.status(401).json(ret);
             }
 
@@ -185,23 +173,23 @@ exports.setApp = function (app, client) {
                 technologies = resultsEmailUnverified[0].technologies;
                 link = resultsEmailUnverified[0].link;
                 error = "User is not verified";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, token: token, error: error };
                 res.status(401).json(ret);
             } else {
                 error = "password is wrong";
-                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+                var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, token: token, error: error };
                 res.status(401).json(ret);
             }
         } else { //Login did not match any user
             error = "Login did not match any user";
-            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, error: error };
+            var ret = { id: id, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, token: token, error: error };
             res.status(404).json(ret);
         }
 
     });
 
-    //register api
-    app.post('/api/register', async (req, res, next) => {
+    //register api +
+    app.post('/api/mobile/register', async (req, res, next) => {
         var db;
         var resultsUsername;
         var resultsEmail;
@@ -262,7 +250,7 @@ exports.setApp = function (app, client) {
     });
 
     //resend verification email api
-    app.post('/api/resend_verification_email', async (req, res, next) => {
+    app.post('/api/mobile/resend_verification_email', async (req, res, next) => {
         var db;
         var resultEmail;
         var resultEmailUnverified;
@@ -295,80 +283,8 @@ exports.setApp = function (app, client) {
         } else return res.status(404).json({ error: "User not found" });
     });
 
-    //verify email api
-    app.get('/api/verify_email/:token', async (req, res, next) => {
-        const emailToken = req.params.token;
-        var payload;
-        var email;
-        try {
-            payload = jwt.verify(emailToken, process.env.EMAIL_SECRET);
-            email = payload.email;
-        } catch (e) {
-            return res.status(403).json({ error: "email token is not valid" });
-        }
-
-        var id = -1;
-        var firstName = '';
-        var lastName = '';
-        var username = '';
-        var password = '';
-        var bio = '';
-        var technologies = [];
-        var link = '';
-        var error = '';
-
-        var db;
-        var resultsEmail;
-        var resultsEmailUnverified;
-        try {
-            db = client.db('DevFusion');
-            resultsEmail = await db.collection('Users').find({ email: email }).toArray();
-            resultsEmailUnverified = await db.collection('UnverifiedUsers').find({ email: email }).toArray();
-        } catch (e) {
-            error = e.toString;
-            var ret = { error: error };
-            return res.status(500).json(ret);
-        }
-
-        if (resultsEmail.length > 0) { //emailToken matched a verified user's email
-            error = 'user is already verified';
-            var ret = { error: error };
-            return res.status(400).json(ret);
-        } else if (resultsEmailUnverified.length > 0) { //emailToken matched an unverified user's email
-            _id = resultsEmailUnverified[0]._id;
-            password = resultsEmailUnverified[0].password;
-            firstName = resultsEmailUnverified[0].firstName;
-            lastName = resultsEmailUnverified[0].lastName;
-            username = resultsEmailUnverified[0].username;
-            bio = resultsEmailUnverified[0].bio;
-            technologies = resultsEmailUnverified[0].technologies;
-            var insertResult;
-            var deleteResult;
-            const newUser = {
-                firstName: firstName, lastName: lastName, password: password, username: username, email: email, bio: bio, technologies: technologies, link: defaultProfilePicture
-            };
-            try {
-                insertResult = await db.collection('Users').insertOne(newUser);
-                deleteResult = await db.collection('UnverifiedUsers').deleteOne({ _id: _id });
-                //if successful verification redirect 
-                return res.redirect("/verified-user");
-                // return res.status(200).json({ error: "" });
-                // return res.redirect('/');
-            } catch (e) {
-                a
-                error = e.toString;
-                var ret = { error: error };
-                return res.status(500).json(ret);
-            }
-        } else { //emailToken did not match any user
-            error = "Email did not match any user";
-            var ret = { error: error };
-            return res.status(404).json(ret);
-        }
-    });
-
     //update user api
-    app.put('/api/users', cookieJwtAuth, async (req, res, next) => {
+    app.put('/api/mobile/users', cookieJwtAuth, async (req, res, next) => {
         var error = '';
         var userId = req.body.userId;
         var firstName = req.body.firstName;
@@ -417,7 +333,7 @@ exports.setApp = function (app, client) {
         }
     });
 
-    app.post('/api/users/password', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/users/password', cookieJwtAuth, async (req, res, next) => {
         const username = req.username;
         var error = '';
 
@@ -445,7 +361,7 @@ exports.setApp = function (app, client) {
     });
 
     //get user api
-    app.get('/api/users/:userId', cookieJwtAuth, async (req, res, next) => {
+    app.get('/api/mobile/users/:userId', cookieJwtAuth, async (req, res, next) => {
         const userId = req.params.userId;
         var firstName = '';
         var lastName = '';
@@ -491,13 +407,13 @@ exports.setApp = function (app, client) {
     });
     
     //logout api
-    app.post('/api/logout', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/logout', cookieJwtAuth, async (req, res, next) => {
         res.clearCookie("token");
         res.status(200).json({});
     });
 
     //forgot_password api that sends the email
-    app.post('/api/forgot_password/send', async (req, res, next) => {
+    app.post('/api/mobile/forgot_password/send', async (req, res, next) => {
         var db;
         const email = req.body.email;
         var result;
@@ -538,7 +454,7 @@ exports.setApp = function (app, client) {
 
     });
 
-    app.post('/api/forgot_password/reset', async (req, res, next) => {
+    app.post('/api/mobile/forgot_password/reset', async (req, res, next) => {
         const newPassword = md5(req.body.newPassword);
         var db;
         try {
@@ -588,49 +504,8 @@ exports.setApp = function (app, client) {
 
     });
 
-    //forgot_password api for when the user clicks on the link on email
-    app.get('/api/forgot_password/email/:userId/:token', async (req, res, next) => {
-        const combinedToken = req.params.token;
-        const userId = req.params.userId;
-        if (userId.length != 24) return res.status(400).json({ error: "userId must be 24 characters" });
-        const nid = new ObjectId(userId);
-        var db;
-        var result;
-        try {
-            db = client.db('DevFusion');
-            result = await db.collection('Users').findOne({ _id: nid });
-        } catch (e) {
-            error = e.toString;
-            var ret = { error: error };
-            return res.status(500).json(ret);
-        }
-
-        if (result == null || result == undefined) return res.status(404).json({ error: "User not found" });
-
-        const oldPassword = result.password;
-        const combinedKey = process.env.EMAIL_SECRET + oldPassword;
-
-        try {
-            var payloadVerify = jwt.verify(combinedToken, combinedKey);
-        } catch (e) {
-            return res.status(403).json({ error: "Token is not valid" });
-        }
-
-        const payload = { userId };
-        var token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "15m" });
-        res.cookie("userIdToken", token, {
-            httpOnly: true
-        });
-
-        return res.redirect("/reset-password");
-        // return res.status(200).json({ error: "" });
-        // return res.redirect('/');
-
-
-    });
-
     //api to test jwt authentication
-    app.post('/api/jwtTest', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/jwtTest', cookieJwtAuth, async (req, res, next) => {
         var id = -1;
         var firstName = '';
         var lastName = '';

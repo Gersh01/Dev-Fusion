@@ -61,18 +61,26 @@ try {
 }
 
 //--------------------API--------------------
-
+//APIs for WEB
 //Users API (includes APIs for authentication etc.)
-var usersAPI = require("./api/users.js");
-usersAPI.setApp(app, client);
-
+var usersWebAPI = require("./api/web/users.js");
+usersWebAPI.setApp(app, client);
 //Projects API
-var projectsAPI = require("./api/projects.js");
-projectsAPI.setApp(app, client);
-
+var projectsWebAPI = require("./api/web/projects.js");
+projectsWebAPI.setApp(app, client);
 //Inbox API
-var inboxAPI = require("./api/inbox.js");
-inboxAPI.setApp(app, client);
+var inboxWebAPI = require("./api/web/inbox.js");
+inboxWebAPI.setApp(app, client);
+//APIs for Mobile
+//Users API (includes APIs for authentication etc.)
+var usersMobileAPI = require("./api/mobile/users.js");
+usersMobileAPI.setApp(app, client);
+//Projects API
+var projectsMobileAPI = require("./api/mobile/projects.js");
+projectsMobileAPI.setApp(app, client);
+//Inbox API
+var inboxMobileAPI = require("./api/mobile/inbox.js");
+inboxMobileAPI.setApp(app, client);
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static(path.join(__dirname, "./frontend/dist/")));
