@@ -7,7 +7,6 @@ const getProjects = async (queryConfig) => {
 		queryConfig,
 		{ withCredentials: true }
 	);
-
 	return response.data;
 };
 
@@ -47,7 +46,6 @@ const getProfileProjects = async (queryConfig) => {
 		queryConfig,
 		{ withCredentials: true }
 	);
-	console.log(response.data);
 	return response.data;
 };
 

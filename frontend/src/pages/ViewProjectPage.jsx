@@ -28,7 +28,6 @@ const ViewProjectPage = () => {
     const deleteShowModal = useSelector(
         (state) => state.application.showDeleteModal
     );
-    console.log(deleteShowModal);
     let rolesAvailable = [];
 
     if (projectData === null) {
