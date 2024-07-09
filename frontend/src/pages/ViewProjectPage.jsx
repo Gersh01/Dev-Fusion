@@ -1,8 +1,8 @@
 import { Fragment } from "react";
 import {
-	MdArrowLeft,
-	MdPerson,
-	MdOutlineAccessTimeFilled,
+    MdArrowLeft,
+    MdPerson,
+    MdOutlineAccessTimeFilled,
 } from "react-icons/md";
 import Divider from "../components/reusable/Divider";
 import Bubble from "../components/reusable/Bubble";
@@ -13,203 +13,217 @@ import ApplicationModalView from "../components/application/ApplicationModalView
 import { useSelector } from "react-redux";
 import UserViews from "../components/view/UserViews";
 import DeleteProjectModal from "../components/view/DeleteProjectModal";
-import { showDeleteModal } from "../store/slices/applicationSlice";
+import {
+    showDeleteModal,
+    showLeaveModal,
+} from "../store/slices/applicationSlice";
+import LeaveProjectModal from "../components/view/LeaveProjectModal";
 
 const ViewProjectPage = () => {
-	const projectData = useLoaderData().projects;
-	const applications = useLoaderData().apps;
-	const navigate = useNavigate();
-	const showModal = useSelector((state) => state.application.showModal);
-	const userId = useSelector((state) => state.user.id);
-	const username = useSelector((state) => state.user.username);
-	const deleteShowModal = useSelector(
-		(state) => state.application.showDeleteModal
-	);
-	let rolesAvailable = [];
+    const projectData = useLoaderData().projects;
+    const applications = useLoaderData().apps;
+    const navigate = useNavigate();
+    const showModal = useSelector((state) => state.application.showModal);
+    const userId = useSelector((state) => state.user.id);
+    const username = useSelector((state) => state.user.username);
+    const deleteShowModal = useSelector(
+        (state) => state.application.showDeleteModal
+    );
+    const leaveShowModal = useSelector(
+        (state) => state.application.showLeaveModal
+    );
 
-	const numTotalPositions = 9;
-	const {
-		title,
-		projectStartDate,
-		deadline,
-		description,
-		technologies,
-		communications,
-		roles,
-		teamMembers,
-	} = projectData;
-	const numDaysTilStart = Math.floor(
-		(new Date(projectStartDate) - new Date()) / 1000 / 60 / 60 / 24 + 1
-	);
-	const numDaysTilEnd = Math.floor(
-		(new Date(deadline) - new Date()) / 1000 / 60 / 60 / 24 + 1
-	);
+    let rolesAvailable = [];
 
-	let dateMessage = "";
+    const numTotalPositions = 9;
+    const {
+        title,
+        projectStartDate,
+        deadline,
+        description,
+        technologies,
+        communications,
+        roles,
+        teamMembers,
+    } = projectData;
+    const numDaysTilStart = Math.floor(
+        (new Date(projectStartDate) - new Date()) / 1000 / 60 / 60 / 24 + 1
+    );
+    const numDaysTilEnd = Math.floor(
+        (new Date(deadline) - new Date()) / 1000 / 60 / 60 / 24 + 1
+    );
 
-	if (numDaysTilStart > 0) {
-		if (numDaysTilStart === 1) {
-			dateMessage = `${numDaysTilStart} day until project begins`;
-		} else {
-			dateMessage = `${numDaysTilStart} days until project begins`;
-		}
-	} else {
-		if (numDaysTilEnd === 1) {
-			dateMessage = `due in ${numDaysTilEnd} day`;
-		} else {
-			dateMessage = `due in ${numDaysTilEnd} days`;
-		}
-	}
+    let dateMessage = "";
 
-	const renderedTechnologyBubbles = technologies?.map((technology) => {
-		return <Bubble key={technology} text={technology} />;
-	});
+    if (numDaysTilStart > 0) {
+        if (numDaysTilStart === 1) {
+            dateMessage = `${numDaysTilStart} day until project begins`;
+        } else {
+            dateMessage = `${numDaysTilStart} days until project begins`;
+        }
+    } else {
+        if (numDaysTilEnd === 1) {
+            dateMessage = `due in ${numDaysTilEnd} day`;
+        } else {
+            dateMessage = `due in ${numDaysTilEnd} days`;
+        }
+    }
 
-	const renderedRolesRequirementBubbles = roles?.map((role) => {
-		let roleCount = 0;
-		const members = [];
+    const renderedTechnologyBubbles = technologies?.map((technology) => {
+        return <Bubble key={technology} text={technology} />;
+    });
 
-		teamMembers.forEach((member) => {
-			if (member.role === role.role) {
-				roleCount += 1;
-				members.push({
-					userId: member.userId,
-					username: member.username,
-				});
-			}
-		});
+    const renderedRolesRequirementBubbles = roles?.map((role) => {
+        let roleCount = 0;
+        const members = [];
 
-		if (roleCount < role.count) {
-			rolesAvailable.push(role.role);
-		}
+        teamMembers.forEach((member) => {
+            if (member.role === role.role) {
+                roleCount += 1;
+                members.push({
+                    userId: member.userId,
+                    username: member.username,
+                });
+            }
+        });
 
-		return (
-			<RolesBubble
-				key={role.role}
-				role={role.role}
-				description={role.description}
-				count={role.count}
-				currentCount={roleCount}
-				members={members}
-			/>
-		);
-	});
+        if (roleCount < role.count) {
+            rolesAvailable.push(role.role);
+        }
 
-	const goBack = () => {
-		navigate("/discover");
-	};
+        return (
+            <RolesBubble
+                key={role.role}
+                role={role.role}
+                description={role.description}
+                count={role.count}
+                currentCount={roleCount}
+                members={members}
+            />
+        );
+    });
 
-	const userStatus = () => {
-		let mode = "newUser";
-		if (userId === projectData.ownerID) {
-			mode = "owner";
-		} else {
-			teamMembers.map((member) => {
-				if (member.userId === userId) {
-					if (member.role === "Project Manager") {
-						mode = "manager";
-					} else {
-						mode = "member";
-					}
-				}
-			});
-		}
-		return mode;
-	};
+    const goBack = () => {
+        navigate(-1);
+    };
 
-	const userView = () => {
-		const mode = userStatus();
-		let appAmount = applications.appliedUsers.length;
+    const userStatus = () => {
+        let mode = "newUser";
+        if (userId === projectData.ownerID) {
+            mode = "owner";
+        } else {
+            teamMembers.map((member) => {
+                if (member.userId === userId) {
+                    if (member.role === "Project Manager") {
+                        mode = "manager";
+                    } else {
+                        mode = "member";
+                    }
+                }
+            });
+        }
+        return mode;
+    };
 
-		return (
-			<UserViews
-				mode={mode}
-				projectData={projectData}
-				amount={appAmount}
-				username={username}
-			></UserViews>
-		);
-	};
+    const userView = () => {
+        const mode = userStatus();
+        let appAmount = applications.appliedUsers.length;
 
-	const renderedCommunicationsBubbles = communications?.map((comm) => {
-		const mode = userStatus();
-		return (
-			<Bubble
-				key={comm.name}
-				text={comm.name}
-				input={comm.link.length === 0 ? "None" : comm.link}
-				writable
-				readOnly
-				member={mode}
-			/>
-		);
-	});
+        return (
+            <UserViews
+                mode={mode}
+                projectData={projectData}
+                amount={appAmount}
+                username={username}
+            ></UserViews>
+        );
+    };
 
-	return (
-		<Fragment>
-			<button className="flex items-center self-start" onClick={goBack}>
-				<MdArrowLeft className="text-2xl" />
-				<p className="text-xl font-semibold">Back</p>
-			</button>
-			{/* <Divider /> */}
-			<p className="text-3xl font-semibold">{title}</p>
-			{/* different views depending on the user viewing the project*/}
-			<div className="flex flex-wrap justify-between">{userView()}</div>
-			{/* TIME */}
-			<div className="flex justify-between flex-wrap">
-				<div className="flex gap-1 items-center">
-					<p className="poppins text-white">{numTotalPositions}</p>
-					<MdPerson className="text-xl text-white" />
-				</div>
-				<div className="flex gap-1 items-center">
-					<MdOutlineAccessTimeFilled className="text-xl text-white" />
-					<p className="poppins text-white">{dateMessage}</p>
-				</div>
-			</div>
-			<Divider />
-			{/* DESCRIPTION */}
-			<div className="flex flex-col gap-2">
-				<p className="text-xl font-semibold">Description</p>
-				<p>{description}</p>
-			</div>
-			{/* POSITION REQUIREMENTS */}
-			<div className="flex flex-col gap-2">
-				<p className="text-xl font-semibold">Position Requirements</p>
-				<div className="flex flex-col gap-4">
-					{renderedRolesRequirementBubbles}
-				</div>
-			</div>
-			{/* TECHNOLOGIES */}
-			<div className="flex flex-col gap-2">
-				<p className="text-xl font-semibold">Technologies</p>
-				<div className="flex flex-wrap gap-4">
-					{renderedTechnologyBubbles}
-				</div>
-			</div>
-			{/* COMMUICATION */}
-			<div className="flex flex-col gap-2">
-				<p className="text-xl font-semibold">Communications</p>
-				<div className="flex flex-wrap gap-4">
-					{renderedCommunicationsBubbles}
-				</div>
-			</div>
-			{/* MODAL */}
-			<Modal show={showModal}>
-				<ApplicationModalView
-					project={projectData}
-					setShowModal={showModal}
-					roles={rolesAvailable}
-					show={showModal}
-				/>
-			</Modal>
-			<Modal show={deleteShowModal}>
-				<DeleteProjectModal
-					projectId={projectData._id}
-					show={showDeleteModal}
-				></DeleteProjectModal>
-			</Modal>
-		</Fragment>
-	);
+    const renderedCommunicationsBubbles = communications?.map((comm) => {
+        const mode = userStatus();
+        return (
+            <Bubble
+                key={comm.name}
+                text={comm.name}
+                input={comm.link.length === 0 ? "None" : comm.link}
+                writable
+                readOnly
+                member={mode}
+            />
+        );
+    });
+
+    return (
+        <Fragment>
+            <button className="flex items-center self-start" onClick={goBack}>
+                <MdArrowLeft className="text-2xl" />
+                <p className="text-xl font-semibold">Back</p>
+            </button>
+            {/* <Divider /> */}
+            <p className="text-3xl font-semibold">{title}</p>
+            {/* different views depending on the user viewing the project*/}
+            <div className="flex flex-wrap justify-between">{userView()}</div>
+            {/* TIME */}
+            <div className="flex justify-between flex-wrap">
+                <div className="flex gap-1 items-center">
+                    <p className="poppins text-white">{numTotalPositions}</p>
+                    <MdPerson className="text-xl text-white" />
+                </div>
+                <div className="flex gap-1 items-center">
+                    <MdOutlineAccessTimeFilled className="text-xl text-white" />
+                    <p className="poppins text-white">{dateMessage}</p>
+                </div>
+            </div>
+            <Divider />
+            {/* DESCRIPTION */}
+            <div className="flex flex-col gap-2">
+                <p className="text-xl font-semibold">Description</p>
+                <p>{description}</p>
+            </div>
+            {/* POSITION REQUIREMENTS */}
+            <div className="flex flex-col gap-2">
+                <p className="text-xl font-semibold">Position Requirements</p>
+                <div className="flex flex-col gap-4">
+                    {renderedRolesRequirementBubbles}
+                </div>
+            </div>
+            {/* TECHNOLOGIES */}
+            <div className="flex flex-col gap-2">
+                <p className="text-xl font-semibold">Technologies</p>
+                <div className="flex flex-wrap gap-4">
+                    {renderedTechnologyBubbles}
+                </div>
+            </div>
+            {/* COMMUICATION */}
+            <div className="flex flex-col gap-2">
+                <p className="text-xl font-semibold">Communications</p>
+                <div className="flex flex-wrap gap-4">
+                    {renderedCommunicationsBubbles}
+                </div>
+            </div>
+            {/* MODAL */}
+            <Modal show={showModal}>
+                <ApplicationModalView
+                    project={projectData}
+                    setShowModal={showModal}
+                    roles={rolesAvailable}
+                    show={showModal}
+                />
+            </Modal>
+            <Modal show={deleteShowModal}>
+                <DeleteProjectModal
+                    projectId={projectData._id}
+                    show={showDeleteModal}
+                ></DeleteProjectModal>
+            </Modal>
+            <Modal show={leaveShowModal}>
+                <LeaveProjectModal
+                    projectId={projectData._id}
+                    show={showLeaveModal}
+                ></LeaveProjectModal>
+            </Modal>
+        </Fragment>
+    );
 };
 
 export default ViewProjectPage;

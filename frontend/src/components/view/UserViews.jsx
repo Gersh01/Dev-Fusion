@@ -6,8 +6,8 @@ import { useDispatch } from "react-redux";
 import {
     showApplicationModal,
     showDeleteModal,
+    showLeaveModal,
 } from "../../store/slices/applicationSlice";
-import { userLeavingProject } from "../../pages/loaders/projectLoader";
 import axios from "axios";
 import { apiDomain } from "../../utils/utility";
 
@@ -25,9 +25,7 @@ const UserViews = ({ mode, projectData, amount, username }) => {
     };
 
     const leaveProject = () => {
-        const payload = { projectId: projectData._id, username: username };
-        console.log(payload);
-        userLeavingProject(payload);
+        dispatch(showLeaveModal(true));
     };
 
     const removeProject = () => {
@@ -94,7 +92,7 @@ const UserViews = ({ mode, projectData, amount, username }) => {
                         Delete
                     </Button>
                 ) : null}
-                {mode === "member" ? (
+                {mode === "member" || mode === "manager" ? (
                     <Button mode="danger" onClick={leaveProject}>
                         Leave
                     </Button>
