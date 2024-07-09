@@ -19,12 +19,10 @@ const ProjectsPage = () => {
 	const projectsContainerRef = useRef();
 
 	useEffect(() => {
-		setEndOfSearch(false);
-	}, [location.pathname]);
-
-	useEffect(() => {
+		setProjects([]);
 		setProjects(retrievedProjects);
-	}, [retrievedProjects]);
+		setEndOfSearch(false);
+	}, [location.pathname, retrievedProjects]);
 
 	// * Lazy loading more projects
 	const retrieveMoreProjects = useCallback(async () => {
@@ -55,7 +53,6 @@ const ProjectsPage = () => {
 
 		setProjects([...projects, ...newProjects]);
 
-		console.log(newProjects.length);
 		if (newProjects.length === 0) {
 			setEndOfSearch(true);
 		}

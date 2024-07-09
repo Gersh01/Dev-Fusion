@@ -1,8 +1,10 @@
 import { Fragment, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { santizeProject } from "../utils/sanitation";
-import { validateProject } from "../utils/validations";
+import {
+	validateEditProjectStartDate,
+	validateProject,
+} from "../utils/validations";
 import axios from "axios";
 import { apiDomain } from "../utils/utility";
 import Divider from "../components/reusable/Divider";
@@ -31,6 +33,10 @@ const EditProjectPage = () => {
 	const [showModal, setShowModal] = useState(false);
 
 	const navigate = useNavigate();
+
+	const oldStartDate = projectData.projectStartDate;
+
+	console.log("OLD: " + oldStartDate);
 
 	useEffect(() => {
 		const { title, description } = projectData;
@@ -69,7 +75,7 @@ const EditProjectPage = () => {
 	}, [projectData]);
 
 	// * Called when publishing a project
-	const onPublish = () => {
+	const publishChanges = () => {
 		const rolesToSend = roles.map((role) => {
 			return {
 				role: role.name,
@@ -103,7 +109,11 @@ const EditProjectPage = () => {
 		// * Sanitize input (Remove redundant white space...)
 		santizeProject(editedProject);
 
-		const validationErrors = validateProject(editedProject);
+		const validationErrors = validateProject(editedProject, "edit");
+		validationErrors.startDate = validateEditProjectStartDate(
+			editedProject,
+			oldStartDate
+		).startDate;
 		let hasValidationErrors = false;
 		// * Validate input
 		setErrors(validationErrors);
@@ -117,9 +127,12 @@ const EditProjectPage = () => {
 
 		if (hasValidationErrors === false) {
 			setShowModal(true);
-			console.log(editedProject);
 			editProject(editedProject);
 		}
+	};
+
+	const discardChanges = () => {
+		navigate(`/projects/${projectData._id}`);
 	};
 
 	// * Make API call to create the project
@@ -230,11 +243,11 @@ const EditProjectPage = () => {
 				/>
 				<div className="grid grid-cols-2 gap-4">
 					{/* Publish */}
-					<Button large onClick={onPublish}>
+					<Button large onClick={publishChanges}>
 						Publish
 					</Button>
 					{/* Publish */}
-					<Button large onClick={onPublish} mode="danger">
+					<Button large onClick={discardChanges} mode="danger">
 						Discard
 					</Button>
 				</div>

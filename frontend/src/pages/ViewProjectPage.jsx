@@ -1,11 +1,10 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import {
     MdArrowLeft,
     MdPerson,
     MdOutlineAccessTimeFilled,
 } from "react-icons/md";
 import Divider from "../components/reusable/Divider";
-import Button from "../components/reusable/Button";
 import Bubble from "../components/reusable/Bubble";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import RolesBubble from "../components/view/RolesBubble";
@@ -13,20 +12,29 @@ import Modal from "../components/reusable/Modal";
 import ApplicationModalView from "../components/application/ApplicationModalView";
 import { useSelector } from "react-redux";
 import UserViews from "../components/view/UserViews";
-import { getApplications } from "./loaders/applicationLoader";
+import DeleteProjectModal from "../components/view/DeleteProjectModal";
+import {
+    showDeleteModal,
+    showLeaveModal,
+} from "../store/slices/applicationSlice";
+import LeaveProjectModal from "../components/view/LeaveProjectModal";
 
 const ViewProjectPage = () => {
-    const projectData = useLoaderData();
+    const projectData = useLoaderData().projects;
+    const applications = useLoaderData().apps;
     const navigate = useNavigate();
     const showModal = useSelector((state) => state.application.showModal);
-    const roleSelected = useSelector((state) => state.application.role);
     const userId = useSelector((state) => state.user.id);
-    const [sent, setSent] = useState(false);
+    const username = useSelector((state) => state.user.username);
+    const deleteShowModal = useSelector(
+        (state) => state.application.showDeleteModal
+    );
+    const leaveShowModal = useSelector(
+        (state) => state.application.showLeaveModal
+    );
+
     let rolesAvailable = [];
 
-    if (projectData === null) {
-        return null;
-    }
     const numTotalPositions = 9;
     const {
         title,
@@ -95,6 +103,10 @@ const ViewProjectPage = () => {
         );
     });
 
+    const goBack = () => {
+        navigate(-1);
+    };
+
     const userStatus = () => {
         let mode = "newUser";
         if (userId === projectData.ownerID) {
@@ -114,13 +126,15 @@ const ViewProjectPage = () => {
     };
 
     const userView = () => {
-        const appAmount = getApplications?.(projectData._id);
         const mode = userStatus();
+        let appAmount = applications.appliedUsers.length;
+
         return (
             <UserViews
                 mode={mode}
                 projectData={projectData}
-                amount={appAmount.length}
+                amount={appAmount}
+                username={username}
             ></UserViews>
         );
     };
@@ -141,17 +155,13 @@ const ViewProjectPage = () => {
 
     return (
         <Fragment>
-            <button
-                className="flex items-center self-start"
-                onClick={() => {
-                    navigate(-1);
-                }}
-            >
+            <button className="flex items-center self-start" onClick={goBack}>
                 <MdArrowLeft className="text-2xl" />
                 <p className="text-xl font-semibold">Back</p>
             </button>
             {/* <Divider /> */}
             <p className="text-3xl font-semibold">{title}</p>
+            {/* different views depending on the user viewing the project*/}
             <div className="flex flex-wrap justify-between">{userView()}</div>
             {/* TIME */}
             <div className="flex justify-between flex-wrap">
@@ -199,6 +209,18 @@ const ViewProjectPage = () => {
                     roles={rolesAvailable}
                     show={showModal}
                 />
+            </Modal>
+            <Modal show={deleteShowModal}>
+                <DeleteProjectModal
+                    projectId={projectData._id}
+                    show={showDeleteModal}
+                ></DeleteProjectModal>
+            </Modal>
+            <Modal show={leaveShowModal}>
+                <LeaveProjectModal
+                    projectId={projectData._id}
+                    show={showLeaveModal}
+                ></LeaveProjectModal>
             </Modal>
         </Fragment>
     );

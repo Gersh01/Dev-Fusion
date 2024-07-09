@@ -2,7 +2,7 @@ import { getTechnology } from "../../utils/utility";
 import SelectionSearchField from "../reusable/SelectionSearchField";
 import Bubble from "../reusable/Bubble";
 
-const CreateTechnologiesPanel = ({ techs, setTechs, errors, onFocus }) => {
+const CreateTechnologiesPanel = ({ techs, setTechs, errors, clearErrors }) => {
 	const onRemove = (TechNameToRemove) => {
 		const updatedBubbles = techs.filter((bubble) => {
 			return bubble.name !== TechNameToRemove;
@@ -62,7 +62,7 @@ const CreateTechnologiesPanel = ({ techs, setTechs, errors, onFocus }) => {
 					<SelectionSearchField
 						selectionFunc={getTechnology}
 						onAdd={addNewTechnology}
-						onFocus={onFocus}
+						onFocus={clearErrors}
 					/>
 				</div>
 				<div className={`flex gap-2 flex-wrap`}>

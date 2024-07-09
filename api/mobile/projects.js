@@ -21,7 +21,7 @@ async function search(client, req, res, type) {
 
     const initial = Boolean(req.body.initial);
 
-    if (projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"})
+    if (projectId.length != 24) return res.status(400).json({newToken: req.token, error: "projectId must be 24 characters"})
     
     // req.username
     let user;
@@ -83,12 +83,21 @@ async function search(client, req, res, type) {
 
     } else if (type == "joined") {
       pipeline.push({
+
         $match: {
-          'teamMembers.username': {
-            $regex: `${user.username}`,
-            $options: 'i'
-          }
+          
+          $and: [
+            {ownerID: {$ne: new ObjectId(user._id.toString())}},
+            {
+              'teamMembers.username': {
+                $regex: `${user.username}`,
+                $options: 'i'
+              }
+            }
+          ]
+
         }
+
       })
     } else if (type == "owned-joined") {
         pipeline.push({
@@ -271,7 +280,7 @@ async function search(client, req, res, type) {
 
     // display first X data
     pipeline.push({
-      $limit: count
+      $limit: parseInt(count)
     })
 
     // console.log("GOT MY SEARCH RESULTS");
@@ -280,17 +289,17 @@ async function search(client, req, res, type) {
 
     results = await db.collection("Projects").aggregate(pipeline).toArray()
     // console.log(results)
-    return res.status(200).json(results)
+    return res.status(200).json({newToken: req.token, results})
 
   } catch(e) {
       console.log(e)
 
-      return res.status(500).json(e)
+      return res.status(500).json({newToken: req.token, e})
   }
 }
 
 const cookieJwtAuth = (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.body.token;
   try {
       const payload = jwt.verify(token, process.env.SECRET_KEY);
       var username = payload.username;
@@ -305,20 +314,16 @@ const cookieJwtAuth = (req, res, next) => {
       else {
           newToken = jwt.sign(newPayload, process.env.SECRET_KEY, { expiresIn: "1h" });
       }
-      res.cookie("token", newToken, {
-          httpOnly: true,
-          path: '/'
-      });
+      req.token = newToken;
       next();
   } catch (e) {
-      res.clearCookie("token");
       return res.status(403).json({ error: "token is not valid" });
   }
 }
 
 exports.setApp = function (app, client) {
 
-    app.get('/api/project/:projectId', async (req, res, next) => {
+    app.get('/api/mobile/project/:projectId', cookieJwtAuth, async (req, res, next) => {
 
       try {
 
@@ -326,25 +331,25 @@ exports.setApp = function (app, client) {
   
         let id = req.params.projectId
 
-        if (id.length != 24) return res.status(400).json({error: "projectId must be 24 characters"})
+        if (id.length != 24) return res.status(400).json({newToken: req.token, error: "projectId must be 24 characters"})
   
         let project = await db.collection("Projects").findOne({ _id: new ObjectId(id) })
 
         if (project == null) {
-          return res.status(404).json({"error": "Project ID does not exist"})
+          return res.status(404).json({newToken: req.token, "error": "Project ID does not exist"})
         }
   
-        return res.status(200).json(project)
+        return res.status(200).json({newToken: req.token, project})
 
       } catch (e) {
-        return res.status(500).json(e)
+        return res.status(500).json({newToken: req.token, e})
       }
 
 
     })
     
     // create a project
-    app.post('/api/project', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/project', cookieJwtAuth, async (req, res, next) => {
 
 
       
@@ -405,21 +410,21 @@ exports.setApp = function (app, client) {
           let ret = await db.collection("Projects").insertOne(project);
 
 
-          return res.status(200).json({"projectId": ret.insertedId.toString()});
+          return res.status(200).json({newToken: req.token, "projectId": ret.insertedId.toString()});
 
         } catch (e) {
             error = e.toString();
-            let ret = {error: error};
+            let ret = {newToken: req.token, error: error};
             return res.status(500).json(ret);
         }
     })
 
     //edit teamMembers API
-    app.put('/api/project/team_members', cookieJwtAuth, async (req, res, next) => {
+    app.put('/api/mobile/project/team_members', cookieJwtAuth, async (req, res, next) => {
       var projectId = req.body.projectId;
       var teamMembers = req.body.teamMembers;
-      if(projectId.length != 24) return res.status(400).json({error: "projectId must be 24 characters"});
-      if(teamMembers == null) return res.status(400).json({error: "teamMembers cannot be null"});
+      if(projectId.length != 24) return res.status(400).json({newToken: req.token, error: "projectId must be 24 characters"});
+      if(teamMembers == null) return res.status(400).json({newToken: req.token, error: "teamMembers cannot be null"});
   
   
       const nid = new ObjectId(projectId);
@@ -430,10 +435,10 @@ exports.setApp = function (app, client) {
       try{
           db = client.db('DevFusion');
           resultFind = await db.collection('Projects').findOne({_id: nid});
-          if(resultFind == null || resultFind == undefined) return res.status(404).json({error: "Project not found"});
+          if(resultFind == null || resultFind == undefined) return res.status(404).json({newToken: req.token, error: "Project not found"});
       } catch (e) {
           error = e.toString;
-          var ret = { error: error };
+          var ret = { newToken: req.token, error: error };
           return res.status(500).json(ret);
       }
   
@@ -444,16 +449,16 @@ exports.setApp = function (app, client) {
       try {
           db = client.db('DevFusion');
           resultPut = await db.collection('Projects').updateOne(query, newValues);
-          return res.status(200).json({error:error});
+          return res.status(200).json({newToken: req.token, error:error});
       } catch (e) {
           error = e.toString;
-          var ret = { error: error };
+          var ret = { newToken: req.token, error: error };
           return res.status(500).json(ret);
       }
   
     });
     
-    app.post('/api/discover', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/discover', cookieJwtAuth, async (req, res, next) => {
         // const searchBy = req.query.searchBy;
         // const query = req.query.query;
         // const count = req.query.count;
@@ -486,22 +491,22 @@ exports.setApp = function (app, client) {
 
     })
 
-    app.post('/api/owned-projects', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/owned-projects', cookieJwtAuth, async (req, res, next) => {
 
       return search(client, req, res, "owned");
     })
 
-    app.post('/api/joined-projects', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/joined-projects', cookieJwtAuth, async (req, res, next) => {
 
       return search(client, req, res, "joined");
     })
 
-    app.post('/api/owned-joined', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/owned-joined', cookieJwtAuth, async (req, res, next) => {
 
       return search(client, req, res, "owned-joined");
     })
 
-    app.put('/api/edit-project', cookieJwtAuth, async (req, res, next) => {
+    app.put('/api/mobile/edit-project', cookieJwtAuth, async (req, res, next) => {
 
       try {
         let username = req.username;
@@ -513,16 +518,25 @@ exports.setApp = function (app, client) {
         const projectObj = await db.collection("Projects").findOne({ _id: new ObjectId(req.body.projectId) })
 
 
-        if (user._id.toString() !== projectObj.ownerID.toString()) {
-          return res.status(400).json({"error": "This user can't edit the project since the user is not the owner"})
+        let isPM = false
+
+        for (let i = 0; i < projectObj.teamMembers.length; i++) {
+          if (projectObj.teamMembers[i].username == user.username && projectObj.teamMembers[i].role == "Project Manager") {
+            isPM = true
+            break
+          }
+        }
+
+
+        // make sure that the user is either the owner or the project manager
+        if (user._id.toString() !== projectObj.ownerID.toString() && !isPM) {
+          return res.status(400).json({"error": "This user can't edit the project since the user is not the owner or a project manager"})
         }
 
   
         let isOpen = Boolean(req.body.isOpen);
         let isDone = Boolean(req.body.isDone);
         let isStarted = Boolean(req.body.isStarted);
-
-        let ownerID = user._id;
 
         let deadline = new Date(req.body.deadline);
         let projectStartDate = new Date(req.body.projectStartDate);
@@ -557,16 +571,16 @@ exports.setApp = function (app, client) {
           }
         )
         
-        return res.sendStatus(200);
+        return res.status(200).json({newToken: req.token});
           
       } catch (e) {
           error = e.toString();
           let ret = {error: error};
-          return res.status(500).json(ret);
+          return res.status(500).json({newToken: req.token, ret});
       }
     })
 
-    app.delete('/api/project/:projectId', cookieJwtAuth, async (req, res, next) => {
+    app.delete('/api/mobile/project/:projectId', cookieJwtAuth, async (req, res, next) => {
 
       try {
   
@@ -582,22 +596,22 @@ exports.setApp = function (app, client) {
         // console.log(user._id, project.ownerID)
         // console.log("project: ", project)
         if (user._id.toString() !== project.ownerID.toString()) {
-          return res.status(400).json({"error": "This user cannot delete the project since the user is not the owner"})
+          return res.status(400).json({newToken: req.token, "error": "This user cannot delete the project since the user is not the owner"})
         }
   
         db.collection("Projects").deleteOne({_id: project._id })
   
   
   
-        return res.sendStatus(200);
+        return res.status(200).json({newToken: req.token});
 
       } catch(e) {
         
-        return res.status(500).json(e)
+        return res.status(500).json({newToken: req.token, e})
       }
     })
 
-    app.post('/api/leave/project', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/project/leave', cookieJwtAuth, async (req, res, next) => {
 
 
       try {
@@ -618,20 +632,17 @@ exports.setApp = function (app, client) {
         for (let i = 0; i < teamMembers.length; i++) {
           
           
-          let role = teamMembers[i]
-  
-          if (role.startsWith(`${username}:`)) {
-  
+          if (teamMembers[i].username == username) {
             newTeamMembers = teamMembers.slice(0, i).concat(teamMembers.slice(i+1, teamMembers.length + 1))
             break
-  
           }
+
         }
   
         // console.log(newTeamMembers)
   
         if (newTeamMembers == null) {
-          return res.status(400).json({"error": "can not leave project since member was not found in the project"})
+          return res.status(400).json({newToken: req.token, "error": "can not leave project since member was not found in the project"})
         }
   
         await db.collection('Projects').updateOne(
@@ -644,10 +655,10 @@ exports.setApp = function (app, client) {
         )
   
   
-        return res.sendStatus(200)
+        return res.status(200).json({newToken: req.token})
 
       } catch (e) {
-        return res.status(500).json(e)
+        return res.status(500).json({newToken: req.token, e})
       }
 
 

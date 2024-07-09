@@ -7,7 +7,6 @@ const getProjects = async (queryConfig) => {
 		queryConfig,
 		{ withCredentials: true }
 	);
-
 	return response.data;
 };
 
@@ -47,12 +46,10 @@ const getProfileProjects = async (queryConfig) => {
 		queryConfig,
 		{ withCredentials: true }
 	);
-	console.log(response.data);
 	return response.data;
 };
 
 const updateTeamMembers = async(payload)=>{
-	console.log(payload)
 	try{
 		const response = await axios.put(apiDomain+"/api/project/team_members", payload,{withCredentials:true})
 		if(response){
@@ -64,6 +61,20 @@ const updateTeamMembers = async(payload)=>{
 }
 
 
+const userLeavingProject = async(payload)=>{
+	try{
+		const response = await axios.post(apiDomain+"/api/leave/project",payload,{withCredentials:true})
+		if(response){
+			console.log(response)
+			console.log("User has left the project")
+		}
+	} catch(err){
+		console.log(`Error: ${err.message}`)
+	}
+}
+
+
+
 export {
 	getProjects,
 	getProjectById,
@@ -71,4 +82,5 @@ export {
 	getJoinedProjects,
 	getProfileProjects,
 	updateTeamMembers,
+	userLeavingProject,
 };

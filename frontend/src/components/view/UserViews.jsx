@@ -3,11 +3,16 @@ import Button from "../reusable/Button";
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { showApplicationModal } from "../../store/slices/applicationSlice";
+import {
+    showApplicationModal,
+    showDeleteModal,
+    showLeaveModal,
+} from "../../store/slices/applicationSlice";
+import axios from "axios";
+import { apiDomain } from "../../utils/utility";
 
-const UserViews = ({ mode, projectData, appAmount }) => {
+const UserViews = ({ mode, projectData, amount, username }) => {
     const dispatch = useDispatch();
-    console.log("Debug: The mode being set: " + mode);
     const navigate = useNavigate();
 
     const editProject = () => {
@@ -19,12 +24,54 @@ const UserViews = ({ mode, projectData, appAmount }) => {
         dispatch(showApplicationModal(true));
     };
 
+    const leaveProject = () => {
+        dispatch(showLeaveModal(true));
+    };
+
+    const removeProject = () => {
+        console.log("ShowDeletModal");
+        dispatch(showDeleteModal(true));
+    };
+
+    const startProjectNow = async () => {
+        let date = new Date();
+        let dateYMD = `${date.getFullYear()}-${
+            date.getMonth() + 1
+        }-${date.getDate()}`;
+
+        let startProject = {
+            projectId: projectData._id,
+            title: projectData.title,
+            projectStartDate: dateYMD,
+            description: projectData.description,
+            deadline: projectData.deadline,
+            roles: projectData.roles,
+            technologies: projectData.technologies,
+            communications: projectData.communications,
+            isStarted: true,
+        };
+
+        try {
+            await axios.put(apiDomain + "/api/edit-project", startProject, {
+                withCredentials: true,
+            });
+            navigate(0);
+        } catch (err) {
+            console.log(`Error: ${err.message}`);
+        }
+    };
+
     return (
         <Fragment>
             <div className="flex gap-2">
                 {mode === "owner" || mode === "manager" ? (
                     <Fragment>
-                        <Button mode="safe">Begin</Button>
+                        {projectData.isStarted === false && (
+                            <Button mode="safe" onClick={startProjectNow}>
+                                Begin
+                            </Button>
+                        )}
+
                         <Button
                             mode="secondary"
                             onClick={() =>
@@ -41,10 +88,14 @@ const UserViews = ({ mode, projectData, appAmount }) => {
                 ) : null}
 
                 {mode === "owner" ? (
-                    <Button mode="danger">Delete</Button>
+                    <Button mode="danger" onClick={removeProject}>
+                        Delete
+                    </Button>
                 ) : null}
-                {mode === "member" ? (
-                    <Button mode="danger">Leave</Button>
+                {mode === "member" || mode === "manager" ? (
+                    <Button mode="danger" onClick={leaveProject}>
+                        Leave
+                    </Button>
                 ) : null}
                 {mode === "newUser" ? (
                     <Button mode="safe" onClick={toggleModal}>
@@ -62,8 +113,8 @@ const UserViews = ({ mode, projectData, appAmount }) => {
                         >
                             <MdMailOutline className="size-8" />
                         </button>
-                        {appAmount > 0 ? (
-                            <p className="flex text-2xl">({appAmount})</p>
+                        {amount > 0 ? (
+                            <p className="flex text-2xl">({amount})</p>
                         ) : null}
                     </Fragment>
                 ) : null}
