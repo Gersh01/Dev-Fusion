@@ -538,8 +538,6 @@ exports.setApp = function (app, client) {
         let isDone = Boolean(req.body.isDone);
         let isStarted = Boolean(req.body.isStarted);
 
-        let ownerID = user._id;
-
         let deadline = new Date(req.body.deadline);
         let projectStartDate = new Date(req.body.projectStartDate);
         let roles = req.body.roles;
