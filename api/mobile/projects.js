@@ -83,12 +83,21 @@ async function search(client, req, res, type) {
 
     } else if (type == "joined") {
       pipeline.push({
+
         $match: {
-          'teamMembers.username': {
-            $regex: `${user.username}`,
-            $options: 'i'
-          }
+          
+          $and: [
+            {ownerID: {$ne: new ObjectId(user._id.toString())}},
+            {
+              'teamMembers.username': {
+                $regex: `${user.username}`,
+                $options: 'i'
+              }
+            }
+          ]
+
         }
+
       })
     } else if (type == "owned-joined") {
         pipeline.push({
@@ -271,7 +280,7 @@ async function search(client, req, res, type) {
 
     // display first X data
     pipeline.push({
-      $limit: count
+      $limit: parseInt(count)
     })
 
     // console.log("GOT MY SEARCH RESULTS");
