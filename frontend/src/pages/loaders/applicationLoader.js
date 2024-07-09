@@ -12,9 +12,7 @@ const getApplications = async (projectId) => {
 		if (response) {
 			return response.data;
 		}
-		console.log(response.data);
 	} catch (err) {
-		console.log(err.response);
 		console.log(`Error: ${err.message}`);
 	}
 	return null;
