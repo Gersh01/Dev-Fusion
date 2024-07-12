@@ -11,9 +11,12 @@ import {
 import axios from "axios";
 import { apiDomain } from "../../utils/utility";
 
-const UserViews = ({ mode, projectData, amount, username }) => {
+const UserViews = ({ userViewInfo, projectData, amount }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    let mode = userViewInfo.mode;
+    let canApply = userViewInfo.canApply;
 
     const editProject = () => {
         navigate(`/projects/edit/${projectData._id}`);
@@ -65,7 +68,9 @@ const UserViews = ({ mode, projectData, amount, username }) => {
     return (
         <Fragment>
             <div className="flex gap-2">
-                {mode === "owner" || mode === "manager" ? (
+                {mode === "owner" ||
+                mode === "manager" ||
+                mode === "ownerapply" ? (
                     <Fragment>
                         {projectData.isStarted === false && (
                             <Button mode="safe" onClick={startProjectNow}>
@@ -88,7 +93,7 @@ const UserViews = ({ mode, projectData, amount, username }) => {
                     </Fragment>
                 ) : null}
 
-                {mode === "owner" ? (
+                {mode === "owner" || mode === "ownerapply" ? (
                     <Button mode="danger" onClick={removeProject}>
                         Delete
                     </Button>
@@ -98,14 +103,16 @@ const UserViews = ({ mode, projectData, amount, username }) => {
                         Leave
                     </Button>
                 ) : null}
-                {mode === "newUser" ? (
+                {(mode === "newUser" || mode === "ownerapply") && canApply ? (
                     <Button mode="safe" onClick={toggleModal}>
                         Apply
                     </Button>
                 ) : null}
             </div>
             <div className="flex">
-                {mode === "manager" || mode === "owner" ? (
+                {mode === "manager" ||
+                mode === "owner" ||
+                mode === "ownerapply" ? (
                     <Fragment>
                         <button
                             onClick={() =>

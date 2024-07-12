@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { applicationApply } from "../../pages/loaders/applicationLoader";
 import Button from "../reusable/Button";
 import { showApplicationModal } from "../../store/slices/applicationSlice";
+import { useNavigate } from "react-router-dom";
 
 const ApplicationModalView = ({ project, roles, setShowModal, show }) => {
     const [applicationDescription, setApplicationDescription] = useState("");
@@ -13,6 +14,7 @@ const ApplicationModalView = ({ project, roles, setShowModal, show }) => {
     const [appError, setAppError] = useState(false);
     const [role, setRole] = useState(roles.length === 0 ? "" : roles[0]);
     const [errorMessage, setErrorMessage] = useState("");
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -49,6 +51,7 @@ const ApplicationModalView = ({ project, roles, setShowModal, show }) => {
         // setRole("");
 
         dispatch(showApplicationModal(false));
+        navigate(0);
     };
 
     const renderedRoleOptions = roles.map((role) => {
