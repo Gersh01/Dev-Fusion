@@ -40,6 +40,7 @@ const UserViews = ({ mode, projectData, amount, username }) => {
         }-${date.getDate()}`;
 
         let startProject = {
+            // ownerID: projectData.ownerID,
             projectId: projectData._id,
             title: projectData.title,
             projectStartDate: dateYMD,
