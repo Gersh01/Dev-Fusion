@@ -109,20 +109,38 @@ const ViewProjectPage = () => {
 
     const userStatus = () => {
         let mode = "newUser";
+        let canApply = true;
+        let userViewInfo = {
+            mode: null,
+            canApply: null,
+        };
         if (userId === projectData.ownerID) {
-            mode = "owner";
-        } else {
-            teamMembers.map((member) => {
-                if (member.userId === userId) {
-                    if (member.role === "Project Manager") {
-                        mode = "manager";
-                    } else {
-                        mode = "member";
-                    }
-                }
-            });
+            mode = "ownerapply";
         }
-        return mode;
+        teamMembers.map((member) => {
+            if (member.userId === userId) {
+                if (
+                    member.role === "Project Manager" &&
+                    mode !== "ownerapply"
+                ) {
+                    mode = "manager";
+                } else if (mode === "ownerapply") {
+                    mode = "owner";
+                } else {
+                    mode = "member";
+                }
+            }
+        });
+
+        applications.appliedUsers.map((application) => {
+            if (application.userId === userId) {
+                canApply = false;
+            }
+        });
+        userViewInfo.mode = mode;
+        userViewInfo.canApply = canApply;
+
+        return userViewInfo;
     };
 
     const userView = () => {
@@ -131,7 +149,7 @@ const ViewProjectPage = () => {
 
         return (
             <UserViews
-                mode={mode}
+                userViewInfo={mode}
                 projectData={projectData}
                 amount={appAmount}
                 username={username}
