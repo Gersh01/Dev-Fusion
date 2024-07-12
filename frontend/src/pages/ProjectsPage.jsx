@@ -73,10 +73,7 @@ const ProjectsPage = () => {
 		window.addEventListener("scroll", handleScroll);
 
 		// * Load
-		if (
-			projectsContainerRef.current.clientHeight - 500 <
-			window.innerHeight
-		) {
+		if (projectsContainerRef.current.clientHeight < window.innerHeight) {
 			if (!endOfSearch) {
 				retrieveMoreProjects();
 			}
