@@ -10,7 +10,7 @@ const TextArea = ({ titleText, placeholder, errors, ...rest }) => {
 	});
 
 	return (
-		<div className="flex flex-col min-w-0">
+		<div className="flex flex-col min-w-0 drop-shadow-lg">
 			<div
 				className="flex flex-col p-2 gap-2 bg-gray-200 dark:bg-gray-900 rounded-md
 				text-black dark:text-white poppins min-w-0 min-h-0"

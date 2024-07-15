@@ -12,6 +12,7 @@ const SortBySelector = ({ sortBy, setSortBy }) => {
 				className="self-end w-36 bg-transparent rounded-md focus:outline-none
 				flex gap-2 items-center"
 				value={sortBy}
+				aria-label="Sort by selection dropdown"
 				onChange={(e) => {
 					setSortBy(e.target.value);
 				}}

@@ -189,6 +189,7 @@ const ProfilePage = () => {
 			<div className="flex min-w-[100px] gap-5">
 				<img
 					className="h-28 w-28 rounded-full"
+					alt="user profile picture"
 					src={displayProfilePic()}
 				></img>
 				<p className="flex items-center text-2xl md:text-4xl font-bold poppins text-wrap text-center ">
@@ -197,11 +198,11 @@ const ProfilePage = () => {
 			</div>
 			<div className="flex flex-wrap gap-8 py-4">
 				{/* Bio Field*/}
-				<div className="flex flex-col w-full h-80 p-4 rounded-2xl dark:bg-gray-900 bg-gray-50 lg:w-3/5 text-xl poppins">
+				<div className="flex flex-col w-full h-80 p-4 rounded-2xl bg-gray-200 dark:bg-gray-900 lg:w-3/5 text-xl poppins shadow-lg">
 					{renderedBioField}
 				</div>
 				{/*Technologies fields*/}
-				<div className="flex flex-col p-4 rounded-2xl h-80 dark:bg-gray-900 bg-gray-50 w-full lg:w-1/5 lg:grow poppins text-xl">
+				<div className="flex flex-col p-4 rounded-2xl h-80 bg-gray-200 dark:bg-gray-900 w-full lg:w-1/5 lg:grow poppins text-xl shadow-lg">
 					{renderedTechField}
 				</div>
 			</div>

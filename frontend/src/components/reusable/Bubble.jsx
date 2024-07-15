@@ -98,6 +98,7 @@ const Bubble = ({
 									data-testid="countable-button"
 									className="bg-gray-200 dark:bg-gray-700 w-6 rounded-md
 									flex justify-center items-center"
+									aria-label="add button"
 									onClick={() => {
 										incrementCount();
 										onFocus?.();
@@ -108,6 +109,7 @@ const Bubble = ({
 								<button
 									className="bg-gray-200 dark:bg-gray-700 w-6 rounded-md
 									flex justify-center items-center"
+									aria-label="minus button"
 									onClick={() => {
 										decrementCount();
 										onFocus?.();
@@ -122,7 +124,8 @@ const Bubble = ({
 							<button
 								data-testid="remove-button"
 								className="rounded-sm w-6 bg-transparent
-								flex justify-center items-center"
+								flex justify-center items-center text-white"
+								aria-label="remove button"
 								onClick={() => {
 									onRemove(text);
 									onFocus?.();
@@ -150,6 +153,7 @@ const Bubble = ({
 					<textarea
 						className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md 
 							focus:outline-none h-24 scroll-bar min-w-0"
+						aria-label="writable textarea"
 						value={input}
 						disabled={readOnly}
 						onChange={onType}
@@ -162,6 +166,7 @@ const Bubble = ({
 					<input
 						className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md 
 							focus:outline-none min-w-0"
+						aria-label="writable input"
 						value={input}
 						disabled={readOnly}
 						onChange={onType}

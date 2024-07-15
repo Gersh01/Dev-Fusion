@@ -28,15 +28,15 @@ const BioProfileFields = ({ type, title, info, privateView }) => {
 	};
 
 	const editStyles = !mode
-		? "bg-gray-50 dark:bg-gray-700 p-2 rounded-md"
-		: "";
+		? "bg-gray-300 dark:bg-gray-700 p-2 rounded-md"
+		: "bg-transparent";
 
 	return (
 		<div className="flex flex-col gap-2">
 			<div className="flex justify-between">
 				<span className="text-2xl font-semibold ">{title}</span>
 				{privateView && (
-					<button onClick={switchMode}>
+					<button onClick={switchMode} aria-label="edit/save button">
 						{mode ? (
 							<MdOutlineModeEdit className="text-2xl" />
 						) : (
@@ -46,8 +46,9 @@ const BioProfileFields = ({ type, title, info, privateView }) => {
 				)}
 			</div>
 			<textarea
-				className={`grow flex w-full min-h-60 max-h-60 bg-transparent text-base focus:outline-none 
+				className={`grow flex w-full min-h-60 max-h-60 text-base focus:outline-none 
 				${editStyles} scroll-bar`}
+				aria-label="user bio textarea"
 				role="textbox"
 				disabled={mode}
 				value={bio}
