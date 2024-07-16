@@ -5,6 +5,7 @@ import SearchField from "../components/reusable/SearchField";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { getProjects } from "./loaders/projectLoader";
 import SortBySelector from "../components/reusable/SortBySelector";
+import { useLazyLoading } from "../hooks/hooks";
 
 const DisocverPage = () => {
 	const [searchBy, setSearchBy] = useState("title");
@@ -13,9 +14,30 @@ const DisocverPage = () => {
 
 	const initialProjects = useLoaderData();
 	const [projects, setProjects] = useState(useLoaderData());
-	const [endOfSearch, setEndOfSearch] = useState(false);
 
-	const search = useCallback(async () => {
+	let isInitialLoading = useRef(false);
+
+	const projectsContainerRef = useRef();
+
+	const fetchMoreProjects = useCallback(async () => {
+		if (projects.length == 0) {
+			return [];
+		}
+
+		const newProjects = await getProjects({
+			searchBy: searchBy,
+			sortBy: sortBy,
+			query: query,
+			count: 4,
+			initial: false,
+			projectId: projects[projects.length - 1]._id,
+		});
+
+		return newProjects;
+	}, [projects, sortBy, query, searchBy]);
+
+	const initialSearch = useCallback(async () => {
+		isInitialLoading.current = true;
 		setProjects(
 			await getProjects({
 				searchBy: searchBy,
@@ -26,69 +48,29 @@ const DisocverPage = () => {
 				projectId: "000000000000000000000000",
 			})
 		);
+		isInitialLoading.current = false;
 	}, [query, searchBy, sortBy]);
+
+	const [endOfSearch, setEndOfSearch] = useLazyLoading(
+		projectsContainerRef,
+		fetchMoreProjects,
+		projects,
+		setProjects,
+		isInitialLoading
+	);
 
 	useEffect(() => {
 		setEndOfSearch(false);
-	}, [query, sortBy, search]);
+	}, [query, sortBy, searchBy, setEndOfSearch]);
 
 	useEffect(() => {
 		setProjects(initialProjects);
 	}, [initialProjects]);
 
 	useEffect(() => {
-		search();
-	}, [search]);
-
-	// * Lazy loading more projects
-	const retrieveMoreProjects = useCallback(async () => {
-		if (projects.length === 0) {
-			return;
-		}
-		const newProjects = await getProjects({
-			searchBy: searchBy,
-			sortBy: sortBy,
-			query: query,
-			count: 4,
-			initial: false,
-			projectId: projects[projects.length - 1]._id,
-		});
-
-		setProjects([...projects, ...newProjects]);
-
-		if (newProjects.length === 0) {
-			setEndOfSearch(true);
-		}
-	}, [projects, query, searchBy, sortBy]);
-
-	const handleScroll = useCallback(() => {
-		const bottom =
-			window.innerHeight + window.scrollY >= document.body.scrollHeight;
-
-		if (bottom) {
-			retrieveMoreProjects();
-		}
-	}, [retrieveMoreProjects]);
-
-	const projectsContainerRef = useRef();
-	useEffect(() => {
-		// * Adding scroll listener to window
-		window.addEventListener("scroll", handleScroll);
-
-		// * Load
-		if (
-			projectsContainerRef.current.clientHeight - 500 <=
-			window.innerHeight
-		) {
-			if (!endOfSearch) {
-				retrieveMoreProjects();
-			}
-		}
-		// console.log(projects);
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-		};
-	}, [endOfSearch, handleScroll, projects, retrieveMoreProjects]);
+		// setProjects([]);
+		initialSearch();
+	}, [initialSearch]);
 
 	const renderedProjectTiles = projects.map((project) => {
 		return <DiscoverProjectTile key={project._id} project={project} />;
@@ -106,7 +88,7 @@ const DisocverPage = () => {
 					setSearchBy={setSearchBy}
 					query={query}
 					setQuery={setQuery}
-					onSearch={search}
+					// onSearch={search}
 				/>
 			</div>
 			<div className="self-end">
