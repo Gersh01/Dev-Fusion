@@ -355,7 +355,7 @@ exports.setApp = function (app, client) {
     });
 
     //get user api +
-    app.get('/api/mobile/users/:userId', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/users/:userId', cookieJwtAuth, async (req, res, next) => {
         const userId = req.params.userId;
         var firstName = '';
         var lastName = '';
