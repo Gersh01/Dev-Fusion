@@ -49,31 +49,30 @@ const getProfileProjects = async (queryConfig) => {
 	return response.data;
 };
 
-const updateTeamMembers = async(payload)=>{
-	try{
-		const response = await axios.put(apiDomain+"/api/project/team_members", payload,{withCredentials:true})
-		if(response){
-			return response
+const updateTeamMembers = async (payload) => {
+	try {
+		const response = await axios.put(
+			apiDomain + "/api/project/team_members",
+			payload,
+			{ withCredentials: true }
+		);
+		if (response) {
+			return response;
 		}
-	}catch(err){
-		console.log(`Error: ${err.message}`)
+	} catch (err) {
+		console.log(`Error: ${err.message}`);
 	}
-}
+};
 
-
-const userLeavingProject = async(payload)=>{
-	try{
-		const response = await axios.post(apiDomain+"/api/leave/project",payload,{withCredentials:true})
-		if(response){
-			console.log(response)
-			console.log("User has left the project")
-		}
-	} catch(err){
-		console.log(`Error: ${err.message}`)
+const userLeavingProject = async (payload) => {
+	try {
+		await axios.post(apiDomain + "/api/leave/project", payload, {
+			withCredentials: true,
+		});
+	} catch (err) {
+		console.log(`Error: ${err.message}`);
 	}
-}
-
-
+};
 
 export {
 	getProjects,

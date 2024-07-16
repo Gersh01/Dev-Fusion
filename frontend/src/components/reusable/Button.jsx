@@ -9,13 +9,13 @@ import { twMerge } from "tailwind-merge";
 const Button = ({ children, large, mode, ...rest }) => {
 	const buttonStyles = twMerge(
 		classNames(
-			"px-2 py-1 bg-orange-400 dark:bg-violet-600 poppins text-white font-medium rounded-md",
+			"px-2 py-1 bg-orange-500 dark:bg-violet-600 poppins text-white font-medium rounded-md",
 			{
 				"px-3 py-1.5 text-lg font-semibold": large,
 				"bg-none bg-gray-500 dark:bg-gray-500": mode === "secondary",
 				"bg-none bg-white dark:bg-white text-black": mode === "white",
-				"bg-none bg-red-500 dark:bg-red-500": mode === "danger",
-				"bg-none bg-green-500 dark:bg-green-500": mode === "safe",
+				"bg-none bg-red-600 dark:bg-red-600": mode === "danger",
+				"bg-none bg-green-700 dark:bg-green-700": mode === "safe",
 			}
 		)
 	);

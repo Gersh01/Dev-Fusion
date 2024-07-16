@@ -24,7 +24,7 @@ const Input = ({
 	});
 
 	return (
-		<div className="flex flex-col">
+		<div className="flex flex-col drop-shadow-lg">
 			{/* Input */}
 			<div
 				className="flex flex-col p-2 gap-2 bg-gray-200 dark:bg-gray-900 rounded-md
@@ -32,11 +32,14 @@ const Input = ({
 			>
 				<div className="flex items-center gap-1.5 text-lg">
 					{icon}
-					<p data-testid="title-text" className="text-sm font-medium">{titleText}</p>
+					<p data-testid="title-text" className="text-sm font-medium">
+						{titleText}
+					</p>
 				</div>
 				<div className="flex gap-2 items-center">
 					<input
 						data-testid="input"
+						aria-label="input field"
 						className="grow poppins bg-transparent focus:outline-none text-base min-w-0 font-normal"
 						type={inputVisibility ? "password" : "text"}
 						placeholder={placeholder}

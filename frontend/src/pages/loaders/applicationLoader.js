@@ -19,7 +19,7 @@ const getApplications = async (projectId) => {
 };
 
 const applicationApply = async (payload) => {
-	await axios.post(apiDomain+ "/api/inbox/apply", payload, {
+	await axios.post(apiDomain + "/api/inbox/apply", payload, {
 		withCredentials: true,
 	});
 };

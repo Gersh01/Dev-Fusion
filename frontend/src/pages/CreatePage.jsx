@@ -79,7 +79,6 @@ const CreatePage = () => {
 		}
 
 		if (hasValidationErrors === false) {
-			console.log(newProject);
 			setShowModal(true);
 			createProject(newProject);
 		}
@@ -87,7 +86,6 @@ const CreatePage = () => {
 
 	// * Make API call to create the project
 	const createProject = async (project) => {
-		console.log("Creating project");
 		await axios.post(apiDomain + "/api/project", project, {
 			withCredentials: true,
 		});

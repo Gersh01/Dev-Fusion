@@ -8,6 +8,7 @@ import TechnologiesField from "../components/profile/TechnologiesField";
 import Button from "../components/reusable/Button";
 import { getProfileProjects } from "./loaders/projectLoader";
 import { MdArrowLeft } from "react-icons/md";
+import { useLazyLoading } from "../hooks/hooks";
 
 const ProfilePage = () => {
 	let res = useSelector((state) => state.user);
@@ -17,14 +18,15 @@ const ProfilePage = () => {
 	const loaderData = useLoaderData();
 	const [projects, setProjects] = useState(loaderData.projects);
 	const [usersProfile, setUsersProfile] = useState(loaderData.user);
-	const [endOfSearch, setEndOfSearch] = useState(false);
+
+	let isInitialLoading = useRef(true);
 
 	const projectsContainerRef = useRef();
 
 	// * Lazy loading more projects
-	const retrieveMoreProjects = useCallback(async () => {
+	const fetchMoreProjects = useCallback(async () => {
 		if (projects.length === 0) {
-			return;
+			return [];
 		}
 
 		let newProjects;
@@ -52,51 +54,26 @@ const ProfilePage = () => {
 			});
 		}
 
-		setProjects([...projects, ...newProjects]);
-
-		if (newProjects.length === 0) {
-			setEndOfSearch(true);
-		}
+		return newProjects;
 	}, [projects, usersProfile]);
 
-	// * Only lazy load when reaching end of projects
-	const handleScroll = useCallback(() => {
-		const bottom =
-			window.innerHeight + window.scrollY >= document.body.scrollHeight;
+	const [endOfSearch, setEndOfSearch] = useLazyLoading(
+		projectsContainerRef,
+		fetchMoreProjects,
+		projects,
+		setProjects,
+		isInitialLoading
+	);
 
-		if (bottom) {
-			retrieveMoreProjects();
-		}
-	}, [retrieveMoreProjects]);
+	useEffect(() => {
+		setEndOfSearch(false);
+	}, [loaderData, setEndOfSearch]);
 
 	useEffect(() => {
 		setUsersProfile(loaderData.user);
 		setProjects(loaderData.projects);
+		isInitialLoading.current = false;
 	}, [loaderData.user, loaderData.projects]);
-
-	useEffect(() => {
-		// * Adding scroll listener to window
-		window.addEventListener("scroll", handleScroll);
-
-		// * Load
-		if (
-			projectsContainerRef.current.clientHeight - 500 <=
-			window.innerHeight
-		) {
-			if (!endOfSearch) {
-				retrieveMoreProjects();
-			}
-		}
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-		};
-	}, [
-		retrieveMoreProjects,
-		endOfSearch,
-		handleScroll,
-		projects,
-		usersProfile,
-	]);
 
 	const renderedProjectTiles = projects.map((project) => {
 		return <DiscoverProjectTile key={project._id} project={project} />;
@@ -159,7 +136,6 @@ const ProfilePage = () => {
 
 	const displayProfilePic = () => {
 		if (!usersProfile) {
-			// console.log(res.link);
 			return res.link;
 		} else {
 			return usersProfile.link;
@@ -189,6 +165,7 @@ const ProfilePage = () => {
 			<div className="flex min-w-[100px] gap-5">
 				<img
 					className="h-28 w-28 rounded-full"
+					alt="user profile picture"
 					src={displayProfilePic()}
 				></img>
 				<p className="flex items-center text-2xl md:text-4xl font-bold poppins text-wrap text-center ">
@@ -197,11 +174,11 @@ const ProfilePage = () => {
 			</div>
 			<div className="flex flex-wrap gap-8 py-4">
 				{/* Bio Field*/}
-				<div className="flex flex-col w-full h-80 p-4 rounded-2xl dark:bg-gray-900 bg-gray-50 lg:w-3/5 text-xl poppins">
+				<div className="flex flex-col w-full h-80 p-4 rounded-2xl bg-gray-200 dark:bg-gray-900 lg:w-3/5 text-xl poppins shadow-lg">
 					{renderedBioField}
 				</div>
 				{/*Technologies fields*/}
-				<div className="flex flex-col p-4 rounded-2xl h-80 dark:bg-gray-900 bg-gray-50 w-full lg:w-1/5 lg:grow poppins text-xl">
+				<div className="flex flex-col p-4 rounded-2xl h-80 bg-gray-200 dark:bg-gray-900 w-full lg:w-1/5 lg:grow poppins text-xl shadow-lg">
 					{renderedTechField}
 				</div>
 			</div>
