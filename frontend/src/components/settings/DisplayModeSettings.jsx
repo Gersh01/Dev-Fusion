@@ -23,6 +23,7 @@ const DisplayModeSettings = () => {
 			<select
 				className="w-32 rounded-md p-1 bg-gray-200 dark:bg-gray-700 focus:outline-none"
 				value={selectionValue}
+				aria-label="Display mode selection dropdown"
 				onChange={onDisplayModeChange}
 			>
 				<option value="light">Light</option>

@@ -30,12 +30,10 @@ const getUserFromJwt = async () => {
 };
 
 const getUsersProfile = async (id) => {
-	console.log(id)
 	const response = await axios.get(`${apiDomain}/api/users/${id}`, {
 		withCredentials: true,
 	});
 
-	console.log(response.data);
 	return response.data;
 };
 

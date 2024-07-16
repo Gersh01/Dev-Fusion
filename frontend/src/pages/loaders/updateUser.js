@@ -1,7 +1,6 @@
 import Axios from "axios";
 import { apiDomain } from "../../utils/utility";
 
-
 export const updateUser = async (id, newInfo) => {
 	try {
 		await Axios.put(
@@ -17,7 +16,7 @@ export const updateUser = async (id, newInfo) => {
 };
 
 export const updateUserTechnology = async (id, tech) => {
-	const payload = { userId: id,technologies: tech  };
+	const payload = { userId: id, technologies: tech };
 	try {
 		await Axios.put(apiDomain + "/api/users", payload, {
 			withCredentials: true,
@@ -27,9 +26,8 @@ export const updateUserTechnology = async (id, tech) => {
 	}
 };
 
-export const updateUserName = async (id, first, last) =>{
-	const payload ={userId:id,firstName:first,lastName:last}
-	console.log(payload)
+export const updateUserName = async (id, first, last) => {
+	const payload = { userId: id, firstName: first, lastName: last };
 	try {
 		await Axios.put(apiDomain + "/api/users", payload, {
 			withCredentials: true,
@@ -39,14 +37,15 @@ export const updateUserName = async (id, first, last) =>{
 	}
 };
 
-export const updateProfilePicture = async (id, link)=>{
-	const payload = {userId:id, link:link};
-	try{
-		await Axios.put(apiDomain+"/api/users",payload,{withCredentials:true})
-	}catch(err){
-		console.log(`Error: ${err.message}`)
+export const updateProfilePicture = async (id, link) => {
+	const payload = { userId: id, link: link };
+	try {
+		await Axios.put(apiDomain + "/api/users", payload, {
+			withCredentials: true,
+		});
+	} catch (err) {
+		console.log(`Error: ${err.message}`);
 	}
-}
-
+};
 
 export default { updateUser, updateUserTechnology };
