@@ -3,6 +3,7 @@ import ProjectTilePanel from "../reusable/ProjectTilePanel";
 import { MdPerson, MdOutlineAccessTimeFilled } from "react-icons/md";
 import Bubble from "../reusable/Bubble";
 import Divider from "../reusable/Divider";
+import { getDateMessage } from "../../utils/utility";
 
 const DiscoverProjectTile = ({ project }) => {
 	const title = project.title;
@@ -17,6 +18,11 @@ const DiscoverProjectTile = ({ project }) => {
 			24 +
 			1
 	);
+	const numDaysTilEnd = Math.floor(
+		(new Date(project.deadline) - new Date()) / 1000 / 60 / 60 / 24 + 1
+	);
+
+	let dateMessage = getDateMessage(numDaysTilStart, numDaysTilEnd);
 
 	let positionLeft = 0;
 	project.roles.forEach((role) => {
@@ -55,12 +61,7 @@ const DiscoverProjectTile = ({ project }) => {
 				</div>
 				<div className="flex gap-1 items-center">
 					<MdOutlineAccessTimeFilled className="text-xl text-white" />
-					<p className="poppins text-white">
-						{numDaysTilStart}{" "}
-						{numDaysTilStart === 1
-							? "day left to join"
-							: "days left to join"}
-					</p>
+					<p className="poppins text-white">{dateMessage}</p>
 				</div>
 			</div>
 		</Fragment>

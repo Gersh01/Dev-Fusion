@@ -533,6 +533,28 @@ const getRoles = (search, rolesList) => {
 	);
 };
 
+const getDateMessage = (numDaysTilStart, numDaysTilEnd) => {
+	let dateMessage = "";
+
+	if (numDaysTilStart > 0) {
+		if (numDaysTilStart === 1) {
+			dateMessage = `${numDaysTilStart} day until project begins`;
+		} else {
+			dateMessage = `${numDaysTilStart} days until project begins`;
+		}
+	} else if (numDaysTilEnd > 0) {
+		if (numDaysTilEnd === 1) {
+			dateMessage = `due in ${numDaysTilEnd} day`;
+		} else {
+			dateMessage = `due in ${numDaysTilEnd} days`;
+		}
+	} else {
+		dateMessage = "Project completed";
+	}
+
+	return dateMessage;
+};
+
 export {
 	getBubbleColor,
 	getTechnology,
@@ -540,4 +562,5 @@ export {
 	getCommunication,
 	apiDomain,
 	getRoles,
+	getDateMessage,
 };
