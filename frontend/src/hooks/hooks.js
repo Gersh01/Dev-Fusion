@@ -6,7 +6,6 @@ const useLazyLoading = (
 	projects,
 	setProjects,
 	isInitialLoading
-	// dependencies
 ) => {
 	const [endOfSearch, setEndOfSearch] = useState(false);
 	const isFetching = useRef(false);
@@ -21,7 +20,6 @@ const useLazyLoading = (
 		const newProjects = await retrieveProjects();
 		isFetching.current = false;
 
-		console.log(newProjects);
 		setProjects([...projects, ...newProjects]);
 
 		if (newProjects.length === 0) {
@@ -31,19 +29,20 @@ const useLazyLoading = (
 
 	const handleScroll = useCallback(() => {
 		const bottom =
-			window.innerHeight + window.scrollY >= document.body.scrollHeight;
+			window.innerHeight + window.scrollY + 25 >=
+			document.body.scrollHeight;
 
-		if (bottom) {
+		if (bottom && !endOfSearch) {
 			lazyLoad();
 		}
-	}, [lazyLoad]);
+	}, [lazyLoad, endOfSearch]);
 
 	useEffect(() => {
 		// * Adding scroll listener to window
 		window.addEventListener("scroll", handleScroll);
 
 		// * Load
-		if (container.current.clientHeight <= window.innerHeight) {
+		if (container.current.clientHeight - 500 <= window.innerHeight) {
 			if (!endOfSearch) {
 				lazyLoad();
 			}

@@ -8,6 +8,7 @@ import TechnologiesField from "../components/profile/TechnologiesField";
 import Button from "../components/reusable/Button";
 import { getProfileProjects } from "./loaders/projectLoader";
 import { MdArrowLeft } from "react-icons/md";
+import { useLazyLoading } from "../hooks/hooks";
 
 const ProfilePage = () => {
 	let res = useSelector((state) => state.user);
@@ -17,14 +18,15 @@ const ProfilePage = () => {
 	const loaderData = useLoaderData();
 	const [projects, setProjects] = useState(loaderData.projects);
 	const [usersProfile, setUsersProfile] = useState(loaderData.user);
-	const [endOfSearch, setEndOfSearch] = useState(false);
+
+	let isInitialLoading = useRef(true);
 
 	const projectsContainerRef = useRef();
 
 	// * Lazy loading more projects
-	const retrieveMoreProjects = useCallback(async () => {
+	const fetchMoreProjects = useCallback(async () => {
 		if (projects.length === 0) {
-			return;
+			return [];
 		}
 
 		let newProjects;
@@ -52,51 +54,26 @@ const ProfilePage = () => {
 			});
 		}
 
-		setProjects([...projects, ...newProjects]);
-
-		if (newProjects.length === 0) {
-			setEndOfSearch(true);
-		}
+		return newProjects;
 	}, [projects, usersProfile]);
 
-	// * Only lazy load when reaching end of projects
-	const handleScroll = useCallback(() => {
-		const bottom =
-			window.innerHeight + window.scrollY >= document.body.scrollHeight;
+	const [endOfSearch, setEndOfSearch] = useLazyLoading(
+		projectsContainerRef,
+		fetchMoreProjects,
+		projects,
+		setProjects,
+		isInitialLoading
+	);
 
-		if (bottom) {
-			retrieveMoreProjects();
-		}
-	}, [retrieveMoreProjects]);
+	useEffect(() => {
+		setEndOfSearch(false);
+	}, [loaderData, setEndOfSearch]);
 
 	useEffect(() => {
 		setUsersProfile(loaderData.user);
 		setProjects(loaderData.projects);
+		isInitialLoading.current = false;
 	}, [loaderData.user, loaderData.projects]);
-
-	useEffect(() => {
-		// * Adding scroll listener to window
-		window.addEventListener("scroll", handleScroll);
-
-		// * Load
-		if (
-			projectsContainerRef.current.clientHeight - 500 <=
-			window.innerHeight
-		) {
-			if (!endOfSearch) {
-				retrieveMoreProjects();
-			}
-		}
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-		};
-	}, [
-		retrieveMoreProjects,
-		endOfSearch,
-		handleScroll,
-		projects,
-		usersProfile,
-	]);
 
 	const renderedProjectTiles = projects.map((project) => {
 		return <DiscoverProjectTile key={project._id} project={project} />;
@@ -159,7 +136,6 @@ const ProfilePage = () => {
 
 	const displayProfilePic = () => {
 		if (!usersProfile) {
-			// console.log(res.link);
 			return res.link;
 		} else {
 			return usersProfile.link;

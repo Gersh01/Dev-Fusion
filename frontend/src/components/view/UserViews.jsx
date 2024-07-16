@@ -23,7 +23,6 @@ const UserViews = ({ userViewInfo, projectData, amount }) => {
 	};
 
 	const toggleModal = () => {
-		console.log("Setting modal to show");
 		dispatch(showApplicationModal(true));
 	};
 
@@ -32,7 +31,6 @@ const UserViews = ({ userViewInfo, projectData, amount }) => {
 	};
 
 	const removeProject = () => {
-		console.log("ShowDeletModal");
 		dispatch(showDeleteModal(true));
 	};
 

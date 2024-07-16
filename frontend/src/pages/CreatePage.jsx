@@ -79,7 +79,6 @@ const CreatePage = () => {
 		}
 
 		if (hasValidationErrors === false) {
-			console.log(newProject);
 			setShowModal(true);
 			createProject(newProject);
 		}

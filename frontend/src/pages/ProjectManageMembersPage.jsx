@@ -20,7 +20,6 @@ const ProjectManageMembersPage = () => {
 				possibleMovedRoles.push(role.role);
 			}
 		});
-		console.log("Returning USER");
 		return (
 			<ManageTeamTile
 				possibleRoles={possibleMovedRoles}

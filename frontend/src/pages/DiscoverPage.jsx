@@ -15,7 +15,7 @@ const DisocverPage = () => {
 	const initialProjects = useLoaderData();
 	const [projects, setProjects] = useState(useLoaderData());
 
-	let isInitialLoading = useRef(false);
+	let isInitialLoading = useRef(true);
 
 	const projectsContainerRef = useRef();
 
@@ -64,11 +64,12 @@ const DisocverPage = () => {
 	}, [query, sortBy, searchBy, setEndOfSearch]);
 
 	useEffect(() => {
+		isInitialLoading.current = true;
 		setProjects(initialProjects);
+		isInitialLoading.current = false;
 	}, [initialProjects]);
 
 	useEffect(() => {
-		// setProjects([]);
 		initialSearch();
 	}, [initialSearch]);
 
