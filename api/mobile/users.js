@@ -390,7 +390,7 @@ exports.setApp = function (app, client) {
             bio = result[0].bio;
             technologies = result[0].technologies;
             link = result[0].link;
-            var ret = { userId: userId, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, newToken: req.token, error: error };
+            var ret = { id: userId, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, newToken: req.token, error: error };
             return res.status(200).json(ret);
         } else {
             error = 'user not found';
