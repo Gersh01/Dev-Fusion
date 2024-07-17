@@ -552,7 +552,6 @@ exports.setApp = function (app, client) {
             isDone: isDone,
             isStarted: isStarted,
 
-            ownerID: ownerID,
 
             deadline: deadline,
             projectStartDate: projectStartDate,
