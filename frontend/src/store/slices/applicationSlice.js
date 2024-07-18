@@ -10,6 +10,8 @@ const applicationSlice = createSlice({
 		showModal:false,
 		showDeleteModal:false,
 		showLeaveModal:false,
+		showRemoveModal:false,
+		// removeUser:"",
 	},
 	reducers: {
 		updateRole: (state, action) => {
@@ -29,9 +31,15 @@ const applicationSlice = createSlice({
 		},
 		showLeaveModal:(state,action)=>{
 			state.showLeaveModal = action.payload
+		},
+		showRemoveModal: (state,action)=>{
+			state.showRemoveModal = action.payload
+		},
+		updateRemoveUser:(state,action)=>{
+			state.removeUser = action.payload;
 		}
 	},
 });
 
-export const { updateRole,updateMemberRole,showApplicationModal,showDeleteModal, showLeaveModal } = applicationSlice.actions;
+export const { updateRole,updateMemberRole,showApplicationModal,showDeleteModal, showLeaveModal,showRemoveModal,updateRemoveUser } = applicationSlice.actions;
 export default applicationSlice.reducer;

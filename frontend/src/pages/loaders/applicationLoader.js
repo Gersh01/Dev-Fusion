@@ -44,6 +44,7 @@ const applicationDeny = async (application) => {
 	}
 };
 
+
 export {
 	getApplications,
 	applicationApply,
