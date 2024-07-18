@@ -5,84 +5,97 @@ import { useNavigate } from "react-router-dom";
 import { useLoaderData } from "react-router-dom";
 import ManageTeamTile from "../components/manage_team/ManageTeamTile";
 import RolesBubble from "../components/view/RolesBubble";
+import Modal from "../components/reusable/Modal";
+import { useSelector } from "react-redux";
+import RemoveUserModal from "../components/manage_team/RemoveUserModal";
 
 const ProjectManageMembersPage = () => {
-	const navigate = useNavigate();
-	const teamMembers = useLoaderData().teamMembers;
-	const roles = useLoaderData().roles;
-	let possibleRoles = [];
-	let possibleMovedRoles = [];
+    const navigate = useNavigate();
+    const teamMembers = useLoaderData().teamMembers;
+    const roles = useLoaderData().roles;
+    const projectData = useLoaderData();
+    let possibleRoles = [];
+    let possibleMovedRoles = [];
+    const showRemoveModal = useSelector(
+        (state) => state.application.showRemoveModal
+    );
 
-	const getMembers = teamMembers.map((value) => {
-		possibleMovedRoles = ["No change..."];
-		roles.map((role) => {
-			if (role.role !== value.role) {
-				possibleMovedRoles.push(role.role);
-			}
-		});
-		return (
-			<ManageTeamTile
-				possibleRoles={possibleMovedRoles}
-				memberInfo={value}
-				key={value.userId}
-			></ManageTeamTile>
-		);
-	});
+    const getMembers = teamMembers.map((value) => {
+        possibleMovedRoles = ["No change..."];
+        roles.map((role) => {
+            if (role.role !== value.role) {
+                possibleMovedRoles.push(role.role);
+            }
+        });
+        return (
+            <ManageTeamTile
+                possibleRoles={possibleMovedRoles}
+                memberInfo={value}
+                key={value.userId}
+            ></ManageTeamTile>
+        );
+    });
 
-	const renderedRolesRequirementBubbles = roles?.map((role) => {
-		let roleCount = 0;
-		const members = [];
+    const renderedRolesRequirementBubbles = roles?.map((role) => {
+        let roleCount = 0;
+        const members = [];
 
-		teamMembers.forEach((member) => {
-			if (member.role === role.role) {
-				roleCount += 1;
-				members.push({
-					userId: member.userId,
-					username: member.username,
-				});
-			}
-		});
+        teamMembers.forEach((member) => {
+            if (member.role === role.role) {
+                roleCount += 1;
+                members.push({
+                    userId: member.userId,
+                    username: member.username,
+                });
+            }
+        });
 
-		if (roleCount < role.count) {
-			possibleRoles.push(role.role);
-		}
-		return (
-			<RolesBubble
-				key={role.role}
-				role={role.role}
-				count={role.count}
-				description={role.description}
-				currentCount={roleCount}
-				members={members}
-			/>
-		);
-	});
+        if (roleCount < role.count) {
+            possibleRoles.push(role.role);
+        }
+        return (
+            <RolesBubble
+                key={role.role}
+                role={role.role}
+                count={role.count}
+                description={role.description}
+                currentCount={roleCount}
+                members={members}
+            />
+        );
+    });
 
-	return (
-		<Fragment>
-			<button
-				className="flex items-center self-start"
-				onClick={() => {
-					navigate(-1);
-				}}
-			>
-				<MdArrowLeft className="text-2xl" />
-				<p className="text-xl font-semibold">Back</p>
-			</button>
-			{/* <Divider /> */}
-			<p className="text-3xl font-semibold">Manage Team</p>
-			<Divider></Divider>
-			<div className="flex flex-col gap-2">
-				<p className="text-xl font-semibold">Current Positions</p>
-				<div className="flex flex-col gap-4">
-					{renderedRolesRequirementBubbles}
-				</div>
-			</div>
-			<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12">
-				{teamMembers ? getMembers : null}
-			</div>
-		</Fragment>
-	);
+    return (
+        <Fragment>
+            <button
+                className="flex items-center self-start"
+                onClick={() => {
+                    navigate(-1);
+                }}
+            >
+                <MdArrowLeft className="text-2xl" />
+                <p className="text-xl font-semibold">Back</p>
+            </button>
+            {/* <Divider /> */}
+            <p className="text-3xl font-semibold">Manage Team</p>
+            <Divider></Divider>
+            <div className="flex flex-col gap-2">
+                <p className="text-xl font-semibold">Current Positions</p>
+                <div className="flex flex-col gap-4">
+                    {renderedRolesRequirementBubbles}
+                </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12">
+                {teamMembers ? getMembers : null}
+            </div>
+            <Modal show={showRemoveModal}>
+                <RemoveUserModal
+                    projectData={projectData}
+                    show={showRemoveModal}
+                ></RemoveUserModal>
+            </Modal>
+        </Fragment>
+    );
 };
 
 export default ProjectManageMembersPage;

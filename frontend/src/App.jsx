@@ -40,6 +40,7 @@ import ProjectsApplicationsPage from "./pages/ProjectsApplicationsPage";
 import { getApplications } from "./pages/loaders/applicationLoader";
 import ProjectManageMembersPage from "./pages/ProjectManageMembersPage";
 import EditProjectPage from "./pages/EditProjectPage";
+import EmailVerificationErrorPage from "./pages/EmailVerificationErrorPage";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -62,6 +63,10 @@ const router = createBrowserRouter(
                 <Route
                     path="/verified-user"
                     element={<VerifiedUsersWelcomePage />}
+                />
+                <Route
+                    path="/email-verification-error"
+                    element={<EmailVerificationErrorPage />}
                 />
             </Route>
             <Route path="/" element={<ResetAuthPage />}>

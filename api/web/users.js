@@ -12,7 +12,7 @@ const nodemailer = require('nodemailer');
 //COMMENT OUT THE FOLLOWING LINE ON BUILD(localhost)
 const appName = "http://www.dev-fusion.com";
 
-const defaultProfilePicture = "https://res.cloudinary.com/dlj2rlloi/image/upload/v1720043202/ef7zmzl5hokpnb3zd6en.png";
+const defaultProfilePicture = "https://res.cloudinary.com/dlj2rlloi/image/upload/v1721333449/profileImage_hqdvzt.webp";
 
 const ObjectId = require('mongodb').ObjectId;
 
@@ -304,7 +304,8 @@ exports.setApp = function (app, client) {
             payload = jwt.verify(emailToken, process.env.EMAIL_SECRET);
             email = payload.email;
         } catch (e) {
-            return res.status(403).json({ error: "email token is not valid" });
+            return res.redirect("/email-verification-error");
+            // return res.status(403).json({ error: "email token is not valid" });
         }
 
         var id = -1;
@@ -327,13 +328,15 @@ exports.setApp = function (app, client) {
         } catch (e) {
             error = e.toString;
             var ret = { error: error };
-            return res.status(500).json(ret);
+            return res.redirect("/email-verification-error");
+            // return res.status(500).json(ret);
         }
 
         if (resultsEmail.length > 0) { //emailToken matched a verified user's email
             error = 'user is already verified';
             var ret = { error: error };
-            return res.status(400).json(ret);
+            return res.redirect("/email-verification-error");
+            // return res.status(400).json(ret);
         } else if (resultsEmailUnverified.length > 0) { //emailToken matched an unverified user's email
             _id = resultsEmailUnverified[0]._id;
             password = resultsEmailUnverified[0].password;
@@ -355,15 +358,16 @@ exports.setApp = function (app, client) {
                 // return res.status(200).json({ error: "" });
                 // return res.redirect('/');
             } catch (e) {
-                a
                 error = e.toString;
                 var ret = { error: error };
-                return res.status(500).json(ret);
+                return res.redirect("/email-verification-error");
+                // return res.status(500).json(ret);
             }
         } else { //emailToken did not match any user
             error = "Email did not match any user";
             var ret = { error: error };
-            return res.status(404).json(ret);
+            return res.redirect("/email-verification-error");
+            // return res.status(404).json(ret);
         }
     });
 
