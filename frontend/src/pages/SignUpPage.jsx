@@ -50,31 +50,30 @@ const SignUpPage = () => {
         }
 
         if (hasValidationErrors === false) {
-            console.log("Sending new registration!");
-            // 	try {
-            // 		const response = await Axios.post(
-            // 			apiDomain + "/api/register",
-            // 			registerAttempt
-            // 		);
-            // 		if (response && response.status === 201) {
-            // 			dispatch(setVerificationEmail(email));
-            // 			navigate("/email-verification");
-            // 		}
-            // 	} catch (err) {
-            // 		let errorMessage = err.response.data.error;
-            // 		if (errorMessage === "email is taken") {
-            // 			setErrors({
-            // 				...errors,
-            // 				email: ["Email is already Taken"],
-            // 			});
-            // 		}
-            // 		if (errorMessage === "username is taken") {
-            // 			setErrors({
-            // 				...errors,
-            // 				username: ["Username is already Taken"],
-            // 			});
-            // 		}
-            // 	}
+            try {
+                const response = await Axios.post(
+                    apiDomain + "/api/register",
+                    registerAttempt
+                );
+                if (response && response.status === 201) {
+                    dispatch(setVerificationEmail(email));
+                    navigate("/email-verification");
+                }
+            } catch (err) {
+                let errorMessage = err.response.data.error;
+                if (errorMessage === "email is taken") {
+                    setErrors({
+                        ...errors,
+                        email: ["Email is already Taken"],
+                    });
+                }
+                if (errorMessage === "username is taken") {
+                    setErrors({
+                        ...errors,
+                        username: ["Username is already Taken"],
+                    });
+                }
+            }
         }
     };
     const showPasswordField = () => {
