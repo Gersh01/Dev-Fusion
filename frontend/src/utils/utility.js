@@ -492,7 +492,7 @@ const getBubbleColor = (text) => {
 	return bubbleBgColors[hash % bubbleBgColors.length];
 };
 
-const apiDomain = "https://dev-fusion-production-65209ae3025b.herokuapp.com/";
+const apiDomain = "https://dev-fusion-production-65209ae3025b.herokuapp.com";
 // const apiDomain = "https://www.dev-fusion.com";
 // const apiDomain = "http://localhost:5000";
 
