@@ -29,7 +29,7 @@ const useLazyLoading = (
 
 	const handleScroll = useCallback(() => {
 		const bottom =
-			window.innerHeight + window.scrollY + 25 >=
+			window.innerHeight + window.scrollY + 50 >=
 			document.body.scrollHeight;
 
 		if (bottom && !endOfSearch) {
