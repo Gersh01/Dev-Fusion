@@ -416,6 +416,7 @@ const communications = [
 	"Flock",
 	"Flowdock",
 	"Fuze",
+	"GitHub",
 	"Gitter",
 	"Glip",
 	"Google Chat",
