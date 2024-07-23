@@ -9,7 +9,7 @@ import Jacob from "../assets/Jacob.png";
 import James from "../assets/James.png";
 import Tony from "../assets/Tony.png";
 import Xutao from "../assets/Xutao.jpg";
-
+//adding a comment
 const AboutUsPage = () => {
 	const projectManager = [
 		{
