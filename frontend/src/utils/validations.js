@@ -107,7 +107,7 @@ const validateLogin = (login) => {
 	}
 
 	if (passwordInput === "") {
-		errors.password.push("Password must not be empty");
+		errors.password.push("Password cannot be empty");
 	}
 
 	return errors;
@@ -118,7 +118,7 @@ const validateRegister = (register) => {
 		"^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
 	);
 	const validPassword = new RegExp(
-		"(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&])(?=.{8,24}$)"
+		"^(?=.*[A-Z])(?=.*[0-9])(?=.*[~`¿¡!#$%^&*€£@+÷=\\-\\[\\]\\\\';,/{}()|\\\":<>?._])(?=.{8,24}$)"
 	);
 
 	const errors = {
@@ -189,7 +189,7 @@ const validResetPasswordEmail = (resetEmail) => {
 
 const validResetPassword = (resetPassword) => {
 	const validPassword = new RegExp(
-		"(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&])(?=.{8,24}$)"
+		"^(?=.*[A-Z])(?=.*[0-9])(?=.*[~`¿¡!#$%^&*€£@+÷=\\-\\[\\]\\\\';,/{}()|\\\":<>?._])(?=.{8,24}$)"
 	);
 
 	const errors = {
