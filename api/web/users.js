@@ -10,7 +10,7 @@ const nodemailer = require('nodemailer');
 // const appName = "http://localhost" + PORT;
 
 //COMMENT OUT THE FOLLOWING LINE ON BUILD(localhost)
-const appName = "http://www.dev-fusion.com";
+const appName = "https://dev-fusion-production-65209ae3025b.herokuapp.com";
 
 const defaultProfilePicture = "https://res.cloudinary.com/dlj2rlloi/image/upload/v1721333449/profileImage_hqdvzt.webp";
 
