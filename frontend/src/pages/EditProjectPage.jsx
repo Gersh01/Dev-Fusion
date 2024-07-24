@@ -95,6 +95,9 @@ const EditProjectPage = () => {
 
 		const editedProject = {
 			projectId: projectData._id,
+			isOpen: projectData.isOpen,
+			isDone: projectData.isDone,
+			isStarted: projectData.isDone,
 			title: projectTitle,
 			projectStartDate: startDate,
 			description: description,
