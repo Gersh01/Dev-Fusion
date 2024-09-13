@@ -1,6 +1,7 @@
 import ProjectTilePanel from "../reusable/ProjectTilePanel";
 import { Fragment } from "react";
 import { MdPerson, MdOutlineAccessTimeFilled } from "react-icons/md";
+import { getDateMessage } from "../../utils/utility";
 
 const OwnedProjectTile = ({ project }) => {
 	const title = project.title;
@@ -19,21 +20,7 @@ const OwnedProjectTile = ({ project }) => {
 		(new Date(project.deadline) - new Date()) / 1000 / 60 / 60 / 24 + 1
 	);
 
-	let dateMessage = "";
-
-	if (numDaysTilStart > 0) {
-		if (numDaysTilStart === 1) {
-			dateMessage = `${numDaysTilStart} day until project begins`;
-		} else {
-			dateMessage = `${numDaysTilStart} days until project begins`;
-		}
-	} else {
-		if (numDaysTilEnd === 1) {
-			dateMessage = `due in ${numDaysTilEnd} day`;
-		} else {
-			dateMessage = `due in ${numDaysTilEnd} days`;
-		}
-	}
+	let dateMessage = getDateMessage(numDaysTilStart, numDaysTilEnd);
 
 	const topContent = (
 		<Fragment>

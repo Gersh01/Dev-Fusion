@@ -19,7 +19,7 @@ const getApplications = async (projectId) => {
 };
 
 const applicationApply = async (payload) => {
-	await axios.post("http://localhost:5000/api/inbox/apply", payload, {
+	await axios.post(apiDomain + "/api/inbox/apply", payload, {
 		withCredentials: true,
 	});
 };
@@ -43,6 +43,7 @@ const applicationDeny = async (application) => {
 		console.log(`Error: ${err.message}`);
 	}
 };
+
 
 export {
 	getApplications,

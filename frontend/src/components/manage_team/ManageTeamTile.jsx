@@ -1,12 +1,15 @@
 import { Fragment, useEffect, useState } from "react";
 import MemberCardPanel from "../reusable/MemberCardPanel";
-import UserBubble from "../view/UserBubble";
 import Button from "../reusable/Button";
 import { useDispatch } from "react-redux";
 import { updateMemberRole } from "../../store/slices/applicationSlice";
 import { useLoaderData } from "react-router-dom";
 import { updateTeamMembers } from "../../pages/loaders/projectLoader";
 import { useNavigate } from "react-router-dom";
+import {
+    showRemoveModal,
+    updateRemoveUser,
+} from "../../store/slices/applicationSlice";
 
 const ManageTeamTile = ({ possibleRoles, memberInfo }) => {
     const navigate = useNavigate();
@@ -27,15 +30,7 @@ const ManageTeamTile = ({ possibleRoles, memberInfo }) => {
     });
 
     const topContent = (
-        <Fragment>
-            <div className="flex justify-between">
-                <UserBubble
-                    username={username}
-                    textSize={"text-2xl font-bold"}
-                    userId={userId}
-                ></UserBubble>
-            </div>
-        </Fragment>
+        <p className="text-lg font-semibold text-white">{`@${username}`}</p>
     );
 
     useEffect(() => {
@@ -46,38 +41,28 @@ const ManageTeamTile = ({ possibleRoles, memberInfo }) => {
     }, [newRole]);
 
     const setNewTeamMemberRoles = () => {
-        let payload = {
-            projectId: projectId,
-            teamMembers: [],
-        };
-        let newMemberRoles = updateMembers;
+        if (newRole != role) {
+            let payload = {
+                projectId: projectId,
+                teamMembers: [],
+            };
+            let newMemberRoles = updateMembers;
 
-        newMemberRoles.map((member) => {
-            if (member.username === username) {
-                member.role = newRole;
+            newMemberRoles.map((member) => {
+                if (member.username === username) {
+                    member.role = newRole;
+                }
+                payload.teamMembers.push(member);
+            });
+            if (updateTeamMembers?.(payload)) {
+                navigate(0);
             }
-            payload.teamMembers.push(member);
-        });
-        if (updateTeamMembers?.(payload)) {
-            navigate(0);
         }
     };
 
     const removeTeamMember = () => {
-        let payload = {
-            projectId: projectId,
-            teamMembers: [],
-        };
-        let newMemberRoles = updateMembers;
-
-        newMemberRoles.map((member) => {
-            if (member.username !== username) {
-                payload.teamMembers.push(member);
-            }
-        });
-        if (updateTeamMembers?.(payload)) {
-            navigate(0);
-        }
+        dispacth(updateRemoveUser(username));
+        dispacth(showRemoveModal(true));
     };
 
     const bottomContent = (
@@ -90,7 +75,8 @@ const ManageTeamTile = ({ possibleRoles, memberInfo }) => {
                 <p>Change Role:</p>
                 <select
                     className="flex-auto flex max-w-44 bg-gray-200 dark:bg-gray-800 rounded-md px-1 focus:outline-none
-				gap-2 items-center"
+					gap-2 items-center"
+                    aria-label="role selection dropdown"
                     value={newRole}
                     onChange={(e) => {
                         setNewRole(e.target.value);
@@ -115,7 +101,7 @@ const ManageTeamTile = ({ possibleRoles, memberInfo }) => {
             topContent={topContent}
             bottomContent={bottomContent}
             key={userId}
-        ></MemberCardPanel>
+        />
     );
 };
 

@@ -1,34 +1,32 @@
 import AuthPanel from "../components/reusable/AuthPanel";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-const UrlNotFound = () => {
-    const validUser = useSelector((state) => state.user.id);
+
+const EmailVerificationErrorPage = () => {
     const navigate = useNavigate();
 
-    const redirectBack = () => {
-        if (validUser) {
-            navigate(-1);
-        } else {
-            navigate("/");
-        }
+    const redirectToRegister = () => {
+        navigate("/signup");
     };
 
     return (
         <AuthPanel width={480} minHeight={600}>
             <div className="flex flex-col gap-10 text-black text-2xl dark:text-white text-center">
                 <p className="text-3xl font-semibold league-spartan">
-                    404 URL Extension Not Found
+                    Email Verification Error
                 </p>
-                <p className="league-spartan">- The Dev Fusion Team</p>
+                <p className="league-spartan">
+                    There was an error while trying to verify your account.
+                    Please try creating a new account with us today!
+                </p>
             </div>
             <button
                 className="font-semibold justify-center underline text-xl league-spartan"
-                onClick={redirectBack}
+                onClick={redirectToRegister}
             >
-                Click here to be redirected back
+                Click here to sign up
             </button>
         </AuthPanel>
     );
 };
 
-export default UrlNotFound;
+export default EmailVerificationErrorPage;

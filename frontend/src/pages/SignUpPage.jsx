@@ -21,7 +21,6 @@ const SignUpPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
     const [passwordField, setPasswordField] = useState(false);
 
     const goToLogin = () => {
@@ -44,6 +43,8 @@ const SignUpPage = () => {
         for (const errorType in validationErrors) {
             if (validationErrors[errorType].length !== 0) {
                 hasValidationErrors = true;
+                console.log("Validation errors are the following: ");
+                console.log(validationErrors);
                 break;
             }
         }
@@ -54,12 +55,8 @@ const SignUpPage = () => {
                     apiDomain + "/api/register",
                     registerAttempt
                 );
-                console.log(response.status);
                 if (response && response.status === 201) {
-                    console.log("Positive respose");
-                    console.log(email);
                     dispatch(setVerificationEmail(email));
-                    console.log("Dispatched");
                     navigate("/email-verification");
                 }
             } catch (err) {

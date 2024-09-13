@@ -6,28 +6,23 @@ import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import JoinedProjectTile from "../components/projects/JoinedProjectTile";
 import Button from "../components/reusable/Button";
 import { getJoinedProjects, getOwnedProjects } from "./loaders/projectLoader";
+import { useLazyLoading } from "../hooks/hooks";
 
 const ProjectsPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	const retrievedProjects = useLoaderData();
+	const initialProjects = useLoaderData();
 
 	const [projects, setProjects] = useState([]);
-	const [endOfSearch, setEndOfSearch] = useState(false);
 
 	const projectsContainerRef = useRef();
 
-	useEffect(() => {
-		setProjects([]);
-		setProjects(retrievedProjects);
-		setEndOfSearch(false);
-	}, [location.pathname, retrievedProjects]);
+	let isInitialLoading = useRef(true);
 
-	// * Lazy loading more projects
-	const retrieveMoreProjects = useCallback(async () => {
+	const fetchMoreProjects = useCallback(async () => {
 		if (projects.length === 0) {
-			return;
+			return [];
 		}
 
 		let newProjects;
@@ -51,41 +46,25 @@ const ProjectsPage = () => {
 			});
 		}
 
-		setProjects([...projects, ...newProjects]);
-
-		if (newProjects.length === 0) {
-			setEndOfSearch(true);
-		}
+		return newProjects;
 	}, [location.pathname, projects]);
 
-	// * Only lazy load when reaching end of projects
-	const handleScroll = useCallback(() => {
-		const bottom =
-			window.innerHeight + window.scrollY >= document.body.scrollHeight;
-
-		if (bottom) {
-			retrieveMoreProjects();
-		}
-	}, [retrieveMoreProjects]);
+	const [endOfSearch, setEndOfSearch] = useLazyLoading(
+		projectsContainerRef,
+		fetchMoreProjects,
+		projects,
+		setProjects,
+		isInitialLoading
+	);
 
 	useEffect(() => {
-		// * Adding scroll listener to window
-		window.addEventListener("scroll", handleScroll);
+		setEndOfSearch(false);
+	}, [location.pathname, setEndOfSearch]);
 
-		// * Load
-		if (
-			projectsContainerRef.current.clientHeight - 500 <
-			window.innerHeight
-		) {
-			if (!endOfSearch) {
-				retrieveMoreProjects();
-			}
-		}
-
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-		};
-	}, [endOfSearch, handleScroll, retrieveMoreProjects]);
+	useEffect(() => {
+		setProjects(initialProjects);
+		isInitialLoading.current = false;
+	}, [initialProjects]);
 
 	const renderedProjectsTiles = projects.map((project) => {
 		if (location.pathname === "/my-projects") {

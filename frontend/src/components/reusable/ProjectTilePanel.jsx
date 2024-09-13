@@ -6,7 +6,7 @@ const ProjectTilePanel = ({ topContent, bottomContent, projectId }) => {
 	return (
 		<div
 			className="flex flex-col text-black dark:text-white cursor-pointer 
-			drop-shadow"
+			drop-shadow-md"
 			onClick={() => navigate(`/projects/${projectId}`)}
 		>
 			{/* TOP */}
@@ -22,7 +22,7 @@ const ProjectTilePanel = ({ topContent, bottomContent, projectId }) => {
 			{/* BOTTOM */}
 			<div
 				className="bg-gradient-to-r from-orange-400 to-orange-500 
-	  			 dark:from-violet-600 dark:to-violet-700 rounded-b-2xl"
+	  			 dark:from-violet-600 dark:to-violet-700 rounded-b-3xl"
 			>
 				<div
 					className="bg-gray-200 dark:bg-gray-700 rounded-b-2xl rounded-tr-2xl 

@@ -10,7 +10,7 @@ const nodemailer = require('nodemailer');
 // const appName = "http://localhost" + PORT;
 
 //COMMENT OUT THE FOLLOWING LINE ON BUILD(localhost)
-const appName = "http://www.dev-fusion.com";
+const appName = "https://dev-fusion-production-65209ae3025b.herokuapp.com";
 
 const ObjectId = require('mongodb').ObjectId;
 
@@ -355,7 +355,7 @@ exports.setApp = function (app, client) {
     });
 
     //get user api +
-    app.get('/api/mobile/users/:userId', cookieJwtAuth, async (req, res, next) => {
+    app.post('/api/mobile/users/:userId', cookieJwtAuth, async (req, res, next) => {
         const userId = req.params.userId;
         var firstName = '';
         var lastName = '';
@@ -390,7 +390,7 @@ exports.setApp = function (app, client) {
             bio = result[0].bio;
             technologies = result[0].technologies;
             link = result[0].link;
-            var ret = { userId: userId, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, newToken: req.token, error: error };
+            var ret = { id: userId, firstName: firstName, lastName: lastName, email: email, username: username, bio: bio, technologies: technologies, link: link, newToken: req.token, error: error };
             return res.status(200).json(ret);
         } else {
             error = 'user not found';

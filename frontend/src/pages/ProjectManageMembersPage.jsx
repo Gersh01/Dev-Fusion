@@ -5,13 +5,20 @@ import { useNavigate } from "react-router-dom";
 import { useLoaderData } from "react-router-dom";
 import ManageTeamTile from "../components/manage_team/ManageTeamTile";
 import RolesBubble from "../components/view/RolesBubble";
+import Modal from "../components/reusable/Modal";
+import { useSelector } from "react-redux";
+import RemoveUserModal from "../components/manage_team/RemoveUserModal";
 
 const ProjectManageMembersPage = () => {
     const navigate = useNavigate();
     const teamMembers = useLoaderData().teamMembers;
     const roles = useLoaderData().roles;
+    const projectData = useLoaderData();
     let possibleRoles = [];
     let possibleMovedRoles = [];
+    const showRemoveModal = useSelector(
+        (state) => state.application.showRemoveModal
+    );
 
     const getMembers = teamMembers.map((value) => {
         possibleMovedRoles = ["No change..."];
@@ -20,7 +27,6 @@ const ProjectManageMembersPage = () => {
                 possibleMovedRoles.push(role.role);
             }
         });
-        console.log("Returning USER");
         return (
             <ManageTeamTile
                 possibleRoles={possibleMovedRoles}
@@ -52,7 +58,7 @@ const ProjectManageMembersPage = () => {
                 key={role.role}
                 role={role.role}
                 count={role.count}
-                description={""}
+                description={role.description}
                 currentCount={roleCount}
                 members={members}
             />
@@ -82,6 +88,12 @@ const ProjectManageMembersPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8 pb-12">
                 {teamMembers ? getMembers : null}
             </div>
+            <Modal show={showRemoveModal}>
+                <RemoveUserModal
+                    projectData={projectData}
+                    show={showRemoveModal}
+                ></RemoveUserModal>
+            </Modal>
         </Fragment>
     );
 };

@@ -36,8 +36,6 @@ const EditProjectPage = () => {
 
 	const oldStartDate = projectData.projectStartDate;
 
-	console.log("OLD: " + oldStartDate);
-
 	useEffect(() => {
 		const { title, description } = projectData;
 
@@ -97,6 +95,9 @@ const EditProjectPage = () => {
 
 		const editedProject = {
 			projectId: projectData._id,
+			isOpen: projectData.isOpen,
+			isDone: projectData.isDone,
+			isStarted: projectData.isDone,
 			title: projectTitle,
 			projectStartDate: startDate,
 			description: description,

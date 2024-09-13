@@ -109,20 +109,37 @@ const ViewProjectPage = () => {
 
     const userStatus = () => {
         let mode = "newUser";
+        let canApply = true;
+        let userViewInfo = {
+            mode: null,
+            canApply: null,
+        };
         if (userId === projectData.ownerID) {
-            mode = "owner";
-        } else {
-            teamMembers.map((member) => {
-                if (member.userId === userId) {
-                    if (member.role === "Project Manager") {
-                        mode = "manager";
-                    } else {
-                        mode = "member";
-                    }
-                }
-            });
+            mode = "ownerapply";
         }
-        return mode;
+        teamMembers.map((member) => {
+            if (member.userId === userId) {
+                if (
+                    member.role === "Project Manager" &&
+                    mode !== "ownerapply"
+                ) {
+                    mode = "manager";
+                } else if (mode === "ownerapply") {
+                    mode = "owner";
+                } else {
+                    mode = "member";
+                }
+            }
+        });
+
+        applications.appliedUsers.map((application) => {
+            if (application.userId === userId) {
+                canApply = false;
+            }
+        });
+        userViewInfo.mode = mode;
+        userViewInfo.canApply = canApply;
+        return userViewInfo;
     };
 
     const userView = () => {
@@ -131,7 +148,7 @@ const ViewProjectPage = () => {
 
         return (
             <UserViews
-                mode={mode}
+                userViewInfo={mode}
                 projectData={projectData}
                 amount={appAmount}
                 username={username}
@@ -166,12 +183,12 @@ const ViewProjectPage = () => {
             {/* TIME */}
             <div className="flex justify-between flex-wrap">
                 <div className="flex gap-1 items-center">
-                    <p className="poppins text-white">{numTotalPositions}</p>
-                    <MdPerson className="text-xl text-white" />
+                    <p className="poppins">{teamMembers.length}</p>
+                    <MdPerson className="text-xl" />
                 </div>
                 <div className="flex gap-1 items-center">
-                    <MdOutlineAccessTimeFilled className="text-xl text-white" />
-                    <p className="poppins text-white">{dateMessage}</p>
+                    <MdOutlineAccessTimeFilled className="text-xl" />
+                    <p className="poppins">{dateMessage}</p>
                 </div>
             </div>
             <Divider />
@@ -190,7 +207,7 @@ const ViewProjectPage = () => {
             {/* TECHNOLOGIES */}
             <div className="flex flex-col gap-2">
                 <p className="text-xl font-semibold">Technologies</p>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-2">
                     {renderedTechnologyBubbles}
                 </div>
             </div>
